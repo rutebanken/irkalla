@@ -1,0 +1,13 @@
+package org.rutebanken.irkalla;
+
+public class Constants {
+    public static final String HEADER_PROCESS_TARGET= "RutebankenProcessTarget";
+    public static final String HEADER_CHANGE_TYPE = "RutebankenChangeType";
+    public static final String HEADER_ENTITY_ID = "RutebankenEntityId";
+    public static final String HEADER_ENTITY_VERSION = "RutebankenEntityVersion";
+    public static final String HEADER_CHOUETTE_REFERENTIAL = "RutebankenChouetteReferential";
+    public static final String HEADER_SYNC_STATUS_FROM = "RutebankenSyncStatusFrom";
+    public static final String HEADER_SYNC_STATUS_TO = "RutebankenSyncStatusTo";
+    public static final String SINGLETON_ROUTE_DEFINITION_GROUP_NAME = "RutebankenSingletonRouteDefinitionGroup";
+
+}

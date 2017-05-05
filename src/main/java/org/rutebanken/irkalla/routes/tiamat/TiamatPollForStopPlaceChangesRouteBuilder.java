@@ -1,0 +1,87 @@
+package org.rutebanken.irkalla.routes.tiamat;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.LoggingLevel;
+import org.apache.camel.component.http4.HttpMethods;
+import org.glassfish.jersey.uri.internal.JerseyUriBuilder;
+import org.rutebanken.irkalla.Constants;
+import org.rutebanken.irkalla.routes.BaseRouteBuilder;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import javax.ws.rs.core.UriBuilder;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+
+import static org.rutebanken.irkalla.util.Http4URL.toHttp4Url;
+
+@Component
+public class TiamatPollForStopPlaceChangesRouteBuilder extends BaseRouteBuilder {
+
+    @Value("${tiamat.url}")
+    private String tiamatUrl;
+
+    @Value("${tiamat.publication.delivery.path:/jersey/publication_delivery/changed}")
+    private String publicationDeliveryPath;
+
+    private static final String DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSSXXXX";
+
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN);
+
+    private static final ZoneId TIME_ZONE_ID = ZoneId.of("UTC");
+
+    @Override
+    public void configure() throws Exception {
+        super.configure();
+
+        from("direct:processChangedStopPlacesAsNetex")
+                .process(e -> setPollForChangesURL(e))
+                .to("direct:processBatchOfChangedStopPlacesAsNetex")
+                .routeId("tiamat-get-changed-stop-places-as-netex");
+
+        from("direct:processBatchOfChangedStopPlacesAsNetex")
+                .log(LoggingLevel.INFO, "Fetching batch of changed stop places")
+                .removeHeader("Link")
+                .setHeader(Exchange.HTTP_METHOD, constant(HttpMethods.GET))
+                .setBody(constant(null))
+                .toD("${header." + Exchange.HTTP_URL + "}")
+                .choice()
+                .when(simple("${header." + Exchange.HTTP_RESPONSE_CODE + "} == 200"))
+                .toD("${header." + Constants.HEADER_PROCESS_TARGET + "}")
+                .choice()
+                .when(simple("${header.Link}"))
+                .process(e -> setURLToNextBatch(e))
+                .to("direct:processBatchOfChangedStopPlacesAsNetex")
+                .end()
+                .routeId("tiamat-get-batch-of-changed-stop-places-as-netex");
+
+    }
+
+    private void setPollForChangesURL(Exchange e) {
+        Instant from = e.getIn().getHeader(Constants.HEADER_SYNC_STATUS_FROM, Instant.class);
+        Instant to = e.getIn().getHeader(Constants.HEADER_SYNC_STATUS_TO, Instant.class);
+
+        UriBuilder uriBuilder = new JerseyUriBuilder().path(toHttp4Url(tiamatUrl) + publicationDeliveryPath);
+
+        if (from != null) {
+            uriBuilder.queryParam("from", from.atZone(TIME_ZONE_ID).format(FORMATTER));
+        }
+        if (to != null) {
+            uriBuilder.queryParam("to", to.atZone(TIME_ZONE_ID).format(FORMATTER));
+        }
+
+        e.getIn().setHeader(Exchange.HTTP_URL, uriBuilder.build().toString());
+    }
+
+
+    /**
+     * URL to next page of result set is encoded as Link header (rel="next")
+     */
+    private void setURLToNextBatch(Exchange e) {
+        e.getIn().setHeader(Exchange.HTTP_URL, toHttp4Url(e.getIn().getHeader("Link", String.class)
+                                                                  .replaceFirst("\\<", "")
+                                                                  .replaceFirst("\\>; rel=\"next\"", "")));
+    }
+
+}
