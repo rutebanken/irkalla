@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <if condition='property("env").contains("dev")'>
+        <then>
+            <include resource="org/springframework/boot/logging/logback/base.xml" />
+            <logger name="org.rutebanken.irkalla" level="DEBUG"/>
+            <logger name="com.github" level="INFO"/>
+            <logger name="org.springframework" level="INFO"/>
+            <logger name="org.eclipse" level="INFO"/>
+            <logger name="org.glassfish" level="INFO"/>
+            <logger name="org.freemarker" level="DEBUG"/>
+            <logger name="com.hazelcast" level="INFO"/>
+            <logger name="com.hazelcast.partition" level="WARN"/>
+            <root level="INFO">
+                <appender-ref ref="CONSOLE"/>
+            </root>
+        </then>
+        <else>
+            <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+                <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+                    <providers>
+                        <!-- provides the timestamp <timestamp/> -->
+                        <!-- provides the version <version/> -->
+                        <!-- provides the fields in the configured pattern -->
+                        <pattern>
+                            <!-- the pattern that defines what to include -->
+                            <pattern>
+                                {
+                                "serviceContext": {
+                                    "service": "irkalla"
+                                },
+                                "message": "%message\n%ex{full}",
+                                "severity": "%level",
+                                "reportLocation": {
+                                    "filePath": "%logger",
+                                    "lineNumber": "%line",
+                                    "functionName": "%method"
+                                }
+                                }
+                            </pattern>
+                        </pattern>
+                    </providers>
+                </encoder>
+            </appender>
+
+
+            <logger name="com" level="INFO"/>
+            <logger name="no" level="INFO"/>
+            <logger name="org" level="INFO"/>
+            <logger name="org.apache" level="INFO"/>
+            <logger name="com.hazelcast" level="INFO"/>
+            <logger name="org.rutebanken.irkalla" level="DEBUG"/>
+            <root level="INFO">
+                <appender-ref ref="console"/>
+            </root>
+        </else>
+    </if>
+</configuration>
