@@ -5,9 +5,7 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.component.http4.HttpMethods;
 import org.apache.camel.model.dataformat.JsonLibrary;
 import org.rutebanken.irkalla.Constants;
-import org.rutebanken.irkalla.repository.SyncStatusRepository;
 import org.rutebanken.irkalla.routes.BaseRouteBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -23,10 +21,6 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
 
     @Value("${chouette.sync.stop.place.cron:0+0+0+?+*+MON-FRI}")
     private String cronSchedule;
-
-
-    @Autowired
-    private SyncStatusRepository stopPlaceSyncStatusRepository;
 
     @Override
     public void configure() throws Exception {
@@ -59,9 +53,6 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
                 .setBody(simple("${header." + Constants.HEADER_SYNC_STATUS_TO + "}"))
                 .to("direct:setSyncStatusUntilTime")
 
-                .process(e -> stopPlaceSyncStatusRepository.setSyncedUntil(
-                        e.getIn().getHeader(Constants.HEADER_CHOUETTE_REFERENTIAL, String.class),
-                        e.getIn().getHeader(Constants.HEADER_SYNC_STATUS_TO, Instant.class)))
                 .log(LoggingLevel.INFO, "Finished synchronizing stop places in Chouette for ref: ${header." + Constants.HEADER_CHOUETTE_REFERENTIAL + "}")
                 .routeId("chouette-synchronize-stop-places");
 
