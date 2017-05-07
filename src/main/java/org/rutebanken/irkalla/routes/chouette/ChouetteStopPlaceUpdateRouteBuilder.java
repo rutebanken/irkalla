@@ -38,11 +38,13 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
                 .split().body()
                 .setHeader(Constants.HEADER_CHOUETTE_REFERENTIAL, simple("${body}"))
                 .setBody(constant(null))
-                .inOnly("activemq:queue:ChouetteStopPlaceSyncQueue?")
+                .inOnly("activemq:queue:ChouetteStopPlaceSyncQueue")
 
                 .routeId("chouette-synchronize-stop-places-all-referentials");
 
         singletonFrom("activemq:queue:ChouetteStopPlaceSyncQueue?transacted=true")
+                .process(e->
+                                 toString())
                 .log(LoggingLevel.INFO, "Synchronizing stop places in Chouette for ref: ${header." + Constants.HEADER_CHOUETTE_REFERENTIAL + "}")
                 .setHeader(Constants.HEADER_PROCESS_TARGET, constant("direct:synchronizeStopPlaceBatch"))
 
