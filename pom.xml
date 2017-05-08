@@ -586,6 +586,7 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
                 <version>${spring-boot-plugin.version}</version>
                 <configuration>
                     <mainClass>org.rutebanken.irkalla.IrkallaApplication</mainClass>
+                    <fork>false</fork>
                 </configuration>
                 <executions>
                     <execution>
