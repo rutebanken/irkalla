@@ -43,11 +43,8 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
                 .routeId("chouette-synchronize-stop-places-all-referentials");
 
         singletonFrom("activemq:queue:ChouetteStopPlaceSyncQueue?transacted=true")
-                .process(e->
-                                 toString())
                 .log(LoggingLevel.INFO, "Synchronizing stop places in Chouette for ref: ${header." + Constants.HEADER_CHOUETTE_REFERENTIAL + "}")
                 .setHeader(Constants.HEADER_PROCESS_TARGET, constant("direct:synchronizeStopPlaceBatch"))
-
                 .to("direct:getSyncStatusUntilTime")
                 .setHeader(Constants.HEADER_SYNC_STATUS_FROM, simple("${body}"))
                 .process(e -> e.getIn().setHeader(Constants.HEADER_SYNC_STATUS_TO, Instant.now()))
