@@ -18,7 +18,7 @@ public class EtcdRouteBuilder extends BaseRouteBuilder {
     @Value("${etcd.url}")
     private String etcdUrl;
 
-    @Value("${etcd.sync.status.prefix:irkalla/stop_place/sync}")
+    @Value("${etcd.sync.status.prefix:dynamic/irkalla/stop_place/sync}")
     private String etcdSyncStatusPrefix;
 
 
