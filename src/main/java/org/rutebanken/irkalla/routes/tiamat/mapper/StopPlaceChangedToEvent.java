@@ -18,16 +18,17 @@ public class StopPlaceChangedToEvent {
     public CrudEvent toEvent(StopPlaceChange stopPlaceChange) {
         StopPlace currentVersion = stopPlaceChange.getCurrent();
         CrudEvent.Builder event = CrudEvent.builder()
-                                      .type(CrudEvent.EntityType.StopPlace)
-                                      .action(CrudEvent.Action.valueOf(stopPlaceChange.getCrudAction().name()))
-                                      .changeType(ObjectUtils.nullSafeToString(stopPlaceChange.getUpdateType()))
-                                      .oldValue(stopPlaceChange.getOldValue())
-                                      .newValue(stopPlaceChange.getNewValue())
-                                      .externalId(currentVersion.id)
-                                      .version(currentVersion.version)
-                                      .name(currentVersion.getNameAsString())
-                                      .geometry(toGeometry(currentVersion.geometry))
-                                      .time(stopPlaceChange.getChangeTime());
+                                          .type(CrudEvent.EntityType.StopPlace)
+                                          .entityClassifier(currentVersion.stopPlaceType)
+                                          .action(CrudEvent.Action.valueOf(stopPlaceChange.getCrudAction().name()))
+                                          .changeType(ObjectUtils.nullSafeToString(stopPlaceChange.getUpdateType()))
+                                          .oldValue(stopPlaceChange.getOldValue())
+                                          .newValue(stopPlaceChange.getNewValue())
+                                          .externalId(currentVersion.id)
+                                          .version(currentVersion.version)
+                                          .name(currentVersion.getNameAsString())
+                                          .geometry(toGeometry(currentVersion.geometry))
+                                          .time(stopPlaceChange.getChangeTime());
 
         return event.build();
     }

@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 public class StopPlaceChangeTest {
 
     @Test
-    public void createDoesNotGiveChanges(){
+    public void createDoesNotGiveChanges() {
         StopPlace current = stopPlace("stopName", 4, 2, "quay1");
 
         StopPlaceChange change = new StopPlaceChange(CrudAction.CREATE, current, null);
@@ -24,7 +24,7 @@ public class StopPlaceChangeTest {
     }
 
     @Test
-    public void removeDoesNotGiveChanges(){
+    public void removeDoesNotGiveChanges() {
         StopPlace current = stopPlace("stopName", 4, 2, "quay1");
         StopPlace prev = stopPlace("stopName", 4, 2, "quay1");
 
@@ -54,6 +54,19 @@ public class StopPlaceChangeTest {
         Assert.assertEquals(StopPlaceChange.StopPlaceUpdateType.NAME, change.getUpdateType());
         Assert.assertEquals(prev.getNameAsString(), change.getOldValue());
         Assert.assertEquals(current.getNameAsString(), change.getNewValue());
+    }
+
+    @Test
+    public void onlyTypeChanged() {
+        StopPlace current = stopPlace("stopName", 4, 2, "quay1");
+        current.stopPlaceType = "onstreetBus";
+        StopPlace prev = stopPlace("stopName", 4, 2, "quay1");
+        prev.stopPlaceType = "onstreetTram";
+
+        StopPlaceChange change = new StopPlaceChange(CrudAction.UPDATE, current, prev);
+        Assert.assertEquals(StopPlaceChange.StopPlaceUpdateType.TYPE, change.getUpdateType());
+        Assert.assertEquals(prev.stopPlaceType, change.getOldValue());
+        Assert.assertEquals(current.stopPlaceType, change.getNewValue());
     }
 
     @Test

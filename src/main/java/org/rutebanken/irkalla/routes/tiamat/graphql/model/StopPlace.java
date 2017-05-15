@@ -12,6 +12,7 @@ public class StopPlace {
     public String id;
     public Long version;
     public Name name;
+    public String stopPlaceType;
     public GraphqlGeometry geometry;
 
     public List<Quay> quays;

@@ -24,6 +24,8 @@ public class CrudEvent {
 
     public EntityType entityType;
 
+    public String entityClassifier;
+
     public Action action;
 
     public String changeType;
@@ -72,6 +74,11 @@ public class CrudEvent {
 
         public Builder type(CrudEvent.EntityType type) {
             event.entityType = type;
+            return this;
+        }
+
+        public Builder entityClassifier(String entityClassifier) {
+            event.entityClassifier = entityClassifier;
             return this;
         }
 

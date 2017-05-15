@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
  * Representation of a change for a stop place.
  */
 public class StopPlaceChange {
-    public enum StopPlaceUpdateType {NAME, COORDINATES, NEW_QUAY, REMOVED_QUAY, MINOR, MAJOR}
+    public enum StopPlaceUpdateType {NAME, COORDINATES, TYPE, NEW_QUAY, REMOVED_QUAY, MINOR, MAJOR}
 
     private CrudAction crudAction;
 
@@ -87,6 +87,7 @@ public class StopPlaceChange {
         updateType = StopPlaceUpdateType.MINOR;
 
         checkForChanges(current.getNameAsString(), previousVersion.getNameAsString(), StopPlaceUpdateType.NAME);
+        checkForChanges(current.stopPlaceType, previousVersion.stopPlaceType, StopPlaceUpdateType.TYPE);
 
         // TODO do we need to verify magnitude of coord change? Seems to be small changes due to rounding.
         checkForChanges(current.geometry, previousVersion.geometry, StopPlaceUpdateType.COORDINATES);

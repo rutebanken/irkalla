@@ -50,6 +50,7 @@ public class StopPlaceQuery {
     private static final String RESULT_DEFINITION = "{" +
                                                             "id " +
                                                             "version " +
+                                                            "stopPlaceType " +
                                                             "validBetweens {fromDate toDate}" +
                                                             "name {" +
                                                             "      value" +
