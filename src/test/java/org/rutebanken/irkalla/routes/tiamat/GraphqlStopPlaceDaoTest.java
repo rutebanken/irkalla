@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.rutebanken.irkalla.domain.ChangeType;
+import org.rutebanken.irkalla.domain.CrudAction;
 import org.rutebanken.irkalla.routes.tiamat.graphql.GraphQLStopPlaceDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,7 +21,7 @@ public class GraphqlStopPlaceDaoTest {
     @Test
     @Ignore // Test against running Tiamat
     public void testGetStopPlace() {
-        StopPlaceChange stopPlaceChange = stopPlaceDao.getStopPlaceChange(ChangeType.CREATE, "NSR:StopPlace:3512", 3L);
+        StopPlaceChange stopPlaceChange = stopPlaceDao.getStopPlaceChange(CrudAction.CREATE, "NSR:StopPlace:3512", 3L);
 
         Assert.assertNotNull(stopPlaceChange);
         Assert.assertNotNull(stopPlaceChange.getCurrent());

@@ -15,7 +15,7 @@ public class EntityChangedEvent {
 
     public Long entityVersion;
 
-    public ChangeType changeType;
+    public CrudAction crudAction;
 
 
     public String getMsgId() {
@@ -50,11 +50,11 @@ public class EntityChangedEvent {
         this.entityVersion = entityVersion;
     }
 
-    public ChangeType getChangeType() {
-        return changeType;
+    public CrudAction getCrudAction() {
+        return crudAction;
     }
 
-    public void setChangeType(ChangeType changeType) {
-        this.changeType = changeType;
+    public void setCrudAction(CrudAction crudAction) {
+        this.crudAction = crudAction;
     }
 }

@@ -8,5 +8,12 @@ public class Quay {
     public Name name;
     public GraphqlGeometry geometry;
 
+    public Quay(String id, Name name, GraphqlGeometry geometry) {
+        this.id = id;
+        this.name = name;
+        this.geometry = geometry;
+    }
 
+    public Quay() {
+    }
 }

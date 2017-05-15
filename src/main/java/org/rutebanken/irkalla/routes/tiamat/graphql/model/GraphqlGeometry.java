@@ -10,6 +10,13 @@ public class GraphqlGeometry {
 
     public List<List<Double>> coordinates;
 
+    public GraphqlGeometry(String type, List<List<Double>> coordinates) {
+        this.type = type;
+        this.coordinates = coordinates;
+    }
+
+    public GraphqlGeometry() {
+    }
 
     @Override
     public boolean equals(Object o) {

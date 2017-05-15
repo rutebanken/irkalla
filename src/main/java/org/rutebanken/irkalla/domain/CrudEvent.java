@@ -121,12 +121,22 @@ public class CrudEvent {
         }
 
 
-
-
         public CrudEvent build() {
-            // TODO validate mandatory
+
             if (event.action == null) {
                 throw new IllegalArgumentException("No action");
+            }
+            if (event.entityType == null) {
+                throw new IllegalArgumentException("No entityType");
+            }
+            if (event.version == null) {
+                throw new IllegalArgumentException("No version");
+            }
+            if (event.externalId == null) {
+                throw new IllegalArgumentException("No externalId");
+            }
+            if (event.eventTime == null) {
+                throw new IllegalArgumentException("No eventTime");
             }
             return event;
         }

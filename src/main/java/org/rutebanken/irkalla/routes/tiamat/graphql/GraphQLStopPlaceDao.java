@@ -1,6 +1,6 @@
 package org.rutebanken.irkalla.routes.tiamat.graphql;
 
-import org.rutebanken.irkalla.domain.ChangeType;
+import org.rutebanken.irkalla.domain.CrudAction;
 import org.rutebanken.irkalla.routes.tiamat.StopPlaceChange;
 import org.rutebanken.irkalla.routes.tiamat.StopPlaceDao;
 import org.rutebanken.irkalla.routes.tiamat.graphql.model.StopPlace;
@@ -21,15 +21,15 @@ public class GraphQLStopPlaceDao implements StopPlaceDao {
     private String tiamatGraphQLPath;
 
     @Override
-    public StopPlaceChange getStopPlaceChange(ChangeType changeType, String id, Long version) {
+    public StopPlaceChange getStopPlaceChange(CrudAction crudAction, String id, Long version) {
         RestTemplate restTemplate = new RestTemplate();
         StopPlaceResponse rsp =
                 restTemplate.exchange(tiamatUrl + tiamatGraphQLPath, HttpMethod.POST, createQueryHttpEntity(id, version), StopPlaceResponse.class).getBody();
 
-        return toStopPlaceChange(changeType, rsp);
+        return toStopPlaceChange(crudAction, rsp);
     }
 
-    private StopPlaceChange toStopPlaceChange(ChangeType changeType, StopPlaceResponse rsp) {
+    private StopPlaceChange toStopPlaceChange(CrudAction crudAction, StopPlaceResponse rsp) {
         StopPlace current = rsp.getCurrent();
         StopPlace previous = rsp.getPreviousVersion();
 
@@ -37,7 +37,7 @@ public class GraphQLStopPlaceDao implements StopPlaceDao {
             return null;
         }
 
-        return new StopPlaceChange(changeType, current, previous);
+        return new StopPlaceChange(crudAction, current, previous);
     }
 
     private HttpEntity<String> createQueryHttpEntity(String id, Long version) {

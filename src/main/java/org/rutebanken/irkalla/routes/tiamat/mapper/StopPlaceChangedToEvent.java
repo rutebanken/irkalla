@@ -15,13 +15,11 @@ import java.util.List;
 @Component
 public class StopPlaceChangedToEvent {
 
-
     public CrudEvent toEvent(StopPlaceChange stopPlaceChange) {
         StopPlace currentVersion = stopPlaceChange.getCurrent();
-        // TODO handle version not found?
         CrudEvent.Builder event = CrudEvent.builder()
                                       .type(CrudEvent.EntityType.StopPlace)
-                                      .action(CrudEvent.Action.valueOf(stopPlaceChange.getChangeType().name()))
+                                      .action(CrudEvent.Action.valueOf(stopPlaceChange.getCrudAction().name()))
                                       .changeType(ObjectUtils.nullSafeToString(stopPlaceChange.getUpdateType()))
                                       .oldValue(stopPlaceChange.getOldValue())
                                       .newValue(stopPlaceChange.getNewValue())

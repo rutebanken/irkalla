@@ -1,21 +1,25 @@
 package org.rutebanken.irkalla.routes.tiamat;
 
-import org.rutebanken.irkalla.domain.ChangeType;
+import com.google.common.base.Joiner;
+import org.rutebanken.irkalla.domain.CrudAction;
 import org.rutebanken.irkalla.routes.tiamat.graphql.model.StopPlace;
 import org.rutebanken.irkalla.routes.tiamat.graphql.model.ValidBetween;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+/**
+ * Representation of a change for a stop place.
+ */
 public class StopPlaceChange {
     public enum StopPlaceUpdateType {NAME, COORDINATES, NEW_QUAY, REMOVED_QUAY, MINOR, MAJOR}
 
-
-    private ChangeType changeType;
+    private CrudAction crudAction;
 
     private StopPlaceUpdateType updateType;
 
@@ -23,12 +27,12 @@ public class StopPlaceChange {
 
     private StopPlace previousVersion;
 
-    private String oldValue;
+    private List<String> oldValue = new ArrayList<>();
 
-    private String newValue;
+    private List<String> newValue = new ArrayList<>();
 
-    public StopPlaceChange(ChangeType changeType, StopPlace current, StopPlace previousVersion) {
-        this.changeType = changeType;
+    public StopPlaceChange(CrudAction crudAction, StopPlace current, StopPlace previousVersion) {
+        this.crudAction = crudAction;
         this.current = current;
         this.previousVersion = previousVersion;
         detectUpdateType();
@@ -42,15 +46,15 @@ public class StopPlaceChange {
 
         ValidBetween currentValidBetween = current.validBetweens.get(0);
 
-        if (ChangeType.REMOVE.equals(changeType)) {
+        if (CrudAction.REMOVE.equals(crudAction)) {
             return currentValidBetween.toDate;
         }
         return currentValidBetween.fromDate;
     }
 
 
-    public ChangeType getChangeType() {
-        return changeType;
+    public CrudAction getCrudAction() {
+        return crudAction;
     }
 
     public StopPlace getCurrent() {
@@ -67,15 +71,15 @@ public class StopPlaceChange {
     }
 
     public String getOldValue() {
-        return oldValue;
+        return oldValue.isEmpty() ? null : Joiner.on("\n").join(oldValue);
     }
 
     public String getNewValue() {
-        return newValue;
+        return newValue.isEmpty() ? null : Joiner.on("\n").join(newValue);
     }
 
     private void detectUpdateType() {
-        if (!ChangeType.UPDATE.equals(changeType)) {
+        if (!CrudAction.UPDATE.equals(crudAction)) {
             return;
         }
 
@@ -87,7 +91,6 @@ public class StopPlaceChange {
         // TODO do we need to verify magnitude of coord change? Seems to be small changes due to rounding.
         checkForChanges(current.geometry, previousVersion.geometry, StopPlaceUpdateType.COORDINATES);
 
-
         List<String> currentQuayIds = current.safeGetQuays().stream().map(q -> q.id).collect(Collectors.toList());
         List<String> previousVersionQuayIds = previousVersion.safeGetQuays().stream().map(q -> q.id).collect(Collectors.toList());
 
@@ -97,11 +100,11 @@ public class StopPlaceChange {
 
         if (!newQuays.isEmpty()) {
             registerUpdate(StopPlaceUpdateType.NEW_QUAY);
-            newValue = newQuays.toString();
-            oldValue = removedQuays.toString();
+            newValue.add(newQuays.toString());
+            oldValue.add(removedQuays.toString());
         } else if (!removedQuays.isEmpty()) {
             registerUpdate(StopPlaceUpdateType.REMOVED_QUAY);
-            oldValue = removedQuays.toString();
+            oldValue.add(removedQuays.toString());
         }
 
     }
@@ -109,8 +112,8 @@ public class StopPlaceChange {
     private void checkForChanges(Object curr, Object pv, StopPlaceUpdateType updateType) {
         if (!Objects.equals(curr, pv)) {
             registerUpdate(updateType);
-            oldValue = ObjectUtils.nullSafeToString(pv);
-            newValue = ObjectUtils.nullSafeToString(curr);
+            oldValue.add(ObjectUtils.nullSafeToString(pv));
+            newValue.add(ObjectUtils.nullSafeToString(curr));
         }
     }
 

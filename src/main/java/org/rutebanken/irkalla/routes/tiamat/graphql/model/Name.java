@@ -5,5 +5,12 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Name {
     public String value;
+
+    public Name(String value) {
+        this.value = value;
+    }
+
+    public Name() {
+    }
 }
 

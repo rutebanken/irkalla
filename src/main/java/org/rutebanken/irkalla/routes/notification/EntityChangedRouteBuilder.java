@@ -18,7 +18,7 @@ public class EntityChangedRouteBuilder extends BaseRouteBuilder {
                 .unmarshal().json(JsonLibrary.Jackson, EntityChangedEvent.class)
                 .setHeader(Constants.HEADER_ENTITY_ID,simple("${body.entityId}"))
                 .setHeader(Constants.HEADER_ENTITY_VERSION,simple("${body.entityVersion}"))
-                .setHeader(Constants.HEADER_CHANGE_TYPE,simple("${body.changeType}"))
+                .setHeader(Constants.HEADER_CRUD_ACTION,simple("${body.crudAction}"))
 
                 .choice()
                 .when(simple("${body.entityType} == '" + EntityChangedEvent.EntityType.STOP_PLACE + "'"))
