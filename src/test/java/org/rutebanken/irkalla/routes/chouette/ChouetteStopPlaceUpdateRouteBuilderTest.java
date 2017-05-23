@@ -6,9 +6,7 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.model.language.SimpleExpression;
 import org.junit.Test;
-import org.rutebanken.irkalla.Constants;
 import org.rutebanken.irkalla.routes.RouteBuilderIntegrationTestBase;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.annotation.DirtiesContext;
@@ -20,10 +18,7 @@ public class ChouetteStopPlaceUpdateRouteBuilderTest extends RouteBuilderIntegra
 
 
     @Produce(uri = "activemq:queue:ChouetteStopPlaceSyncQueue")
-    protected ProducerTemplate updateForSingleReferential;
-
-    @Produce(uri = "direct:synchronizeStopPlacesForAllReferentials")
-    protected ProducerTemplate triggerAllReferentials;
+    protected ProducerTemplate updateStopPlaces;
 
     @Value("${chouette.url}")
     private String chouetteUrl;
@@ -37,57 +32,17 @@ public class ChouetteStopPlaceUpdateRouteBuilderTest extends RouteBuilderIntegra
     @Value("${tiamat.publication.delivery.path:/jersey/publication_delivery/changed}")
     private String publicationDeliveryPath;
 
-
-    @EndpointInject(uri = "mock:chouettGetReferentials")
-    protected MockEndpoint chouetteGetReferentials;
-
-    @EndpointInject(uri = "mock:ChouetteStopPlaceSyncQueue")
-    protected MockEndpoint mockChouetteStopPlaceSyncQueue;
-
-    @EndpointInject(uri = "mock:chouettUpdateStopPlacesRef1")
-    protected MockEndpoint chouetteUpdateStopPlacesRef1;
+    @EndpointInject(uri = "mock:chouetteUpdateStopPlaces")
+    protected MockEndpoint chouetteUpdateStopPlaces;
 
     @EndpointInject(uri = "mock:tiamatExportChanges")
     protected MockEndpoint tiamatExportChanges;
 
-
     @EndpointInject(uri = "mock:etcd")
     protected MockEndpoint etcd;
 
-
     @Test
-    public void testCreateTriggerMessagesForAllReferentials() throws Exception {
-
-        context.getRouteDefinition("chouette-get-list-of-referentials-to-sync").adviceWith(context, new AdviceWithRouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                interceptSendToEndpoint(toHttp4Url(chouetteUrl) + "/chouette_iev/admin/referentials")
-                        .skipSendToOriginalEndpoint().to("mock:chouettGetReferentials");
-            }
-        });
-        context.getRouteDefinition("chouette-synchronize-stop-places-all-referentials").adviceWith(context, new AdviceWithRouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                interceptSendToEndpoint("activemq:queue:ChouetteStopPlaceSyncQueue")
-                        .skipSendToOriginalEndpoint().to("mock:ChouetteStopPlaceSyncQueue");
-            }
-        });
-
-        context.start();
-
-        chouetteGetReferentials.expectedMessageCount(1);
-        chouetteGetReferentials.returnReplyBody(new SimpleExpression("[\"ref1\",\"ref2\"]"));
-
-        mockChouetteStopPlaceSyncQueue.expectedMessageCount(2);
-
-        triggerAllReferentials.sendBody(null);
-
-        chouetteGetReferentials.assertIsSatisfied();
-        mockChouetteStopPlaceSyncQueue.assertIsSatisfied();
-    }
-
-    @Test
-    public void testUpdateStopPlaceForReferential() throws Exception {
+    public void testUpdateStopPlaces() throws Exception {
         String exportPath = toHttp4Url(tiamatUrl) + publicationDeliveryPath + "*";
 
         context.getRouteDefinition("tiamat-get-batch-of-changed-stop-places-as-netex").adviceWith(context, new AdviceWithRouteBuilder() {
@@ -102,7 +57,7 @@ public class ChouetteStopPlaceUpdateRouteBuilderTest extends RouteBuilderIntegra
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint(toHttp4Url(chouetteUrl) + "/chouette_iev/stop_place/*")
-                        .skipSendToOriginalEndpoint().to("mock:chouettUpdateStopPlacesRef1");
+                        .skipSendToOriginalEndpoint().to("mock:chouetteUpdateStopPlaces");
             }
         });
 
@@ -120,7 +75,7 @@ public class ChouetteStopPlaceUpdateRouteBuilderTest extends RouteBuilderIntegra
         context.start();
         tiamatExportChanges.expectedMessageCount(2);
 
-        // Two batches for ref1, no changes for ref2
+        // Two batches waiting
         tiamatExportChanges.whenExchangeReceived(1, e -> {
             e.getIn().setHeader("Link", exportPath);
             e.getIn().setHeader(Exchange.HTTP_RESPONSE_CODE, "200");
@@ -128,17 +83,17 @@ public class ChouetteStopPlaceUpdateRouteBuilderTest extends RouteBuilderIntegra
         tiamatExportChanges.whenExchangeReceived(2, e -> e.getIn().setHeader(Exchange.HTTP_RESPONSE_CODE, "200"));
 
 
-        chouetteUpdateStopPlacesRef1.expectedMessageCount(2);
+        chouetteUpdateStopPlaces.expectedMessageCount(2);
 
-        updateForSingleReferential.sendBodyAndHeader(null, Constants.HEADER_CHOUETTE_REFERENTIAL, "refWithTwoBatches");
+        updateStopPlaces.sendBody(null);
 
         tiamatExportChanges.assertIsSatisfied();
-        chouetteUpdateStopPlacesRef1.assertIsSatisfied();
+        chouetteUpdateStopPlaces.assertIsSatisfied();
     }
 
 
     @Test
-    public void testUpdateStopPlaceForReferentialNoChanges() throws Exception {
+    public void testUpdateStopPlacesNoChanges() throws Exception {
         String exportPath = toHttp4Url(tiamatUrl) + publicationDeliveryPath + "*";
 
         context.getRouteDefinition("tiamat-get-batch-of-changed-stop-places-as-netex").adviceWith(context, new AdviceWithRouteBuilder() {
@@ -166,7 +121,7 @@ public class ChouetteStopPlaceUpdateRouteBuilderTest extends RouteBuilderIntegra
         tiamatExportChanges.whenExchangeReceived(1, e -> e.getIn().setHeader(Exchange.HTTP_RESPONSE_CODE, "204"));
 
 
-        updateForSingleReferential.sendBodyAndHeader(null, Constants.HEADER_CHOUETTE_REFERENTIAL, "refWithNoChanges");
+        updateStopPlaces.sendBody(null);
 
         etcd.assertIsSatisfied();
         tiamatExportChanges.assertIsSatisfied();

@@ -27,7 +27,7 @@ public class EtcdRouteBuilder extends BaseRouteBuilder {
 
         from("direct:getSyncStatusUntilTime")
                 .setHeader(EtcdConstants.ETCD_ACTION, constant(ETCD_KEYS_ACTION_GET))
-                .setHeader(EtcdConstants.ETCD_PATH, simple(etcdSyncStatusPrefix + "/${header." + Constants.HEADER_CHOUETTE_REFERENTIAL + "}"))
+                .setHeader(EtcdConstants.ETCD_PATH, simple(etcdSyncStatusPrefix))
                 .setHeader(EtcdConstants.ETCD_DEFAULT_URIS, constant(etcdUrl))
                 .doTry()
                 .to("etcd:keys")
@@ -35,14 +35,14 @@ public class EtcdRouteBuilder extends BaseRouteBuilder {
             EtcdException ex = exchange.getException(EtcdException.class);
             return (ex.errorCode == EtcdErrorCode.KeyNotFound);
         })
-                .log(LoggingLevel.INFO, "No synced until date found in etcd for referential: ${header." + Constants.HEADER_CHOUETTE_REFERENTIAL + "}")
+                .log(LoggingLevel.INFO, "No synced until date found in etcd")
                 .end()
                 .setBody(simple("${body.node.value}"))
                 .routeId("get-sync-status-until");
 
         from("direct:setSyncStatusUntilTime")
                 .setHeader(EtcdConstants.ETCD_ACTION, constant(ETCD_KEYS_ACTION_SET))
-                .setHeader(EtcdConstants.ETCD_PATH, simple(etcdSyncStatusPrefix + "/${header." + Constants.HEADER_CHOUETTE_REFERENTIAL + "}"))
+                .setHeader(EtcdConstants.ETCD_PATH, simple(etcdSyncStatusPrefix))
                 .setHeader(EtcdConstants.ETCD_DEFAULT_URIS, constant(etcdUrl))
                 .to("etcd:keys")
                 .routeId("set-sync-status-until");

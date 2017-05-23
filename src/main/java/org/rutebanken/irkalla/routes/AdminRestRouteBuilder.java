@@ -2,6 +2,7 @@ package org.rutebanken.irkalla.routes;
 
 import org.apache.camel.model.rest.RestBindingMode;
 import org.apache.camel.model.rest.RestPropertyDefinition;
+import org.rutebanken.irkalla.Constants;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -40,13 +41,15 @@ public class AdminRestRouteBuilder extends BaseRouteBuilder {
 
         rest("/stop_places")
                 .post("/sync")
-                .description("Synchronize stop places for all referentials triggered through admin API")
+                .description("Synchronize stop places from Tiamat to Chouette")
                 .responseMessage().code(200).endResponseMessage()
                 .responseMessage().code(500).message("Internal error").endResponseMessage()
-                .route().routeId("admin-chouette-synchronize-stop-places-all-referentials")
+                .route().routeId("admin-chouette-synchronize-stop-places")
                 .removeHeaders("CamelHttp*")
-                .to("direct:synchronizeStopPlacesForAllReferentials")
+                .inOnly("activemq:queue:ChouetteStopPlaceSyncQueue")
                 .setBody(constant(null))
                 .endRest();
+
+
     }
 }

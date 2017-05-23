@@ -29,22 +29,12 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
         singletonFrom("quartz2://marduk/administrativeUnitsDownload?cron=" + cronSchedule + "&trigger.timeZone=Europe/Oslo")
                 .autoStartup("{{chouette.sync.stop.place.autoStartup:false}}")
                 .log(LoggingLevel.INFO, "Quartz triggers sync of changed stop places.")
-                .to("direct:synchronizeStopPlacesForAllReferentials")
-                .routeId("chouette-synchronize-stop-places-all-referentials-quartz");
-
-
-        from("direct:synchronizeStopPlacesForAllReferentials")
-                .to("direct:getListOfReferentialsToSync")
-                .split().body()
-                .setHeader(Constants.HEADER_CHOUETTE_REFERENTIAL, simple("${body}"))
-                .setBody(constant(null))
                 .inOnly("activemq:queue:ChouetteStopPlaceSyncQueue")
-
-                .routeId("chouette-synchronize-stop-places-all-referentials");
+                .routeId("chouette-synchronize-stop-places-quartz");
 
         singletonFrom("activemq:queue:ChouetteStopPlaceSyncQueue?transacted=true")
                 .transacted()
-                .log(LoggingLevel.INFO, "Synchronizing stop places in Chouette for ref: ${header." + Constants.HEADER_CHOUETTE_REFERENTIAL + "}")
+                .log(LoggingLevel.INFO, "Synchronizing stop places in Chouette")
                 .setHeader(Constants.HEADER_PROCESS_TARGET, constant("direct:synchronizeStopPlaceBatch"))
                 .to("direct:getSyncStatusUntilTime")
                 .setHeader(Constants.HEADER_SYNC_STATUS_FROM, simple("${body}"))
@@ -53,7 +43,7 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
                 .setBody(simple("${header." + Constants.HEADER_SYNC_STATUS_TO + "}"))
                 .to("direct:setSyncStatusUntilTime")
 
-                .log(LoggingLevel.INFO, "Finished synchronizing stop places in Chouette for ref: ${header." + Constants.HEADER_CHOUETTE_REFERENTIAL + "}")
+                .log(LoggingLevel.INFO, "Finished synchronizing stop places in Chouette")
                 .routeId("chouette-synchronize-stop-places");
 
 
@@ -61,16 +51,8 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
                 .convertBodyTo(String.class)
                 .removeHeaders("CamelHttp*")
                 .setHeader(Exchange.HTTP_METHOD, constant(HttpMethods.POST))
-                .toD(toHttp4Url(chouetteUrl) + "/chouette_iev/stop_place/${header." + Constants.HEADER_CHOUETTE_REFERENTIAL + "}")
+                .toD(toHttp4Url(chouetteUrl) + "/chouette_iev/stop_place")
                 .routeId("chouette-synchronize-stop-place-batch");
-
-
-        from("direct:getListOfReferentialsToSync")
-                .removeHeaders("CamelHttp*")
-                .setHeader(Exchange.HTTP_METHOD, constant(HttpMethods.GET))
-                .toD(toHttp4Url(chouetteUrl) + "/chouette_iev/admin/referentials")
-                .unmarshal().json(JsonLibrary.Jackson)
-                .routeId("chouette-get-list-of-referentials-to-sync");
 
     }
 
