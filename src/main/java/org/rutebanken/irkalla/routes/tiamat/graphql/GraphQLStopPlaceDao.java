@@ -26,15 +26,23 @@ public class GraphQLStopPlaceDao implements StopPlaceDao {
         StopPlaceResponse rsp =
                 restTemplate.exchange(tiamatUrl + tiamatGraphQLPath, HttpMethod.POST, createQueryHttpEntity(id, version), StopPlaceResponse.class).getBody();
 
-        return toStopPlaceChange(crudAction, rsp);
+        return toStopPlaceChange(crudAction, version, rsp);
     }
 
-    private StopPlaceChange toStopPlaceChange(CrudAction crudAction, StopPlaceResponse rsp) {
+    private StopPlaceChange toStopPlaceChange(CrudAction crudAction, Long version, StopPlaceResponse rsp) {
         StopPlace current = rsp.getCurrent();
-        StopPlace previous = rsp.getPreviousVersion();
+
 
         if (current == null) {
             return null;
+        }
+
+        // Tiamat returns version 1 if queried for v 0. Verify that version is actually previous
+        StopPlace previous;
+        if (rsp.getPreviousVersion() != null && rsp.getPreviousVersion().version == (version - 1)) {
+            previous = rsp.getPreviousVersion();
+        } else {
+            previous = null;
         }
 
         return new StopPlaceChange(crudAction, current, previous);
