@@ -334,12 +334,6 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
                 <version>${camel.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-etcd</artifactId>
-                <version>${camel.version}</version>
-            </dependency>
-
-            <dependency>
                 <groupId>org.apache.activemq</groupId>
                 <artifactId>activemq-camel</artifactId>
                 <version>5.13.4</version>
@@ -537,10 +531,6 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jsonpath</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-etcd</artifactId>
         </dependency>
 
         <dependency>
