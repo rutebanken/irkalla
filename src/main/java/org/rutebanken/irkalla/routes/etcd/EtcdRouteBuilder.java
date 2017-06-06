@@ -42,7 +42,7 @@ public class EtcdRouteBuilder extends BaseRouteBuilder {
                 .to(toHttp4Url(etcdUrl) + etcdSyncStatusKey)
                 .unmarshal().json(JsonLibrary.Jackson, EtcdResponse.class)
                 .process(e ->
-                                 Instant.from(FORMATTER.parse(e.getIn().getBody(EtcdResponse.class).node.value)))
+                                 e.getIn().setBody(Instant.from(FORMATTER.parse(e.getIn().getBody(EtcdResponse.class).node.value))))
                 .doCatch(HttpOperationFailedException.class).onWhen(exchange -> {
             HttpOperationFailedException ex = exchange.getException(HttpOperationFailedException.class);
             return (ex.getStatusCode() == 404);
