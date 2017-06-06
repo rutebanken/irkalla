@@ -26,7 +26,7 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
     public void configure() throws Exception {
         super.configure();
 
-        singletonFrom("quartz2://marduk/administrativeUnitsDownload?cron=" + cronSchedule + "&trigger.timeZone=Europe/Oslo")
+        singletonFrom("quartz2://irkalla/stopPlaceSync?cron=" + cronSchedule + "&trigger.timeZone=Europe/Oslo")
                 .autoStartup("{{chouette.sync.stop.place.autoStartup:false}}")
                 .log(LoggingLevel.INFO, "Quartz triggers sync of changed stop places.")
                 .inOnly("activemq:queue:ChouetteStopPlaceSyncQueue")
