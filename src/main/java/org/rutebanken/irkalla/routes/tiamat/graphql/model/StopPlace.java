@@ -17,7 +17,7 @@ public class StopPlace {
 
     public List<Quay> quays;
 
-    public List<ValidBetween> validBetweens;
+    public ValidBetween validBetween;
 
 
     @JsonIgnore
