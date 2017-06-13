@@ -51,7 +51,7 @@ public class StopPlaceQuery {
                                                             "id " +
                                                             "version " +
                                                             "stopPlaceType " +
-                                                            "validBetweens {fromDate toDate}" +
+                                                            "validBetween {fromDate toDate}" +
                                                             "name {" +
                                                             "      value" +
                                                             "    }" +
