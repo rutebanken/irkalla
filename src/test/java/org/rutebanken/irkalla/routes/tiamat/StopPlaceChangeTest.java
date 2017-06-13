@@ -8,6 +8,7 @@ import org.rutebanken.irkalla.routes.tiamat.graphql.model.Name;
 import org.rutebanken.irkalla.routes.tiamat.graphql.model.Quay;
 import org.rutebanken.irkalla.routes.tiamat.graphql.model.StopPlace;
 
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -126,6 +127,14 @@ public class StopPlaceChangeTest {
         Assert.assertTrue(change.getNewValue().contains(current.getNameAsString()));
     }
 
+
+    @Test
+    public void missingValidBetweenGivesChangeTimeAsNow() {
+        StopPlace current = stopPlace("stopName", 4, 2, "quay1");
+        Instant beforeTest = Instant.now();
+        StopPlaceChange change = new StopPlaceChange(CrudAction.CREATE, current, null);
+        Assert.assertFalse(change.getChangeTime().isBefore(beforeTest));
+    }
 
     private StopPlace stopPlace(String name, double x, double y, String... quayIds) {
         StopPlace stopPlace = new StopPlace();

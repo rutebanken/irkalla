@@ -25,6 +25,10 @@ public class TiamatPollForStopPlaceChangesRouteBuilder extends BaseRouteBuilder 
     @Value("${tiamat.publication.delivery.path:/jersey/publication_delivery/changed}")
     private String publicationDeliveryPath;
 
+    @Value("${sync.stop.place.batch.size:1000}")
+    private int batchSize;
+
+
     private static final String DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSSXXXX";
 
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN);
@@ -69,6 +73,9 @@ public class TiamatPollForStopPlaceChangesRouteBuilder extends BaseRouteBuilder 
         }
         if (to != null) {
             uriBuilder.queryParam("to", to.atZone(TIME_ZONE_ID).format(FORMATTER));
+        }
+        if (batchSize > 0) {
+            uriBuilder.queryParam("perPage", batchSize);
         }
 
         e.getIn().setHeader(Exchange.HTTP_URL, uriBuilder.build().toString());

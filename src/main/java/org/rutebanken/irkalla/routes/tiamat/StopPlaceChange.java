@@ -40,16 +40,24 @@ public class StopPlaceChange {
 
 
     public Instant getChangeTime() {
+        Instant changeTime;
         if (CollectionUtils.isEmpty(current.validBetweens)) {
-            return null;
+            changeTime = null;
+        } else {
+
+            ValidBetween currentValidBetween = current.validBetweens.get(0);
+
+            if (CrudAction.REMOVE.equals(crudAction)) {
+                changeTime = currentValidBetween.toDate;
+            } else {
+                changeTime = currentValidBetween.fromDate;
+            }
         }
 
-        ValidBetween currentValidBetween = current.validBetweens.get(0);
-
-        if (CrudAction.REMOVE.equals(crudAction)) {
-            return currentValidBetween.toDate;
+        if (changeTime == null) {
+            return Instant.now();
         }
-        return currentValidBetween.fromDate;
+        return changeTime;
     }
 
 
