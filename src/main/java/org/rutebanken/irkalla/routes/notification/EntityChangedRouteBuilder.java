@@ -13,7 +13,7 @@ public class EntityChangedRouteBuilder extends BaseRouteBuilder {
     public void configure() throws Exception {
         super.configure();
 
-        singletonFrom("activemq:queue:IrkallaChangelogQueue?transacted=true")
+        from("activemq:queue:IrkallaChangelogQueue?transacted=true")
                 .transacted()
                 .unmarshal().json(JsonLibrary.Jackson, EntityChangedEvent.class)
                 .setHeader(Constants.HEADER_ENTITY_ID,simple("${body.entityId}"))
