@@ -7,6 +7,6 @@ public class Constants {
     public static final String HEADER_ENTITY_VERSION = "RutebankenEntityVersion";
     public static final String HEADER_SYNC_STATUS_FROM = "RutebankenSyncStatusFrom";
     public static final String HEADER_SYNC_STATUS_TO = "RutebankenSyncStatusTo";
-    public static final String SINGLETON_ROUTE_DEFINITION_GROUP_NAME = "RutebankenSingletonRouteDefinitionGroup";
+    public static final String SINGLETON_ROUTE_DEFINITION_GROUP_NAME = "IrkallaSingletonRouteDefinitionGroup";
 
 }

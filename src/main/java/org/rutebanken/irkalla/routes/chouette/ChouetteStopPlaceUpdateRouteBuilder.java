@@ -19,15 +19,15 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
     private String chouetteUrl;
 
 
-    @Value("${chouette.sync.stop.place.cron:0+0+0+?+*+MON-FRI}")
+    @Value("${chouette.sync.stop.place.cron:0 0/5 * * * ?}")
     private String cronSchedule;
 
     @Override
     public void configure() throws Exception {
         super.configure();
 
-        singletonFrom("quartz2://irkalla/stopPlaceSync?cron=" + cronSchedule + "&trigger.timeZone=Europe/Oslo")
-                .autoStartup("{{chouette.sync.stop.place.autoStartup:false}}")
+        from("quartz2://irkalla/stopPlaceSync?cron=" + cronSchedule + "&trigger.timeZone=Europe/Oslo")
+                .autoStartup("{{chouette.sync.stop.place.autoStartup:true}}")
                 .log(LoggingLevel.INFO, "Quartz triggers sync of changed stop places.")
                 .inOnly("activemq:queue:ChouetteStopPlaceSyncQueue")
                 .routeId("chouette-synchronize-stop-places-quartz");
