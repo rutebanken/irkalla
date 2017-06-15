@@ -256,6 +256,11 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
                 <artifactId>organisation</artifactId>
                 <version>${rutebanken.helpers.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.rutebanken.helpers</groupId>
+                <artifactId>jms-batch</artifactId>
+                <version>${rutebanken.helpers.version}</version>
+            </dependency>
 
 
             <dependency>
@@ -573,6 +578,10 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
         <dependency>
             <groupId>org.rutebanken.helpers</groupId>
             <artifactId>hazelcast-helper</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.rutebanken.helpers</groupId>
+            <artifactId>jms-batch</artifactId>
         </dependency>
 
     </dependencies>
