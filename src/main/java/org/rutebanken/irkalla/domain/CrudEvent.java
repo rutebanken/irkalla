@@ -15,12 +15,14 @@ public class CrudEvent {
     public enum EntityType {StopPlace}
 
     public enum Action {
-        CREATE, UPDATE, REMOVE
+        CREATE, UPDATE, REMOVE, DELETE
     }
 
     public String correlationId;
 
     public Instant eventTime;
+
+    public Instant registeredTime;
 
     public EntityType entityType;
 
@@ -82,7 +84,12 @@ public class CrudEvent {
             return this;
         }
 
-        public Builder time(Instant time) {
+        public Builder registeredTime(Instant time) {
+            event.registeredTime = time;
+            return this;
+        }
+
+        public Builder eventTime(Instant time) {
             event.eventTime = time;
             return this;
         }
@@ -119,6 +126,13 @@ public class CrudEvent {
 
         public Builder changeType(String changeType) {
             event.changeType = changeType;
+            return this;
+        }
+
+        public Builder changeType(Enum changeType) {
+            if (changeType != null) {
+                event.changeType = changeType.toString();
+            }
             return this;
         }
 

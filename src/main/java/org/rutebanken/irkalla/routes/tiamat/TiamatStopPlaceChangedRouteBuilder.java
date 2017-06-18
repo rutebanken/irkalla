@@ -24,19 +24,24 @@ public class TiamatStopPlaceChangedRouteBuilder extends BaseRouteBuilder {
         super.configure();
 
         from("direct:handleStopPlaceChanged")
-                .bean("stopPlaceDao", "getStopPlaceChange")
                 .choice()
-                .when(body().isNotNull())
-                .process(e -> e.getIn().setHeader("isEffective", isChangeEffective(e)))
-
-                .bean("stopPlaceChangedToEvent", "toEvent")
-                .convertBodyTo(String.class)
-                .to("activemq:queue:CrudEventQueue")
-                .to("direct:triggerStopPlaceSyncIfChangeIsEffective")
+                .when(simple("${header." + Constants.HEADER_CRUD_ACTION + "} == ${type:org.rutebanken.irkalla.domain.CrudAction.DELETE}"))
+                .to("activemq:queue:ChouetteStopPlaceDeleteQueue")
                 .otherwise()
-                .log(LoggingLevel.WARN, "Discarding stop place changed event for unknown stop place:" +
+                    .bean("stopPlaceDao", "getStopPlaceChange")
+                    .choice()
+                    .when(body().isNull())
+                        .log(LoggingLevel.WARN, "Discarding stop place changed event for unknown stop place:" +
                                                 " ${header." + Constants.HEADER_ENTITY_ID + "} " +
                                                 "v: ${header." + Constants.HEADER_ENTITY_VERSION + "} ")
+                    .otherwise()
+                    .process(e -> e.getIn().setHeader("isEffective", isChangeEffective(e)))
+                    .bean("stopPlaceChangedToEvent", "toEvent")
+                    .convertBodyTo(String.class)
+                    .to("activemq:queue:CrudEventQueue")
+
+                        .to("direct:triggerStopPlaceSyncIfChangeIsEffective")
+                    .endChoice()
                 .end()
                 .routeId("tiamat-stop-place-changed");
 
@@ -46,6 +51,7 @@ public class TiamatStopPlaceChangedRouteBuilder extends BaseRouteBuilder {
                 .setBody(constant(null))
                 .to("activemq:queue:ChouetteStopPlaceSyncQueue")
                 .routeId("tiamat-trigger-chouette-update-for-changed-stop");
+
     }
 
     private boolean isChangeEffective(Exchange e) {

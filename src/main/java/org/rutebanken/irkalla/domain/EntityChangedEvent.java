@@ -17,7 +17,6 @@ public class EntityChangedEvent {
 
     public CrudAction crudAction;
 
-
     public String getMsgId() {
         return msgId;
     }
