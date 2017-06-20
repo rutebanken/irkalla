@@ -1,8 +1,10 @@
 package org.rutebanken.irkalla.routes.chouette;
 
+import org.apache.activemq.ScheduledMessage;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.component.http4.HttpMethods;
+import org.apache.camel.http.common.HttpOperationFailedException;
 import org.apache.camel.model.dataformat.JsonLibrary;
 import org.rutebanken.irkalla.Constants;
 import org.rutebanken.irkalla.routes.BaseRouteBuilder;
@@ -21,6 +23,9 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
 
     @Value("${chouette.sync.stop.place.cron:0 0/5 * * * ?}")
     private String cronSchedule;
+
+    @Value("${chouette.sync.stop.place.retry.delay:15000}")
+    private int retryDelay;
 
     @Override
     public void configure() throws Exception {
@@ -43,7 +48,6 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
                 .to("direct:processChangedStopPlacesAsNetex")
                 .setBody(simple("${header." + Constants.HEADER_SYNC_STATUS_TO + "}"))
                 .to("direct:setSyncStatusUntilTime")
-
                 .log(LoggingLevel.INFO, "Finished synchronizing stop places in Chouette")
                 .routeId("chouette-synchronize-stop-places");
 
@@ -52,7 +56,17 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
                 .convertBodyTo(String.class)
                 .removeHeaders("CamelHttp*")
                 .setHeader(Exchange.HTTP_METHOD, constant(HttpMethods.POST))
+                .doTry()
                 .toD(toHttp4Url(chouetteUrl) + "/chouette_iev/stop_place")
+                .doCatch(HttpOperationFailedException.class).onWhen(exchange -> {
+            HttpOperationFailedException ex = exchange.getException(HttpOperationFailedException.class);
+            return (ex.getStatusCode() == 423);
+        })
+                .log(LoggingLevel.INFO, "Unable to sync stop places because Chouette is busy, retry in " + retryDelay + " ms")
+                .setHeader(ScheduledMessage.AMQ_SCHEDULED_DELAY, constant(retryDelay))
+                .setBody(constant(null))
+                .to("activemq:queue:ChouetteStopPlaceSyncQueue")
+                .stop()
                 .routeId("chouette-synchronize-stop-place-batch");
 
     }

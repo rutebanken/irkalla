@@ -26,6 +26,7 @@ public class TiamatStopPlaceChangedRouteBuilder extends BaseRouteBuilder {
         from("direct:handleStopPlaceChanged")
                 .choice()
                 .when(simple("${header." + Constants.HEADER_CRUD_ACTION + "} == ${type:org.rutebanken.irkalla.domain.CrudAction.DELETE}"))
+                .setBody(constant(null))
                 .to("activemq:queue:ChouetteStopPlaceDeleteQueue")
                 .otherwise()
                     .bean("stopPlaceDao", "getStopPlaceChange")
