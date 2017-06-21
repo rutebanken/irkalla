@@ -42,6 +42,8 @@ public class CrudEvent {
 
     public String newValue;
 
+    public String comment;
+
     public Geometry geometry;
 
     public String toString() {
@@ -126,6 +128,11 @@ public class CrudEvent {
 
         public Builder changeType(String changeType) {
             event.changeType = changeType;
+            return this;
+        }
+
+        public Builder comment(String comment) {
+            event.comment = comment;
             return this;
         }
 

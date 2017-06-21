@@ -27,6 +27,7 @@ public class StopPlaceChangedToEvent {
                                           .externalId(currentVersion.id)
                                           .version(currentVersion.version)
                                           .name(currentVersion.getNameAsString())
+                                          .comment(currentVersion.versionComment)
                                           .geometry(toGeometry(currentVersion.geometry))
                                           .eventTime(stopPlaceChange.getChangeTime());
 
