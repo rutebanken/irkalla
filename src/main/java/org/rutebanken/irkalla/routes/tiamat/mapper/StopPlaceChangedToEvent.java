@@ -28,6 +28,7 @@ public class StopPlaceChangedToEvent {
                                           .version(currentVersion.version)
                                           .name(currentVersion.getNameAsString())
                                           .comment(currentVersion.versionComment)
+                                          .username(currentVersion.changedBy)
                                           .geometry(toGeometry(currentVersion.geometry))
                                           .eventTime(stopPlaceChange.getChangeTime());
 

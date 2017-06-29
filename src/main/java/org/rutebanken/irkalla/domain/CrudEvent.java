@@ -44,6 +44,8 @@ public class CrudEvent {
 
     public String comment;
 
+    public String username;
+
     public Geometry geometry;
 
     public String toString() {
@@ -133,6 +135,11 @@ public class CrudEvent {
 
         public Builder comment(String comment) {
             event.comment = comment;
+            return this;
+        }
+
+        public Builder username(String username) {
+            event.username = username;
             return this;
         }
 

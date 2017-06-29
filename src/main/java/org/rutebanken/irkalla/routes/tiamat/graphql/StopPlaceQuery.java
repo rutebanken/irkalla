@@ -60,6 +60,7 @@ public class StopPlaceQuery {
                                                             "      coordinates" +
                                                             "    }" +
                                                             "    versionComment "+
+                                                            "    changedBy "+
                                                             "    quays {" +
                                                             "      id" +
                                                             "       name {" +

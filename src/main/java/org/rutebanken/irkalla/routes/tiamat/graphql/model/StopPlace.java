@@ -13,6 +13,7 @@ public class StopPlace {
     public Long version;
     public Name name;
     public String versionComment;
+    public String changedBy;
     public String stopPlaceType;
     public GraphqlGeometry geometry;
 
