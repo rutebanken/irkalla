@@ -2,8 +2,8 @@ package org.rutebanken.irkalla.routes.tiamat;
 
 import com.google.common.base.Joiner;
 import org.rutebanken.irkalla.domain.CrudAction;
+import org.rutebanken.irkalla.routes.tiamat.graphql.model.GraphqlGeometry;
 import org.rutebanken.irkalla.routes.tiamat.graphql.model.StopPlace;
-import org.rutebanken.irkalla.routes.tiamat.graphql.model.ValidBetween;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
@@ -116,9 +116,31 @@ public class StopPlaceChange {
     private void checkForChanges(Object curr, Object pv, StopPlaceUpdateType updateType) {
         if (!Objects.equals(curr, pv)) {
             registerUpdate(updateType);
-            oldValue.add(ObjectUtils.nullSafeToString(pv));
-            newValue.add(ObjectUtils.nullSafeToString(curr));
+            oldValue.add(formatValue(pv));
+            newValue.add(formatValue(curr));
         }
+    }
+
+
+    private String formatValue(Object value) {
+        if (value instanceof GraphqlGeometry) {
+            return formatGeometry((GraphqlGeometry) value);
+        }
+        return ObjectUtils.nullSafeToString(value);
+    }
+
+    private String formatGeometry(GraphqlGeometry geometry) {
+        if ("Point" .equals(geometry.type)) {
+            if (!CollectionUtils.isEmpty(geometry.coordinates)) {
+                List<Double> coordinates = geometry.coordinates.get(0);
+                if (coordinates != null && coordinates.size() > 1) {
+                    Double x = coordinates.get(0);
+                    Double y = coordinates.get(1);
+                    return "(" + x + "," + y + ")";
+                }
+            }
+        }
+        return null;
     }
 
     private void registerUpdate(StopPlaceUpdateType updateType) {

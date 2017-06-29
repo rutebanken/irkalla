@@ -77,8 +77,8 @@ public class StopPlaceChangeTest {
 
         StopPlaceChange change = new StopPlaceChange(CrudAction.UPDATE, current, prev);
         Assert.assertEquals(StopPlaceChange.StopPlaceUpdateType.COORDINATES, change.getUpdateType());
-        Assert.assertEquals(prev.geometry.toString(), change.getOldValue());
-        Assert.assertEquals(current.geometry.toString(), change.getNewValue());
+        Assert.assertEquals("(4.0,5.0)", change.getOldValue());
+        Assert.assertEquals("(4.0,2.0)", change.getNewValue());
     }
 
     @Test
@@ -139,7 +139,7 @@ public class StopPlaceChangeTest {
     private StopPlace stopPlace(String name, double x, double y, String... quayIds) {
         StopPlace stopPlace = new StopPlace();
         stopPlace.name = new Name(name);
-        stopPlace.geometry = new GraphqlGeometry("point", Arrays.asList(Arrays.asList(x, y)));
+        stopPlace.geometry = new GraphqlGeometry("Point", Arrays.asList(Arrays.asList(x, y)));
 
         if (quayIds != null) {
             stopPlace.quays = Arrays.stream(quayIds).map(id -> new Quay(id, new Name(id), stopPlace.geometry)).collect(Collectors.toList());
