@@ -1,18 +1,23 @@
 package org.rutebanken.irkalla.routes.chouette;
 
 import org.apache.activemq.ScheduledMessage;
+import org.apache.activemq.command.ActiveMQMessage;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.component.http4.HttpMethods;
 import org.apache.camel.http.common.HttpOperationFailedException;
 import org.apache.camel.model.dataformat.JsonLibrary;
 import org.rutebanken.irkalla.Constants;
+import org.rutebanken.irkalla.IrkallaException;
 import org.rutebanken.irkalla.routes.BaseRouteBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.time.Instant;
+import java.util.List;
 
+import static org.rutebanken.irkalla.Constants.HEADER_FULL_SYNC;
 import static org.rutebanken.irkalla.util.Http4URL.toHttp4Url;
 
 @Component
@@ -22,28 +27,46 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
 
 
     @Value("${chouette.sync.stop.place.cron:0 0/5 * * * ?}")
-    private String cronSchedule;
+    private String deltaSyncCronSchedule;
+
+    @Value("${chouette.sync.stop.place.full.cron:0 0 2 * * ?}")
+    private String fullSyncCronSchedule;
+
 
     @Value("${chouette.sync.stop.place.retry.delay:15000}")
     private int retryDelay;
+
 
     @Override
     public void configure() throws Exception {
         super.configure();
 
-        from("quartz2://irkalla/stopPlaceSync?cron=" + cronSchedule + "&trigger.timeZone=Europe/Oslo")
+        from("quartz2://irkalla/stopPlaceDeltaSync?cron=" + deltaSyncCronSchedule + "&trigger.timeZone=Europe/Oslo")
                 .autoStartup("{{chouette.sync.stop.place.autoStartup:true}}")
-                .log(LoggingLevel.INFO, "Quartz triggers sync of changed stop places.")
+                .log(LoggingLevel.INFO, "Quartz triggers delta sync of changed stop places.")
                 .inOnly("activemq:queue:ChouetteStopPlaceSyncQueue")
-                .routeId("chouette-synchronize-stop-places-quartz");
+                .routeId("chouette-synchronize-stop-places-delta-quartz");
+
+        from("quartz2://irkalla/stopPlaceSync?cron=" + fullSyncCronSchedule + "&trigger.timeZone=Europe/Oslo")
+                .autoStartup("{{chouette.sync.stop.place.autoStartup:true}}")
+                .log(LoggingLevel.INFO, "Quartz triggers full sync of changed stop places.")
+                .setHeader(HEADER_FULL_SYNC, constant(true))
+                .inOnly("activemq:queue:ChouetteStopPlaceSyncQueue")
+                .routeId("chouette-synchronize-stop-places-full-quartz");
 
         singletonFrom("activemq:queue:ChouetteStopPlaceSyncQueue?transacted=true&messageListenerContainerFactoryRef=batchListenerContainerFactory")
                 .transacted()
+                .choice()
+                .when(e -> isFullSync(e))
+                .log(LoggingLevel.INFO, "Full synchronization of stop places in Chouette.")
+                .otherwise()
                 .setBody(constant(null))
-                .log(LoggingLevel.INFO, "Synchronizing stop places in Chouette")
-                .setHeader(Constants.HEADER_PROCESS_TARGET, constant("direct:synchronizeStopPlaceBatch"))
                 .to("direct:getSyncStatusUntilTime")
                 .setHeader(Constants.HEADER_SYNC_STATUS_FROM, simple("${body}"))
+                .log(LoggingLevel.INFO, "Synchronizing stop place changes since ${body} in Chouette.")
+                .end()
+                .setBody(constant(null))
+                .setHeader(Constants.HEADER_PROCESS_TARGET, constant("direct:synchronizeStopPlaceBatch"))
                 .process(e -> e.getIn().setHeader(Constants.HEADER_SYNC_STATUS_TO, Instant.now()))
                 .to("direct:processChangedStopPlacesAsNetex")
                 .setBody(simple("${header." + Constants.HEADER_SYNC_STATUS_TO + "}"))
@@ -71,4 +94,21 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
 
     }
 
+    private boolean isFullSync(Exchange e) {
+        for (Object o : e.getIn().getBody(List.class)) {
+            if (o instanceof ActiveMQMessage) {
+                ActiveMQMessage activeMQMessage = (ActiveMQMessage) o;
+                try {
+                    Object prop = activeMQMessage.getProperty(HEADER_FULL_SYNC);
+
+                    if (prop != null && Boolean.TRUE.equals(prop)) {
+                        return true;
+                    }
+                } catch (IOException ioE) {
+                    throw new IrkallaException("Unable to get fullSync header as property from ActiveMQMessage: " + ioE.getMessage(), ioE);
+                }
+            }
+        }
+        return false;
+    }
 }
