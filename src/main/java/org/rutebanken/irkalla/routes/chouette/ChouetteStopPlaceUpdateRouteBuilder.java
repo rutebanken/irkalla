@@ -58,7 +58,8 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
                 .transacted()
                 .choice()
                 .when(e -> isFullSync(e))
-                .log(LoggingLevel.INFO, "Full synchronization of stop places in Chouette.")
+                .log(LoggingLevel.INFO, "Full synchronization of stop places in Chouette, deleting unused stops first")
+                .to("direct:deleteUnusedStopPlaces")
                 .otherwise()
                 .setBody(constant(null))
                 .to("direct:getSyncStatusUntilTime")
@@ -73,6 +74,24 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
                 .to("direct:setSyncStatusUntilTime")
                 .log(LoggingLevel.INFO, "Finished synchronizing stop places in Chouette")
                 .routeId("chouette-synchronize-stop-places");
+
+
+        from("direct:deleteUnusedStopPlaces")
+                .removeHeaders("CamelHttp*")
+                .setBody(constant(null))
+                .setHeader(Exchange.HTTP_METHOD, constant(HttpMethods.DELETE))
+                .doTry()
+                .toD(toHttp4Url(chouetteUrl) + "/chouette_iev/stop_place/unused")
+                .doCatch(HttpOperationFailedException.class).onWhen(exchange -> {
+            HttpOperationFailedException ex = exchange.getException(HttpOperationFailedException.class);
+            return (ex.getStatusCode() == 423);
+        })
+                .log(LoggingLevel.INFO, "Unable to delete unused stop places because Chouette is busy, retry in " + retryDelay + " ms")
+                .setHeader(ScheduledMessage.AMQ_SCHEDULED_DELAY, constant(retryDelay))
+                .setBody(constant(null))
+                .to("activemq:queue:ChouetteStopPlaceSyncQueue")
+                .stop()
+                .routeId("chouette-synchronize-stop-places-delete-unused");
 
 
         from("direct:synchronizeStopPlaceBatch")
