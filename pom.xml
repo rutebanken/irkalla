@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+3<?xml version="1.0" encoding="UTF-8"?>
 <!--
 Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
 -->
@@ -28,7 +28,7 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- versions for use in mvn plugins as we cannot inherit them from a BOM -->
-        <docker.maven.plugin.version>0.13.9</docker.maven.plugin.version>
+        <docker.maven.plugin.version>0.21.0</docker.maven.plugin.version>
         <spring-boot-plugin.version>1.5.3.RELEASE</spring-boot-plugin.version>
         <spring-boot.version>1.5.3.RELEASE</spring-boot.version>
 
@@ -49,7 +49,7 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
 
         <maven-javadoc-plugin.version>2.9.1</maven-javadoc-plugin.version>
         <docker.port.container.jolokia>8080</docker.port.container.jolokia>
-        <fabric8.version>2.2.205</fabric8.version>
+        <fabric8.version>2.3.3</fabric8.version>
         <keycloak.version>3.1.0.Final</keycloak.version>
         <jetty.version>9.4.2.v20170220</jetty.version>
         <rutebanken.helpers.version>0.0.3-SNAPSHOT</rutebanken.helpers.version>
@@ -629,7 +629,7 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
             </plugin>
 
             <plugin>
-                <groupId>org.jolokia</groupId>
+                <groupId>io.fabric8</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
                 <version>${docker.maven.plugin.version}</version>
                 <configuration>
@@ -638,6 +638,7 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
                             <name>${docker.image}</name>
                             <build>
                                 <from>${docker.from}</from>
+                                <cleanup>${docker.cleanup}</cleanup>
                                 <assembly>
                                     <basedir>/deployments</basedir>
                                     <descriptorRef>artifact</descriptorRef>
