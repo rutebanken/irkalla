@@ -35,13 +35,14 @@ public class AdminRestRouteBuilder extends BaseRouteBuilder {
                 .dataFormatProperty("prettyPrint", "true")
                 .host(host)
                 .port(port)
+                .contextPath("/services")
                 .apiContextPath("/api-doc")
-                .apiProperty("api.title", "Irkalla Admin API").apiProperty("api.version", "1.0")
+                .apiProperty("api.title", "Stop place synchronization timetable API")
+                .apiProperty("api.description", "Administration of process for synchronizing stop places in the timetable database (Chouette) with the master data in the stop place registry (NSR)")
+                .apiProperty("api.version", "1.0");
 
-                .contextPath("/admin");
-
-        rest("/stop_places")
-                .post("/sync/delta")
+        rest("/stop_place_synchronization_timetable")
+                .post("/delta")
                 .description("Synchronize new changes for stop places from Tiamat to Chouette")
                 .responseMessage().code(200).endResponseMessage()
                 .responseMessage().code(500).message("Internal error").endResponseMessage()
@@ -50,7 +51,7 @@ public class AdminRestRouteBuilder extends BaseRouteBuilder {
                 .inOnly("activemq:queue:ChouetteStopPlaceSyncQueue")
                 .setBody(constant(null))
                 .endRest()
-                .post("/sync/full")
+                .post("/full")
                 .description("Full synchronization of all stop places from Tiamat to Chouette")
                 .responseMessage().code(200).endResponseMessage()
                 .responseMessage().code(500).message("Internal error").endResponseMessage()
