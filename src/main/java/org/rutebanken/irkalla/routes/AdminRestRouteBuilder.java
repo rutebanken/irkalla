@@ -76,7 +76,7 @@ public class AdminRestRouteBuilder extends BaseRouteBuilder {
                 .delete().route().routeId("admin-route-authorize-delete").process(e -> authorize(AuthorizationConstants.ROLE_ROUTE_DATA_ADMIN)).endRest();
 
 
-        rest("/services//stop_place_synchronization_timetable")
+        rest("/services/stop_place_synchronization_timetable")
                 .post("/delta")
                 .description("Synchronize new changes for stop places from Tiamat to Chouette")
                 .responseMessage().code(200).endResponseMessage()
