@@ -68,6 +68,9 @@ public class TiamatPollForStopPlaceChangesRouteBuilder extends BaseRouteBuilder 
 
         UriBuilder uriBuilder = new JerseyUriBuilder().path(toHttp4Url(tiamatUrl) + publicationDeliveryPath);
 
+        uriBuilder.queryParam("topographicPlaceExportMode","NONE");
+        uriBuilder.queryParam("tariffZoneExportMode","NONE");
+
         if (from != null) {
             uriBuilder.queryParam("from", from.atZone(TIME_ZONE_ID).format(FORMATTER));
         }
@@ -75,7 +78,7 @@ public class TiamatPollForStopPlaceChangesRouteBuilder extends BaseRouteBuilder 
             uriBuilder.queryParam("to", to.atZone(TIME_ZONE_ID).format(FORMATTER));
         }
         if (batchSize > 0) {
-            uriBuilder.queryParam("perPage", batchSize);
+            uriBuilder.queryParam("per_page", batchSize);
         }
 
         e.getIn().setHeader(Exchange.HTTP_URL, uriBuilder.build().toString());
