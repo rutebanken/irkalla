@@ -6,7 +6,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.component.http4.HttpMethods;
 import org.apache.camel.http.common.HttpOperationFailedException;
-import org.apache.camel.model.dataformat.JsonLibrary;
 import org.rutebanken.irkalla.Constants;
 import org.rutebanken.irkalla.IrkallaException;
 import org.rutebanken.irkalla.routes.BaseRouteBuilder;
@@ -36,6 +35,8 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
     @Value("${chouette.sync.stop.place.retry.delay:15000}")
     private int retryDelay;
 
+    private static final String SYNC_TYPE_PROPERTY ="SyncType";
+
 
     @Override
     public void configure() throws Exception {
@@ -58,13 +59,16 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
                 .transacted()
                 .choice()
                 .when(e -> isFullSync(e))
+                .setHeader(HEADER_FULL_SYNC, constant(true))
+                .setProperty(SYNC_TYPE_PROPERTY,constant("Full"))
                 .log(LoggingLevel.INFO, "Full synchronization of stop places in Chouette, deleting unused stops first")
                 .to("direct:deleteUnusedStopPlaces")
                 .otherwise()
+                .setProperty(SYNC_TYPE_PROPERTY,constant("Delta"))
                 .setBody(constant(null))
                 .to("direct:getSyncStatusUntilTime")
                 .setHeader(Constants.HEADER_SYNC_STATUS_FROM, simple("${body}"))
-                .log(LoggingLevel.INFO, "Synchronizing stop place changes since ${body} in Chouette.")
+                .log(LoggingLevel.INFO, "Delta synchronization of stop place changes since ${body} in Chouette.")
                 .end()
                 .setBody(constant(null))
                 .setHeader(Constants.HEADER_PROCESS_TARGET, constant("direct:synchronizeStopPlaceBatch"))
@@ -72,7 +76,7 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
                 .to("direct:processChangedStopPlacesAsNetex")
                 .setBody(simple("${header." + Constants.HEADER_SYNC_STATUS_TO + "}"))
                 .to("direct:setSyncStatusUntilTime")
-                .log(LoggingLevel.INFO, "Finished synchronizing stop places in Chouette")
+                .log(LoggingLevel.INFO, "${exchangeProperty."+ SYNC_TYPE_PROPERTY +"} synchronization of stop places in Chouette completed.")
                 .routeId("chouette-synchronize-stop-places");
 
 
@@ -120,7 +124,7 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
                 try {
                     Object prop = activeMQMessage.getProperty(HEADER_FULL_SYNC);
 
-                    if (prop != null && Boolean.TRUE.equals(prop)) {
+                    if (prop != null && Boolean.TRUE.equals(prop)) {;
                         return true;
                     }
                 } catch (IOException ioE) {
