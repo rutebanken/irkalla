@@ -69,7 +69,6 @@ public class TiamatPollForStopPlaceChangesRouteBuilder extends BaseRouteBuilder 
         UriBuilder uriBuilder = new JerseyUriBuilder().path(toHttp4Url(tiamatUrl) + publicationDeliveryPath);
 
         uriBuilder.queryParam("topographicPlaceExportMode","NONE");
-        uriBuilder.queryParam("tariffZoneExportMode","NONE");
 
         if (from != null) {
             uriBuilder.queryParam("from", from.atZone(TIME_ZONE_ID).format(FORMATTER));
