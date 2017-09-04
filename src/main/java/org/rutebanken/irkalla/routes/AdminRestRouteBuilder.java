@@ -15,7 +15,7 @@ import org.springframework.util.CollectionUtils;
 import javax.ws.rs.NotFoundException;
 import java.util.Collections;
 
-import static org.rutebanken.irkalla.Constants.HEADER_FULL_SYNC;
+import static org.rutebanken.irkalla.Constants.*;
 
 @Component
 public class AdminRestRouteBuilder extends BaseRouteBuilder {
@@ -91,6 +91,7 @@ public class AdminRestRouteBuilder extends BaseRouteBuilder {
                 .route().routeId("admin-chouette-synchronize-stop-places-delta")
                 .process(e -> authorize(AuthorizationConstants.ROLE_ROUTE_DATA_ADMIN))
                 .removeHeaders("CamelHttp*")
+                .setHeader(HEADER_SYNC_OPERATION, constant(SYNC_OPERATION_DELTA))
                 .inOnly("activemq:queue:ChouetteStopPlaceSyncQueue")
                 .setBody(constant(null))
                 .endRest()
@@ -101,7 +102,7 @@ public class AdminRestRouteBuilder extends BaseRouteBuilder {
                 .route().routeId("admin-chouette-synchronize-stop-places-full")
                 .process(e -> authorize(AuthorizationConstants.ROLE_ROUTE_DATA_ADMIN))
                 .removeHeaders("CamelHttp*")
-                .setHeader(HEADER_FULL_SYNC, constant(true))
+                .setHeader(HEADER_SYNC_OPERATION, constant(SYNC_OPERATION_FULL_WITH_DELETE_UNUSED_FIRST))
                 .inOnly("activemq:queue:ChouetteStopPlaceSyncQueue")
                 .setBody(constant(null))
                 .endRest();
