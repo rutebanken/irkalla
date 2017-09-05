@@ -75,7 +75,7 @@ public class TiamatPollForStopPlaceChangesRouteBuilder extends BaseRouteBuilder 
             uriBuilder.queryParam("to", to.atZone(TIME_ZONE_ID).format(FORMATTER));
         }
         if (batchSize > 0) {
-            uriBuilder.queryParam("perPage", batchSize);
+            uriBuilder.queryParam("per_page", batchSize);
         }
 
         e.getIn().setHeader(Exchange.HTTP_URL, uriBuilder.build().toString());
