@@ -43,14 +43,14 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
 
         from("quartz2://irkalla/stopPlaceDeltaSync?cron=" + deltaSyncCronSchedule + "&trigger.timeZone=Europe/Oslo")
                 .autoStartup("{{chouette.sync.stop.place.autoStartup:true}}")
-                .log(LoggingLevel.INFO, "Quartz triggers delta sync of changed stop places.")
+                .log(LoggingLevel.DEBUG, "Quartz triggers delta sync of changed stop places.")
                 .setHeader(HEADER_SYNC_OPERATION, constant(DELTA))
                 .inOnly("activemq:queue:ChouetteStopPlaceSyncQueue")
                 .routeId("chouette-synchronize-stop-places-delta-quartz");
 
         from("quartz2://irkalla/stopPlaceSync?cron=" + fullSyncCronSchedule + "&trigger.timeZone=Europe/Oslo")
                 .autoStartup("{{chouette.sync.stop.place.autoStartup:true}}")
-                .log(LoggingLevel.INFO, "Quartz triggers full sync of changed stop places.")
+                .log(LoggingLevel.DEBUG, "Quartz triggers full sync of changed stop places.")
                 .setHeader(HEADER_SYNC_OPERATION, constant(SYNC_OPERATION_FULL_WITH_DELETE_UNUSED_FIRST))
                 .inOnly("activemq:queue:ChouetteStopPlaceSyncQueue")
                 .routeId("chouette-synchronize-stop-places-full-quartz");
@@ -69,14 +69,12 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
 
 
         from("direct:synchronizeStopPlaces")
+                .log(LoggingLevel.INFO, "${header."+ HEADER_SYNC_OPERATION +"} synchronization of stop places in Chouette started.")
                 .choice()
-                .when(simple("${header."+ HEADER_SYNC_OPERATION +"} == '"+ SYNC_OPERATION_FULL+"'"))
-                    .log(LoggingLevel.INFO, "Full synchronization of stop place changes in Chouette.")
-                .otherwise()
+                .when(simple("${header."+ HEADER_SYNC_OPERATION +"} == '"+ SYNC_OPERATION_DELTA+"'"))
                     .setBody(constant(null))
                     .to("direct:getSyncStatusUntilTime")
                     .setHeader(Constants.HEADER_SYNC_STATUS_FROM, simple("${body}"))
-                    .log(LoggingLevel.INFO, "Delta synchronization of stop place changes since ${body} in Chouette.")
                 .end()
                 .setBody(constant(null))
                 .setHeader(Constants.HEADER_PROCESS_TARGET, constant("direct:synchronizeStopPlaceBatch"))

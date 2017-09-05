@@ -45,7 +45,7 @@ public class TiamatPollForStopPlaceChangesRouteBuilder extends BaseRouteBuilder 
                 .routeId("tiamat-get-changed-stop-places-as-netex");
 
         from("direct:processBatchOfChangedStopPlacesAsNetex")
-                .log(LoggingLevel.INFO, "Fetching batch of changed stop places")
+                .log(LoggingLevel.INFO, "Fetching batch of changed stop places: ${header." + Exchange.HTTP_URL + "}")
                 .removeHeader("Link")
                 .setHeader(Exchange.HTTP_METHOD, constant(HttpMethods.GET))
                 .setBody(constant(null))

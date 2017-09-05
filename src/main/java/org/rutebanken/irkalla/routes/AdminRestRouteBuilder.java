@@ -2,6 +2,7 @@ package org.rutebanken.irkalla.routes;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.model.rest.RestBindingMode;
+import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.model.rest.RestPropertyDefinition;
 import org.rutebanken.helper.organisation.AuthorizationConstants;
 import org.rutebanken.helper.organisation.NotAuthenticatedException;
@@ -97,12 +98,18 @@ public class AdminRestRouteBuilder extends BaseRouteBuilder {
                 .endRest()
                 .post("/full")
                 .description("Full synchronization of all stop places from Tiamat to Chouette")
+                .param().name("cleanFirst").type(RestParamType.query).description("Whether or not not in use stop places should be deleted first").dataType("boolean").endParam()
                 .responseMessage().code(200).endResponseMessage()
                 .responseMessage().code(500).message("Internal error").endResponseMessage()
                 .route().routeId("admin-chouette-synchronize-stop-places-full")
                 .process(e -> authorize(AuthorizationConstants.ROLE_ROUTE_DATA_ADMIN))
                 .removeHeaders("CamelHttp*")
-                .setHeader(HEADER_SYNC_OPERATION, constant(SYNC_OPERATION_FULL_WITH_DELETE_UNUSED_FIRST))
+                .choice()
+                .when(simple("${header.cleanFirst}"))
+                    .setHeader(HEADER_SYNC_OPERATION, constant(SYNC_OPERATION_FULL_WITH_DELETE_UNUSED_FIRST))
+                .otherwise()
+                    .setHeader(HEADER_SYNC_OPERATION, constant(SYNC_OPERATION_FULL))
+                .end()
                 .inOnly("activemq:queue:ChouetteStopPlaceSyncQueue")
                 .setBody(constant(null))
                 .endRest();
