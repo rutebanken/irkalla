@@ -6,7 +6,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.component.http4.HttpMethods;
 import org.apache.camel.http.common.HttpOperationFailedException;
-import org.apache.camel.model.dataformat.JsonLibrary;
 import org.rutebanken.irkalla.Constants;
 import org.rutebanken.irkalla.IrkallaException;
 import org.rutebanken.irkalla.routes.BaseRouteBuilder;
@@ -17,7 +16,8 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
 
-import static org.rutebanken.irkalla.Constants.HEADER_FULL_SYNC;
+import static org.apache.camel.management.mbean.Statistic.UpdateMode.DELTA;
+import static org.rutebanken.irkalla.Constants.*;
 import static org.rutebanken.irkalla.util.Http4URL.toHttp4Url;
 
 @Component
@@ -43,28 +43,38 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
 
         from("quartz2://irkalla/stopPlaceDeltaSync?cron=" + deltaSyncCronSchedule + "&trigger.timeZone=Europe/Oslo")
                 .autoStartup("{{chouette.sync.stop.place.autoStartup:true}}")
-                .log(LoggingLevel.INFO, "Quartz triggers delta sync of changed stop places.")
+                .log(LoggingLevel.DEBUG, "Quartz triggers delta sync of changed stop places.")
+                .setHeader(HEADER_SYNC_OPERATION, constant(DELTA))
                 .inOnly("activemq:queue:ChouetteStopPlaceSyncQueue")
                 .routeId("chouette-synchronize-stop-places-delta-quartz");
 
         from("quartz2://irkalla/stopPlaceSync?cron=" + fullSyncCronSchedule + "&trigger.timeZone=Europe/Oslo")
                 .autoStartup("{{chouette.sync.stop.place.autoStartup:true}}")
-                .log(LoggingLevel.INFO, "Quartz triggers full sync of changed stop places.")
-                .setHeader(HEADER_FULL_SYNC, constant(true))
+                .log(LoggingLevel.DEBUG, "Quartz triggers full sync of changed stop places.")
+                .setHeader(HEADER_SYNC_OPERATION, constant(SYNC_OPERATION_FULL_WITH_DELETE_UNUSED_FIRST))
                 .inOnly("activemq:queue:ChouetteStopPlaceSyncQueue")
                 .routeId("chouette-synchronize-stop-places-full-quartz");
 
         singletonFrom("activemq:queue:ChouetteStopPlaceSyncQueue?transacted=true&messageListenerContainerFactoryRef=batchListenerContainerFactory")
                 .transacted()
+                .process(e -> e.getIn().setHeader(HEADER_SYNC_OPERATION, getSyncOperation(e)))
                 .choice()
-                .when(e -> isFullSync(e))
-                .log(LoggingLevel.INFO, "Full synchronization of stop places in Chouette, deleting unused stops first")
-                .to("direct:deleteUnusedStopPlaces")
+                .when(simple("${header." + HEADER_SYNC_OPERATION + "} == '" + SYNC_OPERATION_FULL_WITH_DELETE_UNUSED_FIRST+"'"))
+                    .to("direct:deleteUnusedStopPlaces")
                 .otherwise()
-                .setBody(constant(null))
-                .to("direct:getSyncStatusUntilTime")
-                .setHeader(Constants.HEADER_SYNC_STATUS_FROM, simple("${body}"))
-                .log(LoggingLevel.INFO, "Synchronizing stop place changes since ${body} in Chouette.")
+                    .to("direct:synchronizeStopPlaces")
+                .end()
+                .routeId("chouette-synchronize-stop-places-control-route");
+
+
+
+        from("direct:synchronizeStopPlaces")
+                .log(LoggingLevel.INFO, "${header."+ HEADER_SYNC_OPERATION +"} synchronization of stop places in Chouette started.")
+                .choice()
+                .when(simple("${header."+ HEADER_SYNC_OPERATION +"} == '"+ SYNC_OPERATION_DELTA+"'"))
+                    .setBody(constant(null))
+                    .to("direct:getSyncStatusUntilTime")
+                    .setHeader(Constants.HEADER_SYNC_STATUS_FROM, simple("${body}"))
                 .end()
                 .setBody(constant(null))
                 .setHeader(Constants.HEADER_PROCESS_TARGET, constant("direct:synchronizeStopPlaceBatch"))
@@ -72,16 +82,21 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
                 .to("direct:processChangedStopPlacesAsNetex")
                 .setBody(simple("${header." + Constants.HEADER_SYNC_STATUS_TO + "}"))
                 .to("direct:setSyncStatusUntilTime")
-                .log(LoggingLevel.INFO, "Finished synchronizing stop places in Chouette")
+
+                .log(LoggingLevel.INFO, "${header."+ HEADER_SYNC_OPERATION +"} synchronization of stop places in Chouette completed.")
                 .routeId("chouette-synchronize-stop-places");
 
 
         from("direct:deleteUnusedStopPlaces")
+                .log(LoggingLevel.INFO, "Full synchronization of stop places in Chouette, deleting unused stops first")
                 .removeHeaders("CamelHttp*")
                 .setBody(constant(null))
                 .setHeader(Exchange.HTTP_METHOD, constant(HttpMethods.DELETE))
                 .doTry()
                 .toD(toHttp4Url(chouetteUrl) + "/chouette_iev/stop_place/unused")
+                .setHeader(HEADER_SYNC_OPERATION, constant(SYNC_OPERATION_FULL))
+                .log(LoggingLevel.INFO, "Deleting unused stop places in Chouette completed.")
+                .to("activemq:queue:ChouetteStopPlaceSyncQueue")
                 .doCatch(HttpOperationFailedException.class).onWhen(exchange -> {
             HttpOperationFailedException ex = exchange.getException(HttpOperationFailedException.class);
             return (ex.getStatusCode() == 423);
@@ -113,21 +128,30 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
 
     }
 
-    private boolean isFullSync(Exchange e) {
+    private String getSyncOperation(Exchange e) {
+
+        String syncOperation = SYNC_OPERATION_DELTA;
         for (Object o : e.getIn().getBody(List.class)) {
             if (o instanceof ActiveMQMessage) {
                 ActiveMQMessage activeMQMessage = (ActiveMQMessage) o;
                 try {
-                    Object prop = activeMQMessage.getProperty(HEADER_FULL_SYNC);
+                    Object prop = activeMQMessage.getProperty(HEADER_SYNC_OPERATION);
 
-                    if (prop != null && Boolean.TRUE.equals(prop)) {
-                        return true;
+                    if (prop == null) {
+                        continue;
+                    }
+
+                    if (SYNC_OPERATION_FULL_WITH_DELETE_UNUSED_FIRST.equals(prop)) {
+                        return SYNC_OPERATION_FULL_WITH_DELETE_UNUSED_FIRST;
+                    }
+                    if (SYNC_OPERATION_FULL.equals(prop)) {
+                        syncOperation = SYNC_OPERATION_FULL;
                     }
                 } catch (IOException ioE) {
-                    throw new IrkallaException("Unable to get fullSync header as property from ActiveMQMessage: " + ioE.getMessage(), ioE);
+                    throw new IrkallaException("Unable to get sync operation header as property from ActiveMQMessage: " + ioE.getMessage(), ioE);
                 }
             }
         }
-        return false;
+        return syncOperation;
     }
 }

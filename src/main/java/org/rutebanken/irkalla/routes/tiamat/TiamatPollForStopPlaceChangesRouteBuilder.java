@@ -45,7 +45,7 @@ public class TiamatPollForStopPlaceChangesRouteBuilder extends BaseRouteBuilder 
                 .routeId("tiamat-get-changed-stop-places-as-netex");
 
         from("direct:processBatchOfChangedStopPlacesAsNetex")
-                .log(LoggingLevel.INFO, "Fetching batch of changed stop places")
+                .log(LoggingLevel.INFO, "Fetching batch of changed stop places: ${header." + Exchange.HTTP_URL + "}")
                 .removeHeader("Link")
                 .setHeader(Exchange.HTTP_METHOD, constant(HttpMethods.GET))
                 .setBody(constant(null))
@@ -67,6 +67,8 @@ public class TiamatPollForStopPlaceChangesRouteBuilder extends BaseRouteBuilder 
         Instant to = e.getIn().getHeader(Constants.HEADER_SYNC_STATUS_TO, Instant.class);
 
         UriBuilder uriBuilder = new JerseyUriBuilder().path(toHttp4Url(tiamatUrl) + publicationDeliveryPath);
+
+        uriBuilder.queryParam("topographicPlaceExportMode","NONE");
 
         if (from != null) {
             uriBuilder.queryParam("from", from.atZone(TIME_ZONE_ID).format(FORMATTER));

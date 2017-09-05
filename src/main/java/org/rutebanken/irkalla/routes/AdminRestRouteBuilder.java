@@ -2,6 +2,7 @@ package org.rutebanken.irkalla.routes;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.model.rest.RestBindingMode;
+import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.model.rest.RestPropertyDefinition;
 import org.rutebanken.helper.organisation.AuthorizationConstants;
 import org.rutebanken.helper.organisation.NotAuthenticatedException;
@@ -12,9 +13,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import javax.ws.rs.NotFoundException;
 import java.util.Collections;
 
-import static org.rutebanken.irkalla.Constants.HEADER_FULL_SYNC;
+import static org.rutebanken.irkalla.Constants.*;
 
 @Component
 public class AdminRestRouteBuilder extends BaseRouteBuilder {
@@ -45,6 +47,12 @@ public class AdminRestRouteBuilder extends BaseRouteBuilder {
                 .setHeader(Exchange.CONTENT_TYPE, constant("text/plain"))
                 .transform(exceptionMessage());
 
+        onException(NotFoundException.class)
+                .handled(true)
+                .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(404))
+                .setHeader(Exchange.CONTENT_TYPE, constant("text/plain"))
+                .transform(exceptionMessage());
+
         RestPropertyDefinition corsAllowedHeaders = new RestPropertyDefinition();
         corsAllowedHeaders.setKey("Access-Control-Allow-Headers");
         corsAllowedHeaders.setValue("Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, Authorization");
@@ -70,13 +78,13 @@ public class AdminRestRouteBuilder extends BaseRouteBuilder {
         rest("")
                 .apiDocs(false)
                 .description("Wildcard definitions necessary to get Jetty to match authorization filters to endpoints with path params")
-                .get().route().routeId("admin-route-authorize-get").process(e -> authorize(AuthorizationConstants.ROLE_ROUTE_DATA_ADMIN)).endRest()
-                .post().route().routeId("admin-route-authorize-post").process(e -> authorize(AuthorizationConstants.ROLE_ROUTE_DATA_ADMIN)).endRest()
-                .put().route().routeId("admin-route-authorize-put").process(e -> authorize(AuthorizationConstants.ROLE_ROUTE_DATA_ADMIN)).endRest()
-                .delete().route().routeId("admin-route-authorize-delete").process(e -> authorize(AuthorizationConstants.ROLE_ROUTE_DATA_ADMIN)).endRest();
+                .get().route().routeId("admin-route-authorize-get").throwException(new NotFoundException()).endRest()
+                .post().route().routeId("admin-route-authorize-post").throwException(new NotFoundException()).endRest()
+                .put().route().routeId("admin-route-authorize-put").throwException(new NotFoundException()).endRest()
+                .delete().route().routeId("admin-route-authorize-delete").throwException(new NotFoundException()).endRest();
 
 
-        rest("/services//stop_place_synchronization_timetable")
+        rest("/services/stop_place_synchronization_timetable")
                 .post("/delta")
                 .description("Synchronize new changes for stop places from Tiamat to Chouette")
                 .responseMessage().code(200).endResponseMessage()
@@ -84,17 +92,24 @@ public class AdminRestRouteBuilder extends BaseRouteBuilder {
                 .route().routeId("admin-chouette-synchronize-stop-places-delta")
                 .process(e -> authorize(AuthorizationConstants.ROLE_ROUTE_DATA_ADMIN))
                 .removeHeaders("CamelHttp*")
+                .setHeader(HEADER_SYNC_OPERATION, constant(SYNC_OPERATION_DELTA))
                 .inOnly("activemq:queue:ChouetteStopPlaceSyncQueue")
                 .setBody(constant(null))
                 .endRest()
                 .post("/full")
                 .description("Full synchronization of all stop places from Tiamat to Chouette")
+                .param().name("cleanFirst").type(RestParamType.query).description("Whether or not not in use stop places should be deleted first").dataType("boolean").endParam()
                 .responseMessage().code(200).endResponseMessage()
                 .responseMessage().code(500).message("Internal error").endResponseMessage()
                 .route().routeId("admin-chouette-synchronize-stop-places-full")
                 .process(e -> authorize(AuthorizationConstants.ROLE_ROUTE_DATA_ADMIN))
                 .removeHeaders("CamelHttp*")
-                .setHeader(HEADER_FULL_SYNC, constant(true))
+                .choice()
+                .when(simple("${header.cleanFirst}"))
+                    .setHeader(HEADER_SYNC_OPERATION, constant(SYNC_OPERATION_FULL_WITH_DELETE_UNUSED_FIRST))
+                .otherwise()
+                    .setHeader(HEADER_SYNC_OPERATION, constant(SYNC_OPERATION_FULL))
+                .end()
                 .inOnly("activemq:queue:ChouetteStopPlaceSyncQueue")
                 .setBody(constant(null))
                 .endRest();

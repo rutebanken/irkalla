@@ -50,7 +50,6 @@ public class StopPlaceQuery {
     private static final String RESULT_DEFINITION = "{" +
                                                             "id " +
                                                             "version " +
-                                                            "stopPlaceType " +
                                                             "validBetween {fromDate toDate}" +
                                                             "name {" +
                                                             "      value" +
@@ -61,6 +60,8 @@ public class StopPlaceQuery {
                                                             "    }" +
                                                             "    versionComment "+
                                                             "    changedBy "+
+                                                            "    ... on StopPlace {" +
+                                                            "    stopPlaceType " +
                                                             "    quays {" +
                                                             "      id" +
                                                             "       name {" +
@@ -70,6 +71,7 @@ public class StopPlaceQuery {
                                                             "        type" +
                                                             "        coordinates" +
                                                             "      }" +
+                                                            "    }" +
                                                             "    }" +
                                                             "  }";
 }
