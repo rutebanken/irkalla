@@ -14,6 +14,8 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import static org.apache.camel.management.mbean.Statistic.UpdateMode.DELTA;
@@ -57,34 +59,55 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
 
         singletonFrom("activemq:queue:ChouetteStopPlaceSyncQueue?transacted=true&messageListenerContainerFactoryRef=batchListenerContainerFactory")
                 .transacted()
-                .process(e -> e.getIn().setHeader(HEADER_SYNC_OPERATION, getSyncOperation(e)))
+                .process(e -> mergeActiveMQMessages(e))
                 .choice()
-                .when(simple("${header." + HEADER_SYNC_OPERATION + "} == '" + SYNC_OPERATION_FULL_WITH_DELETE_UNUSED_FIRST+"'"))
-                    .to("direct:deleteUnusedStopPlaces")
+                .when(simple("${header." + HEADER_SYNC_OPERATION + "} == '" + SYNC_OPERATION_FULL_WITH_DELETE_UNUSED_FIRST + "'"))
+                .to("direct:deleteUnusedStopPlaces")
                 .otherwise()
-                    .to("direct:synchronizeStopPlaces")
+                .to("direct:synchronizeStopPlaces")
                 .end()
                 .routeId("chouette-synchronize-stop-places-control-route");
 
 
-
         from("direct:synchronizeStopPlaces")
-                .log(LoggingLevel.INFO, "${header."+ HEADER_SYNC_OPERATION +"} synchronization of stop places in Chouette started.")
-                .choice()
-                .when(simple("${header."+ HEADER_SYNC_OPERATION +"} == '"+ SYNC_OPERATION_DELTA+"'"))
-                    .setBody(constant(null))
-                    .to("direct:getSyncStatusUntilTime")
-                    .setHeader(Constants.HEADER_SYNC_STATUS_FROM, simple("${body}"))
-                .end()
-                .setBody(constant(null))
                 .setHeader(Constants.HEADER_PROCESS_TARGET, constant("direct:synchronizeStopPlaceBatch"))
-                .process(e -> e.getIn().setHeader(Constants.HEADER_SYNC_STATUS_TO, Instant.now()))
+                .choice()
+                .when(header(HEADER_NEXT_BATCH_URL).isNull()) // New sync, init
+                .to("direct:initNewSynchronization")
+                .otherwise()
+                    .log(LoggingLevel.INFO, "${header." + HEADER_SYNC_OPERATION + "} synchronization of stop places in Chouette resumed.")
+                .end()
+
+                .setBody(constant(null))
                 .to("direct:processChangedStopPlacesAsNetex")
+                .choice()
+                .when(header(HEADER_NEXT_BATCH_URL).isNotNull())
+                .to("activemq:ChouetteStopPlaceSyncQueue")  // Prepare new iteration
+                .otherwise()
+                .to("direct:completeSynchronization") // Completed
+
+                .end()
+
+                .routeId("chouette-synchronize-stop-places");
+
+
+        from("direct:initNewSynchronization")
+                .log(LoggingLevel.INFO, "${header." + HEADER_SYNC_OPERATION + "} synchronization of stop places in Chouette started.")
+                .choice()
+                .when(simple("${header." + HEADER_SYNC_OPERATION + "} == '" + SYNC_OPERATION_DELTA + "'"))
+                .setBody(constant(null))
+                .to("direct:getSyncStatusUntilTime")
+                .setHeader(Constants.HEADER_SYNC_STATUS_FROM, simple("${body}"))
+                .end()
+
+                .process(e -> e.getIn().setHeader(Constants.HEADER_SYNC_STATUS_TO, Instant.now()))
+                .routeId("chouette-synchronize-stop-places-init");
+
+        from("direct:completeSynchronization")
                 .setBody(simple("${header." + Constants.HEADER_SYNC_STATUS_TO + "}"))
                 .to("direct:setSyncStatusUntilTime")
-
-                .log(LoggingLevel.INFO, "${header."+ HEADER_SYNC_OPERATION +"} synchronization of stop places in Chouette completed.")
-                .routeId("chouette-synchronize-stop-places");
+                .log(LoggingLevel.INFO, "${header." + HEADER_SYNC_OPERATION + "} synchronization of stop places in Chouette completed.")
+                .routeId("chouette-synchronize-stop-places-complete");
 
 
         from("direct:deleteUnusedStopPlaces")
@@ -128,30 +151,63 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
 
     }
 
-    private String getSyncOperation(Exchange e) {
+    /**
+     * Merge status from all msg read in batch into current exchange.
+     * <p>
+     * Priority:
+     * - Delete and start new, full sync if at least one message signals that
+     * - Full sync, if no delete and at least one message signals that, using first msg with url set (indicating ongoing job) if any
+     * - Delta sync in other cases, using first msg with url set (indicating ongoing job) if any
+     */
+    private void mergeActiveMQMessages(Exchange e) {
+        List<ActiveMQMessage> msgList = e.getIn().getBody(List.class);
+        Collections.sort(msgList, new SyncMsgComparator());
 
-        String syncOperation = SYNC_OPERATION_DELTA;
-        for (Object o : e.getIn().getBody(List.class)) {
-            if (o instanceof ActiveMQMessage) {
-                ActiveMQMessage activeMQMessage = (ActiveMQMessage) o;
-                try {
-                    Object prop = activeMQMessage.getProperty(HEADER_SYNC_OPERATION);
+        ActiveMQMessage topPriMsg = msgList.get(0);
+        try {
+            Object syncOperation = topPriMsg.getProperty(HEADER_SYNC_OPERATION);
+            if (syncOperation == null) {
+                e.getIn().setHeader(HEADER_SYNC_OPERATION, SYNC_OPERATION_DELTA);
+            } else {
+                e.getIn().setHeader(HEADER_SYNC_OPERATION, syncOperation);
+                e.getIn().setHeader(HEADER_SYNC_STATUS_TO, topPriMsg.getProperty(HEADER_SYNC_STATUS_TO));
+                e.getIn().setHeader(HEADER_NEXT_BATCH_URL, topPriMsg.getProperty(HEADER_NEXT_BATCH_URL));
+            }
+        } catch (IOException ioE) {
+            throw new IrkallaException("Unable to get sync operation header as property from ActiveMQMessage: " + ioE.getMessage(), ioE);
+        }
+    }
 
-                    if (prop == null) {
-                        continue;
-                    }
 
-                    if (SYNC_OPERATION_FULL_WITH_DELETE_UNUSED_FIRST.equals(prop)) {
-                        return SYNC_OPERATION_FULL_WITH_DELETE_UNUSED_FIRST;
-                    }
-                    if (SYNC_OPERATION_FULL.equals(prop)) {
-                        syncOperation = SYNC_OPERATION_FULL;
-                    }
-                } catch (IOException ioE) {
-                    throw new IrkallaException("Unable to get sync operation header as property from ActiveMQMessage: " + ioE.getMessage(), ioE);
+    private class SyncMsgComparator implements Comparator<ActiveMQMessage> {
+
+        @Override
+        public int compare(ActiveMQMessage o1, ActiveMQMessage o2) {
+            try {
+                Object o1Opr = o1.getProperty(HEADER_SYNC_OPERATION);
+                Object o2Opr = o2.getProperty(HEADER_SYNC_OPERATION);
+
+                if (SYNC_OPERATION_FULL_WITH_DELETE_UNUSED_FIRST.equals(o1Opr)) {
+                    return -1;
+                } else if (SYNC_OPERATION_FULL_WITH_DELETE_UNUSED_FIRST.equals(o2Opr)) {
+                    return 1;
                 }
+
+                if (SYNC_OPERATION_FULL.equals(o1Opr) && !SYNC_OPERATION_FULL.equals(o2Opr)) {
+                    return -1;
+                } else if (SYNC_OPERATION_FULL.equals(o2Opr)) {
+                    return 1;
+                }
+
+                if (o1.getProperty(HEADER_NEXT_BATCH_URL) != null) {
+                    return -1;
+                }
+                ;
+
+                return 1;
+            } catch (IOException ioE) {
+                throw new IrkallaException("Unable to get sync operation header as property from ActiveMQMessage: " + ioE.getMessage(), ioE);
             }
         }
-        return syncOperation;
     }
 }

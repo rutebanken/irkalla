@@ -68,15 +68,22 @@ public class ChouetteStopPlaceUpdateRouteBuilderTest extends RouteBuilderIntegra
         });
 
 
-        context.getRouteDefinition("chouette-synchronize-stop-places").adviceWith(context, new AdviceWithRouteBuilder() {
+        context.getRouteDefinition("chouette-synchronize-stop-places-init").adviceWith(context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("direct:getSyncStatusUntilTime")
                         .skipSendToOriginalEndpoint().to("mock:etcd");
+            }
+        });
+
+        context.getRouteDefinition("chouette-synchronize-stop-places-complete").adviceWith(context, new AdviceWithRouteBuilder() {
+            @Override
+            public void configure() throws Exception {
                 interceptSendToEndpoint("direct:setSyncStatusUntilTime")
                         .skipSendToOriginalEndpoint().to("mock:etcd");
             }
         });
+
 
         context.start();
         tiamatExportChanges.expectedMessageCount(2);
@@ -110,16 +117,21 @@ public class ChouetteStopPlaceUpdateRouteBuilderTest extends RouteBuilderIntegra
             }
         });
 
-        context.getRouteDefinition("chouette-synchronize-stop-places").adviceWith(context, new AdviceWithRouteBuilder() {
+        context.getRouteDefinition("chouette-synchronize-stop-places-init").adviceWith(context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("direct:getSyncStatusUntilTime")
                         .skipSendToOriginalEndpoint().to("mock:etcd");
+            }
+        });
+
+        context.getRouteDefinition("chouette-synchronize-stop-places-complete").adviceWith(context, new AdviceWithRouteBuilder() {
+            @Override
+            public void configure() throws Exception {
                 interceptSendToEndpoint("direct:setSyncStatusUntilTime")
                         .skipSendToOriginalEndpoint().to("mock:etcd");
             }
         });
-
         context.start();
 
         etcd.expectedMessageCount(2);
@@ -155,7 +167,7 @@ public class ChouetteStopPlaceUpdateRouteBuilderTest extends RouteBuilderIntegra
             }
         });
 
-        context.getRouteDefinition("chouette-synchronize-stop-places").adviceWith(context, new AdviceWithRouteBuilder() {
+        context.getRouteDefinition("chouette-synchronize-stop-places-init").adviceWith(context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("direct:getSyncStatusUntilTime")
