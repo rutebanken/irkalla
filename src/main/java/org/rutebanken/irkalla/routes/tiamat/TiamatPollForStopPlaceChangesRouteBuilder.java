@@ -43,7 +43,7 @@ public class TiamatPollForStopPlaceChangesRouteBuilder extends BaseRouteBuilder 
         from("direct:processChangedStopPlacesAsNetex")
                 .choice()
                 .when(header(HEADER_NEXT_BATCH_URL).isNull())
-                    .process(e -> setPollForChangesURL(e))
+                .process(e -> setPollForChangesURL(e))
                 .end()
                 .to("direct:processBatchOfChangedStopPlacesAsNetex")
                 .routeId("tiamat-get-changed-stop-places-as-netex");
@@ -67,18 +67,20 @@ public class TiamatPollForStopPlaceChangesRouteBuilder extends BaseRouteBuilder 
     }
 
     private void setPollForChangesURL(Exchange e) {
-        Instant from = e.getIn().getHeader(Constants.HEADER_SYNC_STATUS_FROM, Instant.class);
-        Instant to = e.getIn().getHeader(Constants.HEADER_SYNC_STATUS_TO, Instant.class);
+        Long fromAsEpocMillis = e.getIn().getHeader(Constants.HEADER_SYNC_STATUS_FROM, Long.class);
+        Long toAsEpocMillis = e.getIn().getHeader(Constants.HEADER_SYNC_STATUS_TO, Long.class);
 
         UriBuilder uriBuilder = new JerseyUriBuilder().path(toHttp4Url(tiamatUrl) + publicationDeliveryPath);
 
         uriBuilder.queryParam("topographicPlaceExportMode", "NONE");
-        uriBuilder.queryParam("tariffZoneExportMode","NONE");
+        uriBuilder.queryParam("tariffZoneExportMode", "NONE");
 
-        if (from != null) {
+        if (fromAsEpocMillis != null) {
+            Instant from=Instant.ofEpochMilli(fromAsEpocMillis);
             uriBuilder.queryParam("from", from.atZone(TIME_ZONE_ID).format(FORMATTER));
         }
-        if (to != null) {
+        if (toAsEpocMillis != null) {
+            Instant to = Instant.ofEpochMilli(toAsEpocMillis);
             uriBuilder.queryParam("to", to.atZone(TIME_ZONE_ID).format(FORMATTER));
         }
         if (batchSize > 0) {
@@ -94,8 +96,8 @@ public class TiamatPollForStopPlaceChangesRouteBuilder extends BaseRouteBuilder 
      */
     private void setURLToNextBatch(Exchange e) {
         e.getIn().setHeader(HEADER_NEXT_BATCH_URL, toHttp4Url(e.getIn().getHeader("Link", String.class)
-                                                                  .replaceFirst("\\<", "")
-                                                                  .replaceFirst("\\>; rel=\"next\"", "")));
+                                                                      .replaceFirst("\\<", "")
+                                                                      .replaceFirst("\\>; rel=\"next\"", "")));
     }
 
 }

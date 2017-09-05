@@ -100,13 +100,19 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
                 .setHeader(Constants.HEADER_SYNC_STATUS_FROM, simple("${body}"))
                 .end()
 
-                .process(e -> e.getIn().setHeader(Constants.HEADER_SYNC_STATUS_TO, Instant.now()))
+                .process(e -> e.getIn().setHeader(Constants.HEADER_SYNC_STATUS_TO, Instant.now().toEpochMilli()))
                 .routeId("chouette-synchronize-stop-places-init");
 
         from("direct:completeSynchronization")
+                .choice()
+                .when(header(Constants.HEADER_SYNC_STATUS_TO).isNotNull())
                 .setBody(simple("${header." + Constants.HEADER_SYNC_STATUS_TO + "}"))
                 .to("direct:setSyncStatusUntilTime")
                 .log(LoggingLevel.INFO, "${header." + HEADER_SYNC_OPERATION + "} synchronization of stop places in Chouette completed.")
+                .otherwise()
+                .log(LoggingLevel.INFO, "${header." + HEADER_SYNC_OPERATION + "} synchronization of stop places in Chouette completed, unable to update etcd.")
+                .end()
+
                 .routeId("chouette-synchronize-stop-places-complete");
 
 

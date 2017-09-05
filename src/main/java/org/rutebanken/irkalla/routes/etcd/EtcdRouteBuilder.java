@@ -44,7 +44,7 @@ public class EtcdRouteBuilder extends BaseRouteBuilder {
                 .to(toHttp4Url(etcdUrl) + etcdSyncStatusKey)
                 .unmarshal().json(JsonLibrary.Jackson, EtcdResponse.class)
                 .process(e ->
-                                 e.getIn().setBody(Instant.from(FORMATTER.parse(e.getIn().getBody(EtcdResponse.class).node.value))))
+                                 e.getIn().setBody(Instant.from(FORMATTER.parse(e.getIn().getBody(EtcdResponse.class).node.value)).toEpochMilli()))
                 .doCatch(HttpOperationFailedException.class).onWhen(exchange -> {
             HttpOperationFailedException ex = exchange.getException(HttpOperationFailedException.class);
             return (ex.getStatusCode() == 404);
@@ -57,7 +57,7 @@ public class EtcdRouteBuilder extends BaseRouteBuilder {
 
         from("direct:setSyncStatusUntilTime")
                 .setHeader(Exchange.HTTP_METHOD, constant(HttpMethods.PUT))
-                .process(e -> e.getIn().setBody(e.getIn().getBody(Instant.class).atZone(ZoneId.of("UTC")).format(FORMATTER)))
+                .process(e -> e.getIn().setBody(Instant.ofEpochMilli(e.getIn().getBody(Long.class)).atZone(ZoneId.of("UTC")).format(FORMATTER)))
                 .toD(toHttp4Url(etcdUrl) + etcdSyncStatusKey + "?value=${body}")
                 .routeId("set-sync-status-until");
     }
