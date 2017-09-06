@@ -40,8 +40,8 @@ public class HealthResource {
     }
 
     @GET
-    @Path("/up")
-    public Response isUp() {
+    @Path("/live")
+    public Response isLive() {
         if ( !hasBeenOkOnce ) {
             if ( false ) {
                 return Response.status(500).entity("Something is not OK").build();
