@@ -4,6 +4,8 @@ import com.google.common.base.Joiner;
 import org.rutebanken.irkalla.domain.CrudAction;
 import org.rutebanken.irkalla.routes.tiamat.graphql.model.GraphqlGeometry;
 import org.rutebanken.irkalla.routes.tiamat.graphql.model.StopPlace;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
@@ -18,6 +20,9 @@ import java.util.stream.Collectors;
  */
 public class StopPlaceChange {
     public enum StopPlaceUpdateType {NAME, COORDINATES, TYPE, NEW_QUAY, REMOVED_QUAY, MINOR, MAJOR}
+
+    private static final Logger logger = LoggerFactory.getLogger(StopPlaceChange.class);
+
 
     private CrudAction crudAction;
 
@@ -89,6 +94,12 @@ public class StopPlaceChange {
         // Defaulting to minor if no substantial changes are found
         updateType = StopPlaceUpdateType.MINOR;
 
+        if (current == null || previousVersion == null) {
+            logger.warn("Unable to detect update type for unknown current and/or previous version of stops. Current: " + current + ", previous: " + previousVersion);
+            return;
+        }
+
+
         checkForChanges(current.getNameAsString(), previousVersion.getNameAsString(), StopPlaceUpdateType.NAME);
         checkForChanges(current.stopPlaceType, previousVersion.stopPlaceType, StopPlaceUpdateType.TYPE);
 
@@ -130,7 +141,7 @@ public class StopPlaceChange {
     }
 
     private String formatGeometry(GraphqlGeometry geometry) {
-        if ("Point" .equals(geometry.type)) {
+        if ("Point".equals(geometry.type)) {
             if (!CollectionUtils.isEmpty(geometry.coordinates)) {
                 List<Double> coordinates = geometry.coordinates.get(0);
                 if (coordinates != null && coordinates.size() > 1) {
