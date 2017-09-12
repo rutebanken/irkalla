@@ -1,5 +1,6 @@
 package org.rutebanken.irkalla.routes.notification;
 
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.model.dataformat.JsonLibrary;
 import org.rutebanken.irkalla.Constants;
 import org.rutebanken.irkalla.domain.EntityChangedEvent;
@@ -20,6 +21,7 @@ public class EntityChangedRouteBuilder extends BaseRouteBuilder {
                 .setHeader(Constants.HEADER_ENTITY_VERSION,simple("${body.entityVersion}"))
                 .setHeader(Constants.HEADER_CRUD_ACTION,simple("${body.crudAction}"))
 
+                .log(LoggingLevel.INFO,"Received changelog event: ${body.crudAction} ${body.entityType} ${body.entityId} v${body.entityVersion}")
                 .choice()
                 .when(simple("${body.entityType} == '" + EntityChangedEvent.EntityType.STOP_PLACE + "'"))
                 .to("direct:handleStopPlaceChanged")

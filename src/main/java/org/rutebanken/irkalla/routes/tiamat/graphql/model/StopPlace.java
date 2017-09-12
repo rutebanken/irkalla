@@ -35,4 +35,17 @@ public class StopPlace {
         return quays;
     }
 
+    @Override
+    public String toString() {
+        return "StopPlace{" +
+                       "id='" + id + '\'' +
+                       ", version=" + version +
+                       ", name=" + name +
+                       ", versionComment='" + versionComment + '\'' +
+                       ", changedBy='" + changedBy + '\'' +
+                       ", stopPlaceType='" + stopPlaceType + '\'' +
+                       ", quays=" + quays +
+                       ", validBetween=" + validBetween +
+                       '}';
+    }
 }

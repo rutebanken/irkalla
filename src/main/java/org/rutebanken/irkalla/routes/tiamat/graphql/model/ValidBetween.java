@@ -12,4 +12,12 @@ public class ValidBetween {
     public Instant fromDate;
     @JsonFormat(shape=JsonFormat.Shape.STRING, pattern=DATE_TIME_PATTERN)
     public Instant toDate;
+
+    @Override
+    public String toString() {
+        return "ValidBetween{" +
+                       "fromDate=" + fromDate +
+                       ", toDate=" + toDate +
+                       '}';
+    }
 }
