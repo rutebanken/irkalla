@@ -12,5 +12,12 @@ public class Name {
 
     public Name() {
     }
+
+    @Override
+    public String toString() {
+        return "Name{" +
+                       "value='" + value + '\'' +
+                       '}';
+    }
 }
 
