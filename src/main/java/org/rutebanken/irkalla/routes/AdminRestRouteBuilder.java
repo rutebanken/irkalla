@@ -69,8 +69,8 @@ public class AdminRestRouteBuilder extends BaseRouteBuilder {
                 .dataFormatProperty("prettyPrint", "true")
                 .host(host)
                 .port(port)
-                .contextPath("")
-                .apiContextPath("services/api-doc")
+                .contextPath("/services")
+                .apiContextPath("/stop_place_synchronization_timetable/swagger.json")
                 .apiProperty("api.title", "Stop place synchronization timetable API")
                 .apiProperty("api.description", "Administration of process for synchronizing stop places in the timetable database (Chouette) with the master data in the stop place registry (NSR)")
                 .apiProperty("api.version", "1.0");
@@ -84,7 +84,7 @@ public class AdminRestRouteBuilder extends BaseRouteBuilder {
                 .delete().route().routeId("admin-route-authorize-delete").throwException(new NotFoundException()).endRest();
 
 
-        rest("/services/stop_place_synchronization_timetable")
+        rest("/stop_place_synchronization_timetable")
                 .post("/delta")
                 .description("Synchronize new changes for stop places from Tiamat to Chouette")
                 .responseMessage().code(200).endResponseMessage()
