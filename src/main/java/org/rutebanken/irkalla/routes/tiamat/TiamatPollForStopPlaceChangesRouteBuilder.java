@@ -23,7 +23,7 @@ public class TiamatPollForStopPlaceChangesRouteBuilder extends BaseRouteBuilder 
     @Value("${tiamat.url}")
     private String tiamatUrl;
 
-    @Value("${tiamat.publication.delivery.path:/jersey/publication_delivery/changed}")
+    @Value("${tiamat.publication.delivery.path:/services/stop_places/netex/changed_in_period}")
     private String publicationDeliveryPath;
 
     @Value("${sync.stop.place.batch.size:1000}")

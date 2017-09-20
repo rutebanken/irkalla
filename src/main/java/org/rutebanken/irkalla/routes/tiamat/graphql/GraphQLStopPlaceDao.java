@@ -17,7 +17,7 @@ public class GraphQLStopPlaceDao implements StopPlaceDao {
     @Value("${tiamat.url}")
     private String tiamatUrl;
 
-    @Value("${tiamat.graphql.path:/jersey/graphql}")
+    @Value("${tiamat.graphql.path:/services/stop_places/graphql}")
     private String tiamatGraphQLPath;
 
     @Override
