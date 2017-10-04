@@ -85,6 +85,15 @@ public class AdminRestRouteBuilder extends BaseRouteBuilder {
 
 
         rest("/stop_place_synchronization_timetable")
+                .get("/status")
+                .bindingMode(RestBindingMode.off)
+                .description("Get time for which synchronization is up to date")
+                .responseMessage().code(200).endResponseMessage()
+                .responseMessage().code(500).message("Internal error").endResponseMessage()
+                .route().routeId("admin-chouette-synchronize-stop-places-status")
+                .to("direct:getSyncStatusUntilTime")
+                .endRest()
+
                 .post("/delta")
                 .description("Synchronize new changes for stop places from Tiamat to Chouette")
                 .responseMessage().code(200).endResponseMessage()
