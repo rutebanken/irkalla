@@ -91,6 +91,7 @@ public class AdminRestRouteBuilder extends BaseRouteBuilder {
                 .responseMessage().code(200).endResponseMessage()
                 .responseMessage().code(500).message("Internal error").endResponseMessage()
                 .route().routeId("admin-chouette-synchronize-stop-places-status")
+                .removeHeaders("CamelHttp*")
                 .to("direct:getSyncStatusUntilTime")
                 .endRest()
 
