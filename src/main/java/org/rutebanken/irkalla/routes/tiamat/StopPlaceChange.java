@@ -4,6 +4,7 @@ import com.google.common.base.Joiner;
 import org.rutebanken.irkalla.domain.CrudAction;
 import org.rutebanken.irkalla.routes.tiamat.graphql.model.GraphqlGeometry;
 import org.rutebanken.irkalla.routes.tiamat.graphql.model.StopPlace;
+import org.rutebanken.irkalla.routes.tiamat.graphql.model.TopographicPlace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
@@ -11,6 +12,8 @@ import org.springframework.util.ObjectUtils;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -23,6 +26,9 @@ public class StopPlaceChange {
 
     private static final Logger logger = LoggerFactory.getLogger(StopPlaceChange.class);
 
+    public static final String PARENT_STOP_KEY = "IS_PARENT_STOP_PLACE";
+
+    public static final String MULTI_MODAL_TYPE = "multiModal";
 
     private CrudAction crudAction;
 
@@ -78,7 +84,9 @@ public class StopPlaceChange {
             return current.stopPlaceType;
         }
         if (current.keyValues != null) {
-            return current.keyValues.stream().filter(kv -> kv != null && kv.values != null).anyMatch(kv -> "IS_PARENT_STOP_PLACE".equals(kv.key) && kv.values.stream().anyMatch(v -> "false".equalsIgnoreCase(v))) ? "multiModal" : null;
+            return current.keyValues.stream().filter(kv -> kv != null && kv.values != null)
+                           .anyMatch(kv -> PARENT_STOP_KEY.equals(kv.key)
+                                                   && kv.values.stream().anyMatch(v -> Boolean.TRUE.toString().equalsIgnoreCase(v))) ? MULTI_MODAL_TYPE : null;
         }
         return null;
     }
@@ -93,6 +101,27 @@ public class StopPlaceChange {
 
     public String getNewValue() {
         return newValue.isEmpty() ? null : Joiner.on("\n").join(newValue);
+    }
+
+    public String getLocation() {
+
+        List<String> locationNames = new ArrayList<>();
+        TopographicPlace topographicPlace = current.topographicPlace;
+
+        while ((topographicPlace != null)) {
+            if (topographicPlace.name != null && topographicPlace.name.value != null) {
+                locationNames.add(topographicPlace.name.value);
+            }
+            topographicPlace = topographicPlace.parentTopographicPlace;
+        }
+
+        // Present top to bottom
+        Collections.reverse(locationNames);
+        if (locationNames != null) {
+            return Joiner.on(", ").join(locationNames);
+        }
+
+        return null;
     }
 
     private void detectUpdateType() {

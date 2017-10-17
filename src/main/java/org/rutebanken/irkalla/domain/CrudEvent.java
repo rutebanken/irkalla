@@ -48,6 +48,8 @@ public class CrudEvent {
 
     public Geometry geometry;
 
+    public String location;
+
     public String toString() {
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -107,6 +109,12 @@ public class CrudEvent {
             event.geometry = geometry;
             return this;
         }
+
+        public Builder location(String location) {
+            event.location = location;
+            return this;
+        }
+
 
         public Builder newValue(String newValue) {
             event.newValue = newValue;

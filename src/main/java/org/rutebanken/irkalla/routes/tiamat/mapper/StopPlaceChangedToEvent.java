@@ -17,7 +17,7 @@ public class StopPlaceChangedToEvent {
 
     public CrudEvent toEvent(StopPlaceChange stopPlaceChange) {
         StopPlace currentVersion = stopPlaceChange.getCurrent();
-        
+
         CrudEvent.Builder event = CrudEvent.builder()
                                           .type(CrudEvent.EntityType.StopPlace)
                                           .entityClassifier(stopPlaceChange.getEntityClassifier())
@@ -31,6 +31,7 @@ public class StopPlaceChangedToEvent {
                                           .comment(currentVersion.versionComment)
                                           .username(currentVersion.changedBy)
                                           .geometry(toGeometry(currentVersion.geometry))
+                                          .location(stopPlaceChange.getLocation())
                                           .eventTime(stopPlaceChange.getChangeTime());
 
         return event.build();

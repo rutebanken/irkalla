@@ -4,13 +4,18 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.rutebanken.irkalla.domain.CrudAction;
 import org.rutebanken.irkalla.routes.tiamat.graphql.model.GraphqlGeometry;
+import org.rutebanken.irkalla.routes.tiamat.graphql.model.KeyValues;
 import org.rutebanken.irkalla.routes.tiamat.graphql.model.Name;
 import org.rutebanken.irkalla.routes.tiamat.graphql.model.Quay;
 import org.rutebanken.irkalla.routes.tiamat.graphql.model.StopPlace;
+import org.rutebanken.irkalla.routes.tiamat.graphql.model.TopographicPlace;
 
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.stream.Collectors;
+
+import static org.rutebanken.irkalla.routes.tiamat.StopPlaceChange.MULTI_MODAL_TYPE;
+import static org.rutebanken.irkalla.routes.tiamat.StopPlaceChange.PARENT_STOP_KEY;
 
 public class StopPlaceChangeTest {
 
@@ -134,6 +139,40 @@ public class StopPlaceChangeTest {
         Instant beforeTest = Instant.now();
         StopPlaceChange change = new StopPlaceChange(CrudAction.CREATE, current, null);
         Assert.assertFalse(change.getChangeTime().isBefore(beforeTest));
+    }
+
+    @Test
+    public void getLocationFormatsTopToBottom() {
+        StopPlace current = new StopPlace();
+        current.topographicPlace = topographicPlace("parent", topographicPlace("grandParent", topographicPlace("greatGrandParent", null)));
+        StopPlaceChange change = new StopPlaceChange(CrudAction.CREATE, current, null);
+        Assert.assertEquals("greatGrandParent, grandParent, parent", change.getLocation());
+    }
+
+    @Test
+    public void getEntityClassifierReturnsMultiModalIfTypeNotSetAndStopIsParent() {
+        StopPlace current = new StopPlace();
+        KeyValues isParent = new KeyValues();
+        isParent.key = PARENT_STOP_KEY;
+        isParent.values = Arrays.asList("true");
+        current.keyValues = Arrays.asList(isParent);
+        StopPlaceChange change = new StopPlaceChange(CrudAction.CREATE, current, null);
+        Assert.assertEquals(MULTI_MODAL_TYPE, change.getEntityClassifier());
+    }
+
+    @Test
+    public void getEntityClassifierReturnsNulllIfTypeNotSetAndStopIsNotParent() {
+        StopPlace current = new StopPlace();
+        StopPlaceChange change = new StopPlaceChange(CrudAction.CREATE, current, null);
+        Assert.assertNull(change.getEntityClassifier());
+    }
+
+
+    private TopographicPlace topographicPlace(String name, TopographicPlace parent) {
+        TopographicPlace topographicPlace = new TopographicPlace();
+        topographicPlace.parentTopographicPlace = parent;
+        topographicPlace.name = new Name(name);
+        return topographicPlace;
     }
 
     private StopPlace stopPlace(String name, double x, double y, String... quayIds) {

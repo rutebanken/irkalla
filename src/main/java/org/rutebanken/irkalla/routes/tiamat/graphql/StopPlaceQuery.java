@@ -62,6 +62,18 @@ public class StopPlaceQuery {
                                                             "      key" +
                                                             "      values" +
                                                             "    }" +
+                                                            "       topographicPlace {" +
+                                                            "      topographicPlaceType" +
+                                                            "      name {" +
+                                                            "        value" +
+                                                            "      }" +
+                                                            "      parentTopographicPlace {" +
+                                                            "        topographicPlaceType" +
+                                                            "        name {" +
+                                                            "          value" +
+                                                            "        }" +
+                                                            "      }" +
+                                                            "    }" +
                                                             "    versionComment "+
                                                             "    changedBy "+
                                                             "    ... on StopPlace {" +
