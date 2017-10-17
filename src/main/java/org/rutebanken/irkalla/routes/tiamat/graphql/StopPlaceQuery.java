@@ -58,6 +58,10 @@ public class StopPlaceQuery {
                                                             "      type" +
                                                             "      coordinates" +
                                                             "    }" +
+                                                            "    keyValues {" +
+                                                            "      key" +
+                                                            "      values" +
+                                                            "    }" +
                                                             "    versionComment "+
                                                             "    changedBy "+
                                                             "    ... on StopPlace {" +

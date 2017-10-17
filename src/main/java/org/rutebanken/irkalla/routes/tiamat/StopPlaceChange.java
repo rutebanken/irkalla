@@ -73,6 +73,15 @@ public class StopPlaceChange {
         return previousVersion;
     }
 
+    public String getEntityClassifier() {
+        if (current.stopPlaceType != null) {
+            return current.stopPlaceType;
+        }
+        if (current.keyValues != null) {
+            return current.keyValues.stream().filter(kv -> kv != null && kv.values != null).anyMatch(kv -> "IS_PARENT_STOP_PLACE".equals(kv.key) && kv.values.stream().anyMatch(v -> "false".equalsIgnoreCase(v))) ? "multiModal" : null;
+        }
+        return null;
+    }
 
     public StopPlaceUpdateType getUpdateType() {
         return updateType;

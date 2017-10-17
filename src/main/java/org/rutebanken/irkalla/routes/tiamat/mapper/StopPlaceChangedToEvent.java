@@ -17,9 +17,10 @@ public class StopPlaceChangedToEvent {
 
     public CrudEvent toEvent(StopPlaceChange stopPlaceChange) {
         StopPlace currentVersion = stopPlaceChange.getCurrent();
+        
         CrudEvent.Builder event = CrudEvent.builder()
                                           .type(CrudEvent.EntityType.StopPlace)
-                                          .entityClassifier(currentVersion.stopPlaceType)
+                                          .entityClassifier(stopPlaceChange.getEntityClassifier())
                                           .action(CrudEvent.Action.valueOf(stopPlaceChange.getCrudAction().name()))
                                           .changeType(stopPlaceChange.getUpdateType())
                                           .oldValue(stopPlaceChange.getOldValue())

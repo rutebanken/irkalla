@@ -19,6 +19,8 @@ public class StopPlace {
 
     public List<Quay> quays;
 
+    public List<KeyValues> keyValues;
+
     public ValidBetween validBetween;
 
 
