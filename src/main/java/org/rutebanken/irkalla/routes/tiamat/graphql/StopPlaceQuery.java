@@ -58,10 +58,7 @@ public class StopPlaceQuery {
                                                             "      type" +
                                                             "      coordinates" +
                                                             "    }" +
-                                                            "    keyValues {" +
-                                                            "      key" +
-                                                            "      values" +
-                                                            "    }" +
+                                                            "    __typename" +
                                                             "       topographicPlace {" +
                                                             "      topographicPlaceType" +
                                                             "      name {" +

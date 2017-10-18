@@ -21,9 +21,9 @@ public class StopPlace {
 
     public TopographicPlace topographicPlace;
 
-    public List<KeyValues> keyValues;
-
     public ValidBetween validBetween;
+
+    public String __typename;
 
 
     @JsonIgnore

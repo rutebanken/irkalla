@@ -4,7 +4,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.rutebanken.irkalla.domain.CrudAction;
 import org.rutebanken.irkalla.routes.tiamat.graphql.model.GraphqlGeometry;
-import org.rutebanken.irkalla.routes.tiamat.graphql.model.KeyValues;
 import org.rutebanken.irkalla.routes.tiamat.graphql.model.Name;
 import org.rutebanken.irkalla.routes.tiamat.graphql.model.Quay;
 import org.rutebanken.irkalla.routes.tiamat.graphql.model.StopPlace;
@@ -15,7 +14,7 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 import static org.rutebanken.irkalla.routes.tiamat.StopPlaceChange.MULTI_MODAL_TYPE;
-import static org.rutebanken.irkalla.routes.tiamat.StopPlaceChange.PARENT_STOP_KEY;
+import static org.rutebanken.irkalla.routes.tiamat.StopPlaceChange.PARENT_STOP_PLACE_TYPE;
 
 public class StopPlaceChangeTest {
 
@@ -152,16 +151,13 @@ public class StopPlaceChangeTest {
     @Test
     public void getEntityClassifierReturnsMultiModalIfTypeNotSetAndStopIsParent() {
         StopPlace current = new StopPlace();
-        KeyValues isParent = new KeyValues();
-        isParent.key = PARENT_STOP_KEY;
-        isParent.values = Arrays.asList("true");
-        current.keyValues = Arrays.asList(isParent);
+        current.__typename = PARENT_STOP_PLACE_TYPE;
         StopPlaceChange change = new StopPlaceChange(CrudAction.CREATE, current, null);
         Assert.assertEquals(MULTI_MODAL_TYPE, change.getEntityClassifier());
     }
 
     @Test
-    public void getEntityClassifierReturnsNulllIfTypeNotSetAndStopIsNotParent() {
+    public void getEntityClassifierReturnsNullIfTypeNotSetAndStopIsNotParent() {
         StopPlace current = new StopPlace();
         StopPlaceChange change = new StopPlaceChange(CrudAction.CREATE, current, null);
         Assert.assertNull(change.getEntityClassifier());

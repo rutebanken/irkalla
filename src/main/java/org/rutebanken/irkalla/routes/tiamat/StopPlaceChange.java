@@ -26,9 +26,9 @@ public class StopPlaceChange {
 
     private static final Logger logger = LoggerFactory.getLogger(StopPlaceChange.class);
 
-    public static final String PARENT_STOP_KEY = "IS_PARENT_STOP_PLACE";
-
     public static final String MULTI_MODAL_TYPE = "multiModal";
+
+    public static final String PARENT_STOP_PLACE_TYPE = "ParentStopPlace";
 
     private CrudAction crudAction;
 
@@ -83,10 +83,8 @@ public class StopPlaceChange {
         if (current.stopPlaceType != null) {
             return current.stopPlaceType;
         }
-        if (current.keyValues != null) {
-            return current.keyValues.stream().filter(kv -> kv != null && kv.values != null)
-                           .anyMatch(kv -> PARENT_STOP_KEY.equals(kv.key)
-                                                   && kv.values.stream().anyMatch(v -> Boolean.TRUE.toString().equalsIgnoreCase(v))) ? MULTI_MODAL_TYPE : null;
+        if (PARENT_STOP_PLACE_TYPE.equals(current.__typename)) {
+            return MULTI_MODAL_TYPE;
         }
         return null;
     }
