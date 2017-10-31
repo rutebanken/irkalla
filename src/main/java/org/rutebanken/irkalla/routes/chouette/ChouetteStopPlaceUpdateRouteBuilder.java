@@ -30,7 +30,6 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import static org.apache.camel.management.mbean.Statistic.UpdateMode.DELTA;
@@ -52,6 +51,9 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
 
     @Value("${chouette.sync.stop.place.retry.delay:15000}")
     private int retryDelay;
+
+    @Value("${chouette.sync.stop.place.grace.ms:60000}")
+    private int graceMilliseconds;
 
 
     @Override
@@ -90,7 +92,7 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
                 .when(header(HEADER_NEXT_BATCH_URL).isNull()) // New sync, init
                 .to("direct:initNewSynchronization")
                 .otherwise()
-                    .log(LoggingLevel.INFO, "${header." + HEADER_SYNC_OPERATION + "} synchronization of stop places in Chouette resumed.")
+                .log(LoggingLevel.INFO, "${header." + HEADER_SYNC_OPERATION + "} synchronization of stop places in Chouette resumed.")
                 .end()
 
                 .setBody(constant(null))
@@ -121,7 +123,8 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
         from("direct:completeSynchronization")
                 .choice()
                 .when(header(Constants.HEADER_SYNC_STATUS_TO).isNotNull())
-                .setBody(simple("${header." + Constants.HEADER_SYNC_STATUS_TO + "}"))
+                // Adjust sync status back in time to be sure to catch any historic changes not yet committed in stop place registry
+                .process(e -> e.getIn().setBody(e.getIn().getHeader(HEADER_SYNC_STATUS_TO, Instant.class).minusMillis(graceMilliseconds)))
                 .to("direct:setSyncStatusUntilTime")
                 .log(LoggingLevel.INFO, "${header." + HEADER_SYNC_OPERATION + "} synchronization of stop places in Chouette completed.")
                 .otherwise()
