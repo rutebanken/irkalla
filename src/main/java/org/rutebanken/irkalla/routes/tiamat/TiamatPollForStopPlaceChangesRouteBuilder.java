@@ -35,6 +35,15 @@ import static org.rutebanken.irkalla.util.Http4URL.toHttp4Url;
 @Component
 public class TiamatPollForStopPlaceChangesRouteBuilder extends BaseRouteBuilder {
 
+    public static final String ET_CLIENT_NAME = "irkalla";
+
+    public static final String ET_CLIENT_ID_HEADER = "ET-Client-ID";
+
+    public static final String ET_CLIENT_NAME_HEADER = "ET-Client-Name";
+
+    @Value("${HOSTNAME:irkalla}")
+    private String clientId;
+
     @Value("${tiamat.url}")
     private String tiamatUrl;
 
@@ -67,6 +76,8 @@ public class TiamatPollForStopPlaceChangesRouteBuilder extends BaseRouteBuilder 
                 .log(LoggingLevel.INFO, "Fetching batch of changed stop places: ${header." + HEADER_NEXT_BATCH_URL + "}")
                 .removeHeader("Link")
                 .setHeader(Exchange.HTTP_METHOD, constant(HttpMethods.GET))
+                .setHeader(ET_CLIENT_NAME_HEADER, constant(ET_CLIENT_NAME))
+                .setHeader(ET_CLIENT_ID_HEADER, constant(clientId))
                 .setBody(constant(null))
                 .toD("${header." + HEADER_NEXT_BATCH_URL + "}")
                 .removeHeader(HEADER_NEXT_BATCH_URL)
