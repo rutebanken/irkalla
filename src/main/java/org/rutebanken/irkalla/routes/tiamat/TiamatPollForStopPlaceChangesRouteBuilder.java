@@ -29,17 +29,11 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
-import static org.rutebanken.irkalla.Constants.HEADER_NEXT_BATCH_URL;
+import static org.rutebanken.irkalla.Constants.*;
 import static org.rutebanken.irkalla.util.Http4URL.toHttp4Url;
 
 @Component
 public class TiamatPollForStopPlaceChangesRouteBuilder extends BaseRouteBuilder {
-
-    public static final String ET_CLIENT_NAME = "irkalla";
-
-    public static final String ET_CLIENT_ID_HEADER = "ET-Client-ID";
-
-    public static final String ET_CLIENT_NAME_HEADER = "ET-Client-Name";
 
     @Value("${HOSTNAME:irkalla}")
     private String clientId;
@@ -102,7 +96,7 @@ public class TiamatPollForStopPlaceChangesRouteBuilder extends BaseRouteBuilder 
         uriBuilder.queryParam("tariffZoneExportMode", "NONE");
 
         if (fromAsEpocMillis != null) {
-            Instant from=Instant.ofEpochMilli(fromAsEpocMillis);
+            Instant from = Instant.ofEpochMilli(fromAsEpocMillis);
             uriBuilder.queryParam("from", from.atZone(TIME_ZONE_ID).format(FORMATTER));
         }
         if (toAsEpocMillis != null) {
@@ -122,8 +116,8 @@ public class TiamatPollForStopPlaceChangesRouteBuilder extends BaseRouteBuilder 
      */
     private void setURLToNextBatch(Exchange e) {
         e.getIn().setHeader(HEADER_NEXT_BATCH_URL, toHttp4Url(e.getIn().getHeader("Link", String.class)
-                                                                      .replaceFirst("\\<", "")
-                                                                      .replaceFirst("\\>; rel=\"next\"", "")));
+                .replaceFirst("\\<", "")
+                .replaceFirst("\\>; rel=\"next\"", "")));
     }
 
 }

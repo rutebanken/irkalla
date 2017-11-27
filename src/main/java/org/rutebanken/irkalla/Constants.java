@@ -29,4 +29,8 @@ public class Constants {
     public static final String SYNC_OPERATION_FULL="FULL";
     public static final String SYNC_OPERATION_FULL_WITH_DELETE_UNUSED_FIRST="DELETE_UNUSED";
 
+    public static final String ET_CLIENT_ID_HEADER = "ET-Client-ID";
+    public static final String ET_CLIENT_NAME_HEADER = "ET-Client-Name";
+    public static final String ET_CLIENT_NAME = "irkalla";
+
 }
