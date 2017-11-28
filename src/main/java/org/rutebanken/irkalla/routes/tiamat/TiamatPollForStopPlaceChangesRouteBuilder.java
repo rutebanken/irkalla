@@ -70,8 +70,6 @@ public class TiamatPollForStopPlaceChangesRouteBuilder extends BaseRouteBuilder 
                 .log(LoggingLevel.INFO, "Fetching batch of changed stop places: ${header." + HEADER_NEXT_BATCH_URL + "}")
                 .removeHeader("Link")
                 .setHeader(Exchange.HTTP_METHOD, constant(HttpMethods.GET))
-                .setHeader(ET_CLIENT_NAME_HEADER, constant(ET_CLIENT_NAME))
-                .setHeader(ET_CLIENT_ID_HEADER, constant(clientId))
                 .setBody(constant(null))
                 .toD("${header." + HEADER_NEXT_BATCH_URL + "}")
                 .removeHeader(HEADER_NEXT_BATCH_URL)

@@ -26,9 +26,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import static org.rutebanken.irkalla.Constants.ET_CLIENT_ID_HEADER;
-import static org.rutebanken.irkalla.Constants.ET_CLIENT_NAME;
-import static org.rutebanken.irkalla.Constants.ET_CLIENT_NAME_HEADER;
 
 @Service("stopPlaceDao")
 public class GraphQLStopPlaceDao implements StopPlaceDao {
@@ -70,9 +67,6 @@ public class GraphQLStopPlaceDao implements StopPlaceDao {
     private HttpEntity<String> createQueryHttpEntity(String id, Long version) {
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.CONTENT_TYPE, "application/json");
-
-        headers.set(ET_CLIENT_NAME_HEADER, ET_CLIENT_NAME);
-        headers.set(ET_CLIENT_ID_HEADER, clientId);
 
         return new HttpEntity<>(new StopPlaceQuery(id, version).toString(), headers);
     }
