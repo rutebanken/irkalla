@@ -66,7 +66,6 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
         <docker.port.container.jolokia>8080</docker.port.container.jolokia>
         <fabric8.version>2.3.4</fabric8.version>
         <keycloak.version>3.2.1.Final</keycloak.version>
-        <spring.security.version>4.2.3.RELEASE</spring.security.version>
         <jetty.version>9.4.6.v20170531</jetty.version>
         <rutebanken.helpers.version>0.0.3-SNAPSHOT</rutebanken.helpers.version>
         <camel.version>2.19.2</camel.version>
@@ -82,24 +81,12 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-
             <dependency>
                 <groupId>io.fabric8</groupId>
                 <artifactId>fabric8-project</artifactId>
                 <version>${fabric8.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-config</artifactId>
-                <version>${spring.security.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-web</artifactId>
-                <version>${spring.security.version}</version>
             </dependency>
 
             <dependency>
@@ -256,18 +243,18 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
             </dependency>
 
             <dependency>
-                <groupId>org.rutebanken.helpers</groupId>
+                <groupId>org.entur.helpers</groupId>
                 <artifactId>hazelcast-helper</artifactId>
                 <version>${rutebanken.helpers.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>org.rutebanken.helpers</groupId>
+                <groupId>org.entur.helpers</groupId>
                 <artifactId>organisation</artifactId>
                 <version>${rutebanken.helpers.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.rutebanken.helpers</groupId>
+                <groupId>org.entur.helpers</groupId>
                 <artifactId>jms-batch</artifactId>
                 <version>${rutebanken.helpers.version}</version>
             </dependency>
@@ -610,15 +597,15 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
         </dependency>
 
         <dependency>
-            <groupId>org.rutebanken.helpers</groupId>
+            <groupId>org.entur.helpers</groupId>
             <artifactId>hazelcast-helper</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.rutebanken.helpers</groupId>
+            <groupId>org.entur.helpers</groupId>
             <artifactId>jms-batch</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.rutebanken.helpers</groupId>
+            <groupId>org.entur.helpers</groupId>
             <artifactId>organisation</artifactId>
         </dependency>
     </dependencies>
