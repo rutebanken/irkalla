@@ -65,7 +65,7 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
         <maven-javadoc-plugin.version>2.9.1</maven-javadoc-plugin.version>
         <docker.port.container.jolokia>8080</docker.port.container.jolokia>
         <fabric8.version>2.3.4</fabric8.version>
-        <keycloak.version>3.2.1.Final</keycloak.version>
+        <keycloak.version>4.0.0.Final</keycloak.version>
         <spring.security.version>4.2.3.RELEASE</spring.security.version>
         <jetty.version>9.4.6.v20170531</jetty.version>
         <rutebanken.helpers.version>0.0.3-SNAPSHOT</rutebanken.helpers.version>
@@ -387,7 +387,7 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
             <dependency>
                 <groupId>org.wololo</groupId>
                 <artifactId>jts2geojson</artifactId>
-                <version>0.11.0</version>
+                <version>0.12.0</version>
             </dependency>
 
             <dependency>
