@@ -66,7 +66,7 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
         <docker.port.container.jolokia>8080</docker.port.container.jolokia>
         <fabric8.version>2.3.4</fabric8.version>
         <keycloak.version>3.2.1.Final</keycloak.version>
-        <spring.security.version>4.2.3.RELEASE</spring.security.version>
+        <spring.security.version>4.2.4.RELEASE</spring.security.version>
         <jetty.version>9.4.6.v20170531</jetty.version>
         <rutebanken.helpers.version>0.0.3-SNAPSHOT</rutebanken.helpers.version>
         <camel.version>2.19.2</camel.version>
