@@ -32,7 +32,6 @@ import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 
-import static org.apache.camel.management.mbean.Statistic.UpdateMode.DELTA;
 import static org.rutebanken.irkalla.Constants.*;
 import static org.rutebanken.irkalla.util.Http4URL.toHttp4Url;
 
@@ -63,7 +62,7 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
         from("quartz2://irkalla/stopPlaceDeltaSync?cron=" + deltaSyncCronSchedule + "&trigger.timeZone=Europe/Oslo")
                 .autoStartup("{{chouette.sync.stop.place.autoStartup:true}}")
                 .log(LoggingLevel.DEBUG, "Quartz triggers delta sync of changed stop places.")
-                .setHeader(HEADER_SYNC_OPERATION, constant(DELTA))
+                .setHeader(HEADER_SYNC_OPERATION, constant(SYNC_OPERATION_DELTA))
                 .inOnly("activemq:queue:ChouetteStopPlaceSyncQueue")
                 .routeId("chouette-synchronize-stop-places-delta-quartz");
 

@@ -15,10 +15,8 @@
 
 package org.rutebanken.irkalla.rest;
 
-import org.rutebanken.irkalla.service.IrkallaConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.GET;
@@ -32,9 +30,6 @@ import javax.ws.rs.core.Response;
 public class HealthResource {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
-
-    @Autowired
-    private IrkallaConfiguration irkallaConfiguration;
 
     private boolean hasBeenOkOnce = false;
 
