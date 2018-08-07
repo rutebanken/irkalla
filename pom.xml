@@ -68,7 +68,7 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
         <keycloak.version>4.1.0.Final</keycloak.version>
         <spring.security.version>4.2.3.RELEASE</spring.security.version>
         <jetty.version>9.4.6.v20170531</jetty.version>
-        <rutebanken.helpers.version>0.0.3-SNAPSHOT</rutebanken.helpers.version>
+        <entur.helpers.version>0.0.3-SNAPSHOT</entur.helpers.version>
         <camel.version>2.22.0</camel.version>
     </properties>
 
@@ -256,20 +256,20 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
             </dependency>
 
             <dependency>
-                <groupId>org.rutebanken.helpers</groupId>
+                <groupId>org.entur.helpers</groupId>
                 <artifactId>hazelcast-helper</artifactId>
-                <version>${rutebanken.helpers.version}</version>
+                <version>${entur.helpers.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>org.rutebanken.helpers</groupId>
+                <groupId>org.entur.helpers</groupId>
                 <artifactId>organisation</artifactId>
-                <version>${rutebanken.helpers.version}</version>
+                <version>${entur.helpers.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.rutebanken.helpers</groupId>
+                <groupId>org.entur.helpers</groupId>
                 <artifactId>jms-batch</artifactId>
-                <version>${rutebanken.helpers.version}</version>
+                <version>${entur.helpers.version}</version>
             </dependency>
 
 
@@ -610,15 +610,15 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
         </dependency>
 
         <dependency>
-            <groupId>org.rutebanken.helpers</groupId>
+            <groupId>org.entur.helpers</groupId>
             <artifactId>hazelcast-helper</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.rutebanken.helpers</groupId>
+            <groupId>org.entur.helpers</groupId>
             <artifactId>jms-batch</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.rutebanken.helpers</groupId>
+            <groupId>org.entur.helpers</groupId>
             <artifactId>organisation</artifactId>
         </dependency>
     </dependencies>
