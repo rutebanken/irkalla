@@ -44,8 +44,9 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
 
         <!-- versions for use in mvn plugins as we cannot inherit them from a BOM -->
         <docker.maven.plugin.version>0.21.0</docker.maven.plugin.version>
-        <spring-boot-plugin.version>1.5.14.RELEASE</spring-boot-plugin.version>
-        <spring-boot.version>1.5.14.RELEASE</spring-boot.version>
+
+        <spring-boot-plugin.version>2.0.3.RELEASE</spring-boot-plugin.version>
+        <spring-boot.version>2.0.3.RELEASE</spring-boot.version>
 
         <!-- Docker & Fabric8 Configs -->
         <docker.from>eu.gcr.io/carbon-1287/java-base-image</docker.from>
@@ -65,10 +66,12 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
         <maven-javadoc-plugin.version>2.9.1</maven-javadoc-plugin.version>
         <docker.port.container.jolokia>8080</docker.port.container.jolokia>
         <fabric8.version>2.3.4</fabric8.version>
+
         <keycloak.version>3.2.1.Final</keycloak.version>
+
         <jetty.version>9.4.6.v20170531</jetty.version>
-        <rutebanken.helpers.version>0.0.3-SNAPSHOT</rutebanken.helpers.version>
-        <camel.version>2.19.2</camel.version>
+        <entur.helpers.version>0.0.4-SNAPSHOT</entur.helpers.version>
+        <camel.version>2.22.0</camel.version>
     </properties>
 
     <dependencyManagement>
@@ -92,7 +95,7 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
             <dependency>
                 <groupId>net.logstash.logback</groupId>
                 <artifactId>logstash-logback-encoder</artifactId>
-                <version>4.11</version>
+                <version>5.2</version>
             </dependency>
 
             <!-- janino gives logback conditionals -->
@@ -245,18 +248,18 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
             <dependency>
                 <groupId>org.entur.helpers</groupId>
                 <artifactId>hazelcast-helper</artifactId>
-                <version>${rutebanken.helpers.version}</version>
+                <version>${entur.helpers.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.entur.helpers</groupId>
                 <artifactId>organisation</artifactId>
-                <version>${rutebanken.helpers.version}</version>
+                <version>${entur.helpers.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.entur.helpers</groupId>
                 <artifactId>jms-batch</artifactId>
-                <version>${rutebanken.helpers.version}</version>
+                <version>${entur.helpers.version}</version>
             </dependency>
 
 
@@ -363,7 +366,7 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
             </dependency>
             <dependency>
                 <groupId>org.keycloak</groupId>
-                <artifactId>keycloak-spring-boot-adapter</artifactId>
+                <artifactId>keycloak-spring-boot-2-adapter</artifactId>
                 <version>${keycloak.version}</version>
             </dependency>
             <dependency>
@@ -374,7 +377,7 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
             <dependency>
                 <groupId>org.wololo</groupId>
                 <artifactId>jts2geojson</artifactId>
-                <version>0.11.0</version>
+                <version>0.12.0</version>
             </dependency>
 
             <dependency>
@@ -570,7 +573,7 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
         </dependency>
         <dependency>
             <groupId>org.keycloak</groupId>
-            <artifactId>keycloak-spring-boot-adapter</artifactId>
+            <artifactId>keycloak-spring-boot-2-adapter</artifactId>
         </dependency>
         <dependency>
             <groupId>com.graphql-java</groupId>

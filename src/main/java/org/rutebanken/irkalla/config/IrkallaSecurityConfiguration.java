@@ -38,8 +38,6 @@ import org.springframework.security.web.util.matcher.RegexRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestHeaderRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
-import javax.servlet.http.HttpServletRequest;
-
 import static org.keycloak.adapters.springsecurity.filter.KeycloakAuthenticationProcessingFilter.AUTHORIZATION_HEADER;
 
 @Configuration
@@ -90,12 +88,7 @@ public class IrkallaSecurityConfiguration extends KeycloakWebSecurityConfigurerA
         RequestMatcher requestMatcher =
                 new OrRequestMatcher(new RequestHeaderRequestMatcher(AUTHORIZATION_HEADER), tokenQueryParamMatcher);
 
-        KeycloakAuthenticationProcessingFilter filter = new KeycloakAuthenticationProcessingFilter(authenticationManagerBean(), requestMatcher) {
-            @Override
-            protected boolean isBearerTokenRequest(HttpServletRequest request) {
-                return super.isBearerTokenRequest(request) || tokenQueryParamMatcher.matches(request);
-            }
-        };
+        KeycloakAuthenticationProcessingFilter filter = new KeycloakAuthenticationProcessingFilter(authenticationManagerBean(), requestMatcher);
 
         filter.setSessionAuthenticationStrategy(sessionAuthenticationStrategy());
         return filter;
