@@ -1,4 +1,4 @@
-# irkalla
+# irkalla [![CircleCI](https://circleci.com/gh/entur/irkalla/tree/master.svg?style=svg)](https://circleci.com/gh/entur/irkalla/tree/master)
 Will distribute information about stop change between tiamat, chouette and nabu. 
 
 
