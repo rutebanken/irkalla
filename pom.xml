@@ -44,6 +44,7 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
 
         <!-- versions for use in mvn plugins as we cannot inherit them from a BOM -->
         <docker.maven.plugin.version>0.21.0</docker.maven.plugin.version>
+
         <spring-boot-plugin.version>2.0.3.RELEASE</spring-boot-plugin.version>
         <spring-boot.version>2.0.3.RELEASE</spring-boot.version>
 
@@ -65,8 +66,9 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
         <maven-javadoc-plugin.version>2.9.1</maven-javadoc-plugin.version>
         <docker.port.container.jolokia>8080</docker.port.container.jolokia>
         <fabric8.version>2.3.4</fabric8.version>
-        <keycloak.version>4.1.0.Final</keycloak.version>
-        <spring.security.version>4.2.4.RELEASE</spring.security.version>
+
+        <keycloak.version>3.2.1.Final</keycloak.version>
+
         <jetty.version>9.4.6.v20170531</jetty.version>
         <entur.helpers.version>0.0.4-SNAPSHOT</entur.helpers.version>
         <camel.version>2.22.0</camel.version>
@@ -82,24 +84,12 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-
             <dependency>
                 <groupId>io.fabric8</groupId>
                 <artifactId>fabric8-project</artifactId>
                 <version>${fabric8.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-config</artifactId>
-                <version>${spring.security.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-web</artifactId>
-                <version>${spring.security.version}</version>
             </dependency>
 
             <dependency>
@@ -686,6 +676,11 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
                         </image>
                     </images>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>3.2.1</version>
             </plugin>
         </plugins>
     </build>
