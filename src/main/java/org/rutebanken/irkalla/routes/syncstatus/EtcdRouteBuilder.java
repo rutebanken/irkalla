@@ -13,18 +13,17 @@
  * limitations under the Licence.
  */
 
-package org.rutebanken.irkalla.routes.etcd;
+package org.rutebanken.irkalla.routes.syncstatus;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.component.http4.HttpMethods;
 import org.apache.camel.http.common.HttpOperationFailedException;
 import org.apache.camel.model.dataformat.JsonLibrary;
-import org.rutebanken.irkalla.IrkallaException;
 import org.rutebanken.irkalla.routes.BaseRouteBuilder;
-import org.rutebanken.irkalla.routes.etcd.json.EtcdResponse;
+import org.rutebanken.irkalla.routes.syncstatus.json.EtcdResponse;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
@@ -37,7 +36,7 @@ import static org.rutebanken.irkalla.util.Http4URL.toHttp4Url;
  * Get/ set stop place synced until date in etcd. Not using camel-etcd because timeout does not work (hangs indefinitely) with underlying etcd4j lib.
  */
 @Component
-@ConditionalOnProperty(name = "sync.status.in.memory", havingValue = "false", matchIfMissing = true)
+@Profile("etcd")
 public class EtcdRouteBuilder extends BaseRouteBuilder {
 
     @Value("${etcd.url}")

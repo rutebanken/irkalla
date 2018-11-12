@@ -13,16 +13,21 @@
  * limitations under the Licence.
  */
 
-package org.rutebanken.irkalla.routes.etcd.json;
+package org.rutebanken.irkalla.routes.syncstatus.json;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class EtcdNode {
+public class EtcdResponse {
 
-    public String key;
+    public String action;
 
-    public String value;
+    public String errorCode;
+
+    public String message;
+
+    public EtcdNode node;
+
 }
