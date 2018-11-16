@@ -58,7 +58,7 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
         <maven.compiler.source>1.8</maven.compiler.source>
 
         <maven-javadoc-plugin.version>2.9.1</maven-javadoc-plugin.version>
-        <keycloak.version>4.1.0.Final</keycloak.version>
+        <keycloak.version>4.6.0.Final</keycloak.version>
         <spring.security.version>4.2.4.RELEASE</spring.security.version>
         <entur.helpers.version>0.0.4-SNAPSHOT</entur.helpers.version>
         <camel.version>2.22.0</camel.version>
@@ -252,7 +252,7 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
             <dependency>
                 <groupId>org.wololo</groupId>
                 <artifactId>jts2geojson</artifactId>
-                <version>0.12.0</version>
+                <version>0.13.0</version>
             </dependency>
             <dependency>
                 <groupId>org.entur.helpers</groupId>
