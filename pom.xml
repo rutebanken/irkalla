@@ -245,11 +245,6 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
                 <version>${keycloak.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.graphql-java</groupId>
-                <artifactId>graphql-java</artifactId>
-                <version>3.0.0</version>
-            </dependency>
-            <dependency>
                 <groupId>org.wololo</groupId>
                 <artifactId>jts2geojson</artifactId>
                 <version>0.13.0</version>
@@ -459,10 +454,6 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
         <dependency>
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-spring-boot-2-adapter</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.graphql-java</groupId>
-            <artifactId>graphql-java</artifactId>
         </dependency>
         <dependency>
             <groupId>org.wololo</groupId>
