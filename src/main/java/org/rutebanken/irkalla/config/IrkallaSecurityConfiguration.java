@@ -66,11 +66,6 @@ public class IrkallaSecurityConfiguration extends KeycloakWebSecurityConfigurerA
         return new RegisterSessionAuthenticationStrategy(new SessionRegistryImpl());
     }
 
-    @Bean
-    public KeycloakConfigResolver KeycloakConfigResolver() {
-        return new KeycloakSpringBootConfigResolver();
-    }
-
 
     /**
      * Override KeycloakAuthenticationProcessingFilter to support token as query param.
