@@ -255,7 +255,7 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
             <dependency>
                 <groupId>org.wololo</groupId>
                 <artifactId>jts2geojson</artifactId>
-                <version>0.13.0</version>
+                <version>0.14.1</version>
             </dependency>
             <dependency>
                 <groupId>org.entur.helpers</groupId>
