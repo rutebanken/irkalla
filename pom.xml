@@ -224,7 +224,7 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
             <dependency>
                 <groupId>org.apache.activemq</groupId>
                 <artifactId>activemq-camel</artifactId>
-                <version>5.15.7</version>
+                <version>5.15.10</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
