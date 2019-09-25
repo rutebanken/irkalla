@@ -48,8 +48,8 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
         <spring-boot.version>2.1.0.RELEASE</spring-boot.version>
 
 
-        <docker.from>eu.gcr.io/carbon-1287/openjdk11-base-image</docker.from>
-        <fabric8.dockerUser>carbon-1287/</fabric8.dockerUser>
+        <docker.from>eu.gcr.io/entur-system-1287/openjdk11-base-image</docker.from>
+        <fabric8.dockerUser>entur-system-1287/</fabric8.dockerUser>
         <docker.image>eu.gcr.io/${fabric8.dockerUser}${project.artifactId}:${project.version}</docker.image>
         <docker.cleanup>none</docker.cleanup>
 
