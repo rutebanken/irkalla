@@ -1,12 +1,11 @@
 package org.rutebanken.irkalla.routes.syncstatus;
 
-import com.google.cloud.storage.Storage;
 import org.apache.camel.Exchange;
 import org.apache.commons.io.IOUtils;
-import org.rutebanken.helper.gcp.BlobStoreHelper;
+import org.rutebanken.irkalla.repository.BlobStoreRepository;
 import org.rutebanken.irkalla.routes.BaseRouteBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.io.InputStream;
@@ -15,26 +14,16 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
 @Component
-@Profile("gcs-blobstore")
 public class BlobStoreSyncStatusRouteBuilder extends BaseRouteBuilder {
 
 
-    @Value("${blobstore.gcs.credential.path}")
-    private String credentialPath;
+    @Autowired
+    private BlobStoreRepository blobStoreRepository;
 
-    @Value("${blobstore.gcs.project.id}")
-    private String projectId;
-
-
-    @Value("${blobstore.gcs.container.name}")
-    private String containerName;
-
-    @Value("${blobstore.gcs.sync.status.blob.name:StopPlace/syncstatus}")
+    @Value("${blobstore.sync.status.blob.name:StopPlace/syncstatus}")
     private String blobName;
 
-    private Storage storage;
-
-    public static final String DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSSXXXX";
+    private static final String DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSSXXXX";
 
     private static DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN);
 
@@ -42,8 +31,6 @@ public class BlobStoreSyncStatusRouteBuilder extends BaseRouteBuilder {
     @Override
     public void configure() throws Exception {
         super.configure();
-
-        storage = BlobStoreHelper.getStorage(credentialPath, projectId);
 
         from("direct:getSyncStatusUntilTime")
                 .process(this::getSyncStatusUntilTime)
@@ -59,9 +46,9 @@ public class BlobStoreSyncStatusRouteBuilder extends BaseRouteBuilder {
         Long syncStatusUntilTime = null;
 
         try {
-            InputStream inputStream = BlobStoreHelper.getBlob(storage, containerName, blobName);
+            InputStream inputStream = blobStoreRepository.getBlob(blobName);
             if (inputStream != null) {
-                String stringVal = IOUtils.toString(inputStream);
+                String stringVal = IOUtils.toString(inputStream).replaceAll("([\\r\\n])", "");
                 syncStatusUntilTime = Instant.from(FORMATTER.parse(stringVal)).toEpochMilli();
             } else {
                 log.info("Got empty inputstream for syncedUntilTime, assuming this is initial sync.");
@@ -75,9 +62,7 @@ public class BlobStoreSyncStatusRouteBuilder extends BaseRouteBuilder {
 
     private void setSyncStatusUntilTime(Exchange exchange) {
         String stringVal = Instant.ofEpochMilli(exchange.getIn().getBody(Long.class)).atZone(ZoneId.of("UTC")).format(FORMATTER);
-
         InputStream inputStream = IOUtils.toInputStream(stringVal);
-
-        BlobStoreHelper.uploadBlobWithRetry(storage, containerName, blobName, inputStream, false);
+        blobStoreRepository.uploadBlob(blobName, inputStream, false);
     }
 }
