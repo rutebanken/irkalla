@@ -43,5 +43,4 @@ public class InMemoryBlobStoreRepository implements BlobStoreRepository {
             throw new RuntimeException(e);
         }
     }
-
 }
