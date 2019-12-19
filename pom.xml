@@ -52,7 +52,7 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
         <dependencies>
             <dependency>
                 <groupId>org.apache.camel</groupId>
-                <artifactId>camel-bom</artifactId>
+                <artifactId>camel-spring-boot-dependencies</artifactId>
                 <version>${camel.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
@@ -66,11 +66,6 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
         <dependency>
             <groupId>org.entur.helpers</groupId>
             <artifactId>hazelcast-helper</artifactId>
-            <version>${entur.helpers.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.entur.helpers</groupId>
-            <artifactId>jms-batch</artifactId>
             <version>${entur.helpers.version}</version>
         </dependency>
         <dependency>
@@ -156,15 +151,9 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
         </dependency>
 
         <!-- Camel -->
-
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-spring</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core</artifactId>
+            <artifactId>camel-spring-boot-starter</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -175,10 +164,6 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
                     <artifactId>geronimo-servlet_3.0_spec</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-http-common</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -194,20 +179,7 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-jetty-common</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-jms</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-spring-boot</artifactId>
-        </dependency>
-        <dependency>
+         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jackson</artifactId>
         </dependency>
@@ -220,10 +192,7 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
             <artifactId>camel-jsonpath</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-camel</artifactId>
-        </dependency>
+
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-hazelcast</artifactId>

@@ -29,8 +29,7 @@ public class EntityChangedRouteBuilder extends BaseRouteBuilder {
     public void configure() throws Exception {
         super.configure();
 
-        from("activemq:queue:IrkallaChangelogQueue?transacted=true")
-                .transacted()
+        from("entur-google-pubsub:IrkallaChangelogQueue")
                 .unmarshal().json(JsonLibrary.Jackson, EntityChangedEvent.class)
                 .setHeader(Constants.HEADER_ENTITY_ID,simple("${body.entityId}"))
                 .setHeader(Constants.HEADER_ENTITY_VERSION,simple("${body.entityVersion}"))

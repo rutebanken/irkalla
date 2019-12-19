@@ -42,7 +42,7 @@ public class TiamatStopPlaceChangedRouteBuilder extends BaseRouteBuilder {
                 .choice()
                 .when(simple("${header." + Constants.HEADER_CRUD_ACTION + "} == ${type:org.rutebanken.irkalla.domain.CrudAction.DELETE}"))
                 .setBody(constant(null))
-                .to("activemq:queue:ChouetteStopPlaceDeleteQueue")
+                .to("entur-google-pubsub:ChouetteStopPlaceDeleteQueue")
                 .otherwise()
                     .bean("stopPlaceDao", "getStopPlaceChange")
                     .choice()
@@ -54,7 +54,7 @@ public class TiamatStopPlaceChangedRouteBuilder extends BaseRouteBuilder {
                     .process(e -> e.getIn().setHeader("isEffective", isChangeEffective(e)))
                     .bean("stopPlaceChangedToEvent", "toEvent")
                     .convertBodyTo(String.class)
-                    .to("activemq:queue:CrudEventQueue")
+                    .to("entur-google-pubsub:CrudEventQueue")
 
                         .to("direct:triggerStopPlaceSyncIfChangeIsEffective")
                     .endChoice()
@@ -65,7 +65,7 @@ public class TiamatStopPlaceChangedRouteBuilder extends BaseRouteBuilder {
                 .choice()
                 .when(simple("${header.isEffective}"))
                 .setBody(constant(null))
-                .to("activemq:queue:ChouetteStopPlaceSyncQueue")
+                .to("entur-google-pubsub:ChouetteStopPlaceSyncQueue")
                 .routeId("tiamat-trigger-chouette-update-for-changed-stop");
 
     }

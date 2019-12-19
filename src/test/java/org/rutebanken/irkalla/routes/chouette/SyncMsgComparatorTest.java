@@ -15,14 +15,17 @@
 
 package org.rutebanken.irkalla.routes.chouette;
 
-import org.apache.activemq.command.ActiveMQMessage;
+import org.apache.camel.Message;
+import org.apache.camel.impl.DefaultMessage;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.rutebanken.irkalla.Constants.*;
 
@@ -31,28 +34,39 @@ public class SyncMsgComparatorTest {
 
     @Test
     public void testComparator() throws Exception {
-        List<ActiveMQMessage> sortedList = Arrays.asList(msg(SYNC_OPERATION_FULL_WITH_DELETE_UNUSED_FIRST, null),
+        List<Message> sortedList = Arrays.asList(msg(SYNC_OPERATION_FULL_WITH_DELETE_UNUSED_FIRST, null),
                 msg(SYNC_OPERATION_FULL, "url"), msg(SYNC_OPERATION_FULL, null),
                 msg(SYNC_OPERATION_DELTA, "url"), msg(SYNC_OPERATION_DELTA, null));
 
 
-        List<ActiveMQMessage> toBeSortedList = new ArrayList<>(sortedList);
+        List<Message> toBeSortedList = new ArrayList<>(sortedList);
         Collections.sort(toBeSortedList, new SyncMsgComparator());
 
         Assert.assertEquals(sortedList, toBeSortedList);
 
 
-        List<ActiveMQMessage> toBeSortedListReversed = new ArrayList<>(sortedList);
+        List<Message> toBeSortedListReversed = new ArrayList<>(sortedList);
         Collections.reverse(toBeSortedListReversed);
         Collections.sort(toBeSortedListReversed, new SyncMsgComparator());
         Assert.assertEquals(sortedList, toBeSortedListReversed);
     }
 
 
-    private ActiveMQMessage msg(String syncOperation, String nextBatchUrl) throws Exception {
-        ActiveMQMessage msg = new ActiveMQMessage();
-        msg.setProperty(HEADER_NEXT_BATCH_URL, nextBatchUrl);
-        msg.setProperty(HEADER_SYNC_OPERATION, syncOperation);
+    private Message msg(String syncOperation, String nextBatchUrl) throws Exception {
+        Message msg = new DefaultMessage() {
+            private Map<String,Object> headers = new HashMap<>();
+
+            public void setHeader(String key, Object value) {
+                headers.put(key, value);
+            }
+
+            public Object getHeader(String key) {
+                return headers.get(key);
+            }
+
+        };
+        msg.setHeader(HEADER_NEXT_BATCH_URL, nextBatchUrl);
+        msg.setHeader(HEADER_SYNC_OPERATION, syncOperation);
         return msg;
     }
 }
