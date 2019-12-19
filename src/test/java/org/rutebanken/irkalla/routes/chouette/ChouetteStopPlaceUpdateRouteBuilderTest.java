@@ -23,13 +23,16 @@ import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.http.common.HttpOperationFailedException;
 import org.junit.Test;
+import org.rutebanken.irkalla.IrkallaApplication;
 import org.rutebanken.irkalla.routes.RouteBuilderIntegrationTestBase;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 
 import static org.rutebanken.irkalla.util.Http4URL.toHttp4Url;
 
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@SpringBootTest(classes = IrkallaApplication.class, properties = "irkalla.camel.redelivery.max=0")
 public class ChouetteStopPlaceUpdateRouteBuilderTest extends RouteBuilderIntegrationTestBase {
 
 
