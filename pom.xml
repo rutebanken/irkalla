@@ -203,6 +203,15 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
             <artifactId>camel-quartz2</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jms</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-camel</artifactId>
+        </dependency>
+
         <!-- Keycloak -->
 
         <dependency>
