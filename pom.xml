@@ -22,7 +22,7 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
     <parent>
         <groupId>org.rutebanken.superpom</groupId>
         <artifactId>superpom</artifactId>
-        <version>0.0.12-SNAPSHOT</version>
+        <version>0.0.13-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -42,7 +42,7 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
     <properties>
         <camel.version>2.24.3</camel.version>
         <keycloak.version>4.8.3.Final</keycloak.version>
-        <entur.helpers.version>0.0.8-SNAPSHOT</entur.helpers.version>
+        <entur.helpers.version>0.0.9-SNAPSHOT</entur.helpers.version>
         <entur.common.logging.version>1.0.14</entur.common.logging.version>
         <wololo.version>0.13.0</wololo.version>
         <entur.google.pubsub.emulator.download.skip>false</entur.google.pubsub.emulator.download.skip>
