@@ -118,8 +118,8 @@ public class AdminRestRouteBuilder extends BaseRouteBuilder {
                 .process(e -> authorize(AuthorizationConstants.ROLE_ROUTE_DATA_ADMIN))
                 .removeHeaders("CamelHttp*")
                 .setHeader(HEADER_SYNC_OPERATION, constant(SYNC_OPERATION_DELTA))
-                .inOnly("activemq:queue:ChouetteStopPlaceSyncQueue")
                 .setBody(constant(null))
+                .inOnly("entur-google-pubsub:ChouetteStopPlaceSyncQueue")
                 .endRest()
                 .post("/full")
                 .description("Full synchronization of all stop places from Tiamat to Chouette")
@@ -135,8 +135,8 @@ public class AdminRestRouteBuilder extends BaseRouteBuilder {
                 .otherwise()
                     .setHeader(HEADER_SYNC_OPERATION, constant(SYNC_OPERATION_FULL))
                 .end()
-                .inOnly("activemq:queue:ChouetteStopPlaceSyncQueue")
                 .setBody(constant(null))
+                .inOnly("entur-google-pubsub:ChouetteStopPlaceSyncQueue")
                 .endRest();
 
 

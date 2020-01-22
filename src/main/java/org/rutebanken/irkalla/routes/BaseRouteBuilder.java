@@ -15,18 +15,50 @@
 
 package org.rutebanken.irkalla.routes;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spring.SpringRouteBuilder;
+import org.entur.pubsub.camel.EnturGooglePubSubConstants;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.gcp.pubsub.support.BasicAcknowledgeablePubsubMessage;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.rutebanken.irkalla.Constants.SINGLETON_ROUTE_DEFINITION_GROUP_NAME;
 
 public abstract class BaseRouteBuilder extends SpringRouteBuilder {
 
+
+    @Value("${irkalla.camel.redelivery.max:3}")
+    private int maxRedelivery;
+
+    @Value("${irkalla.camel.redelivery.delay:5000}")
+    private int redeliveryDelay;
+
+    @Value("${irkalla.camel.redelivery.backoff.multiplier:3}")
+    private int backOffMultiplier;
+
+
     @Override
     public void configure() throws Exception {
-        errorHandler(transactionErrorHandler()
-                             .logExhausted(true)
-                             .logRetryStackTrace(true));
+        errorHandler(defaultErrorHandler()
+                .redeliveryDelay(redeliveryDelay)
+                .maximumRedeliveries(maxRedelivery)
+                .onRedelivery(exchange -> logRedelivery(exchange))
+                .useExponentialBackOff()
+                .backOffMultiplier(backOffMultiplier)
+                .logExhausted(true)
+                .logRetryStackTrace(true));
+
+    }
+
+    protected void logRedelivery(Exchange exchange) {
+        int redeliveryCounter = exchange.getIn().getHeader("CamelRedeliveryCounter", Integer.class);
+        int redeliveryMaxCounter = exchange.getIn().getHeader("CamelRedeliveryMaxCounter", Integer.class);
+        log.warn("Exchange failed. Redelivering the message locally, attempt {}/{}...", redeliveryCounter, redeliveryMaxCounter);
     }
 
     /**
@@ -34,5 +66,32 @@ public abstract class BaseRouteBuilder extends SpringRouteBuilder {
      */
     protected RouteDefinition singletonFrom(String uri) {
         return this.from(uri).group(SINGLETON_ROUTE_DEFINITION_GROUP_NAME);
+    }
+
+
+    /**
+     * Add ACK/NACK completion callback for an aggregated exchange.
+     * The callback should be added after the aggregation is complete to prevent individual messages from being acked
+     * by the aggregator.
+     */
+    protected void addOnCompletionForAggregatedExchange(Exchange exchange) {
+
+        List<Message> messages = (List<Message>) exchange.getIn().getBody(List.class);
+        List<BasicAcknowledgeablePubsubMessage> ackList = messages.stream()
+                .map(m->m.getHeader(EnturGooglePubSubConstants.ACK_ID, BasicAcknowledgeablePubsubMessage.class))
+                .collect(Collectors.toList());
+
+        exchange.addOnCompletion(new Synchronization() {
+
+            @Override
+            public void onComplete(Exchange exchange) {
+                ackList.stream().forEach(e->e.ack());
+            }
+
+            @Override
+            public void onFailure(Exchange exchange) {
+                ackList.stream().forEach(e->e.nack());
+            }
+        });
     }
 }

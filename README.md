@@ -15,7 +15,6 @@ server.admin.port=11501
 
 server.context-path=/irkalla/
 
-spring.activemq.broker-url=tcp://activemq:61616
 tiamat.url=http://tiamat:2888
 chouette.url=http://localhost:8080
 etcd.url=http://etcd-client:2379/v2/keys/prod/irkalla

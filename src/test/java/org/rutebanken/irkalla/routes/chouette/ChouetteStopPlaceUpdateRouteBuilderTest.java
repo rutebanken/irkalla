@@ -15,7 +15,6 @@
 
 package org.rutebanken.irkalla.routes.chouette;
 
-import org.apache.activemq.ScheduledMessage;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
@@ -23,19 +22,21 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.http.common.HttpOperationFailedException;
-import org.junit.Assert;
 import org.junit.Test;
+import org.rutebanken.irkalla.IrkallaApplication;
 import org.rutebanken.irkalla.routes.RouteBuilderIntegrationTestBase;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 
 import static org.rutebanken.irkalla.util.Http4URL.toHttp4Url;
 
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@SpringBootTest(classes = IrkallaApplication.class, properties = "irkalla.camel.redelivery.max=0")
 public class ChouetteStopPlaceUpdateRouteBuilderTest extends RouteBuilderIntegrationTestBase {
 
 
-    @Produce(uri = "activemq:queue:ChouetteStopPlaceSyncQueue")
+    @Produce(uri = "entur-google-pubsub:ChouetteStopPlaceSyncQueue")
     protected ProducerTemplate updateStopPlaces;
 
     @Value("${chouette.url}")
@@ -167,8 +168,7 @@ public class ChouetteStopPlaceUpdateRouteBuilderTest extends RouteBuilderIntegra
         context.getRouteDefinition("tiamat-get-batch-of-changed-stop-places-as-netex").adviceWith(context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint(exportPath)
-                        .skipSendToOriginalEndpoint().to("mock:tiamatExportChanges");
+                interceptSendToEndpoint(exportPath).skipSendToOriginalEndpoint().to("mock:tiamatExportChanges");
             }
         });
 
@@ -177,20 +177,20 @@ public class ChouetteStopPlaceUpdateRouteBuilderTest extends RouteBuilderIntegra
             public void configure() throws Exception {
                 interceptSendToEndpoint(toHttp4Url(chouetteUrl) + "/chouette_iev/stop_place/*")
                         .skipSendToOriginalEndpoint().to("mock:chouetteUpdateStopPlaces");
-                interceptSendToEndpoint("activemq:queue:ChouetteStopPlaceSyncQueue")
-                        .skipSendToOriginalEndpoint().to("mock:chouetteStopPlaceSyncQueue");
+                weaveByToUri("entur-google-pubsub:ChouetteStopPlaceSyncQueue")
+                        .replace().to("mock:chouetteStopPlaceSyncQueue");
             }
         });
 
         context.getRouteDefinition("chouette-synchronize-stop-places-init").adviceWith(context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint("direct:getSyncStatusUntilTime")
-                        .skipSendToOriginalEndpoint().to("mock:etcd");
+                weaveByToUri("direct:getSyncStatusUntilTime")
+                        .replace().to("mock:etcd");
             }
         });
 
-        context.start();
+
         tiamatExportChanges.expectedMessageCount(1);
         chouetteUpdateStopPlaces.expectedMessageCount(1);
         chouetteStopPlaceSyncQueueMock.expectedMessageCount(1);
@@ -205,12 +205,12 @@ public class ChouetteStopPlaceUpdateRouteBuilderTest extends RouteBuilderIntegra
             throw new HttpOperationFailedException(null, 423, null, null, null, null);
         });
 
+        context.start();
+
         updateStopPlaces.sendBody(null);
 
         tiamatExportChanges.assertIsSatisfied();
         chouetteUpdateStopPlaces.assertIsSatisfied();
-        chouetteStopPlaceSyncQueueMock.assertIsSatisfied();
-
-        Assert.assertNotNull(chouetteStopPlaceSyncQueueMock.getExchanges().get(0).getIn().getHeader(ScheduledMessage.AMQ_SCHEDULED_DELAY));
+        chouetteStopPlaceSyncQueueMock.assertIsSatisfied(20000);
     }
 }

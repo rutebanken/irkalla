@@ -15,7 +15,6 @@
 
 package org.rutebanken.irkalla.routes.chouette;
 
-import org.apache.activemq.ScheduledMessage;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.component.http4.HttpMethods;
@@ -39,8 +38,7 @@ public class ChouetteStopPlaceDeleteRouteBuilder extends BaseRouteBuilder {
     public void configure() throws Exception {
         super.configure();
 
-        singletonFrom("activemq:queue:ChouetteStopPlaceDeleteQueue?transacted=true")
-                .transacted()
+        singletonFrom("entur-google-pubsub:ChouetteStopPlaceDeleteQueue")
 
                 .log(LoggingLevel.INFO, "Delete stop place ${header." + Constants.HEADER_ENTITY_ID + "} in Chouette")
                 .setBody(constant(null))
@@ -55,9 +53,9 @@ public class ChouetteStopPlaceDeleteRouteBuilder extends BaseRouteBuilder {
                      return (ex.getStatusCode() == 423);
                 })
                 .log(LoggingLevel.INFO, "Unable to delete stop place because Chouette is busy, retry in " + retryDelay + " ms")
-                .setHeader(ScheduledMessage.AMQ_SCHEDULED_DELAY, constant(retryDelay))
+                .delay(retryDelay)
                 .setBody(constant(null))
-                .to("activemq:queue:ChouetteStopPlaceSyncQueue")
+                .to("entur-google-pubsub:ChouetteStopPlaceSyncQueue")
                 .end()
                 .routeId("chouette-delete-stop-place");
 

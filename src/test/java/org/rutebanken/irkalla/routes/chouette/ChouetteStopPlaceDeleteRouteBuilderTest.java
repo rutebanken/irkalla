@@ -32,7 +32,7 @@ import static org.rutebanken.irkalla.util.Http4URL.toHttp4Url;
 public class ChouetteStopPlaceDeleteRouteBuilderTest extends RouteBuilderIntegrationTestBase {
 
 
-    @Produce(uri = "activemq:queue:ChouetteStopPlaceDeleteQueue")
+    @Produce(uri = "entur-google-pubsub:ChouetteStopPlaceDeleteQueue")
     protected ProducerTemplate deleteStopPlaces;
 
     @Value("${chouette.url}")

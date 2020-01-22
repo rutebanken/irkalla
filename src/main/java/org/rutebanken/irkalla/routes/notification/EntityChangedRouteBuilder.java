@@ -19,11 +19,11 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.model.dataformat.JsonLibrary;
 import org.rutebanken.irkalla.Constants;
 import org.rutebanken.irkalla.domain.EntityChangedEvent;
-import org.rutebanken.irkalla.routes.BaseRouteBuilder;
+import org.rutebanken.irkalla.routes.ActiveMQBaseRouteBuilder;
 import org.springframework.stereotype.Component;
 
 @Component
-public class EntityChangedRouteBuilder extends BaseRouteBuilder {
+public class EntityChangedRouteBuilder extends ActiveMQBaseRouteBuilder {
 
     @Override
     public void configure() throws Exception {
