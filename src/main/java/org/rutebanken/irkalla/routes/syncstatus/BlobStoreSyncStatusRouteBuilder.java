@@ -4,6 +4,8 @@ import org.apache.camel.Exchange;
 import org.apache.commons.io.IOUtils;
 import org.rutebanken.irkalla.repository.BlobStoreRepository;
 import org.rutebanken.irkalla.routes.BaseRouteBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -15,6 +17,8 @@ import java.time.format.DateTimeFormatter;
 
 @Component
 public class BlobStoreSyncStatusRouteBuilder extends BaseRouteBuilder {
+
+    private static final Logger log = LoggerFactory.getLogger(BlobStoreSyncStatusRouteBuilder.class);
 
 
     @Autowired
@@ -48,7 +52,8 @@ public class BlobStoreSyncStatusRouteBuilder extends BaseRouteBuilder {
         try {
             InputStream inputStream = blobStoreRepository.getBlob(blobName);
             if (inputStream != null) {
-                String stringVal = IOUtils.toString(inputStream).replaceAll("([\\r\\n])", "");
+                String stringVal = IOUtils.toString(inputStream);
+                log.debug("Read Sync status from GCS: {} ", stringVal);
                 syncStatusUntilTime = Instant.from(FORMATTER.parse(stringVal)).toEpochMilli();
             } else {
                 log.info("Got empty inputstream for syncedUntilTime, assuming this is initial sync.");
@@ -62,6 +67,7 @@ public class BlobStoreSyncStatusRouteBuilder extends BaseRouteBuilder {
 
     private void setSyncStatusUntilTime(Exchange exchange) {
         String stringVal = Instant.ofEpochMilli(exchange.getIn().getBody(Long.class)).atZone(ZoneId.of("UTC")).format(FORMATTER);
+        log.debug("Update Sync status in GCS: {} ", stringVal);
         InputStream inputStream = IOUtils.toInputStream(stringVal);
         blobStoreRepository.uploadBlob(blobName, inputStream, false);
     }
