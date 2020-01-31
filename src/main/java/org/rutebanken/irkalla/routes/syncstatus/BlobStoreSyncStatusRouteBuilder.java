@@ -9,8 +9,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -52,7 +54,7 @@ public class BlobStoreSyncStatusRouteBuilder extends BaseRouteBuilder {
         try {
             InputStream inputStream = blobStoreRepository.getBlob(blobName);
             if (inputStream != null) {
-                String stringVal = IOUtils.toString(inputStream);
+                String stringVal = StringUtils.trimTrailingWhitespace(IOUtils.toString(inputStream, StandardCharsets.UTF_8));
                 log.debug("Read Sync status from GCS: {} ", stringVal);
                 syncStatusUntilTime = Instant.from(FORMATTER.parse(stringVal)).toEpochMilli();
             } else {
@@ -68,7 +70,7 @@ public class BlobStoreSyncStatusRouteBuilder extends BaseRouteBuilder {
     private void setSyncStatusUntilTime(Exchange exchange) {
         String stringVal = Instant.ofEpochMilli(exchange.getIn().getBody(Long.class)).atZone(ZoneId.of("UTC")).format(FORMATTER);
         log.debug("Update Sync status in GCS: {} ", stringVal);
-        InputStream inputStream = IOUtils.toInputStream(stringVal);
+        InputStream inputStream = IOUtils.toInputStream(stringVal, StandardCharsets.UTF_8);
         blobStoreRepository.uploadBlob(blobName, inputStream, false);
     }
 }
