@@ -1,5 +1,9 @@
 # irkalla [![CircleCI](https://circleci.com/gh/entur/irkalla/tree/master.svg?style=svg)](https://circleci.com/gh/entur/irkalla/tree/master)
-Will distribute information about stop change between tiamat, chouette and nabu. 
+Propagate changes from the [Norwegian Stop Place Register](https://stoppested.entur.org) into the [Routes database](https://rutedb.dev.entur.org/).
+
+Irkalla monitors changes in [Tiamat](https://github.com/entur/tiamat) by querying its graphQL API and replicate the changes into [Chouette](https://github.com/entur/chouette) through its Web service API.
+
+Irkalla sends also notifications to [Nabu](https://github.com/entur/nabu) when changes are detected.
 
 
 ## Build
