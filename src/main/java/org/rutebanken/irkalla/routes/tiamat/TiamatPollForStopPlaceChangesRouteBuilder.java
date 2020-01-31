@@ -59,6 +59,7 @@ public class TiamatPollForStopPlaceChangesRouteBuilder extends BaseRouteBuilder 
         super.configure();
 
         from("direct:processChangedStopPlacesAsNetex")
+                .log(LoggingLevel.DEBUG, "Received header " + Constants.HEADER_NEXT_BATCH_URL + ": ${header." + HEADER_NEXT_BATCH_URL + "}")
                 .choice()
                 .when(header(HEADER_NEXT_BATCH_URL).isNull())
                 .process(e -> setPollForChangesURL(e))
