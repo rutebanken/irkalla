@@ -22,7 +22,7 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
     <parent>
         <groupId>org.rutebanken.superpom</groupId>
         <artifactId>superpom</artifactId>
-        <version>0.0.13-SNAPSHOT</version>
+        <version>0.0.15-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -40,7 +40,7 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
     </scm>
 
     <properties>
-        <camel.version>2.24.3</camel.version>
+        <camel.version>2.25.0</camel.version>
         <keycloak.version>4.8.3.Final</keycloak.version>
         <entur.helpers.version>0.0.10-SNAPSHOT</entur.helpers.version>
         <entur.common.logging.version>1.0.14</entur.common.logging.version>
@@ -232,10 +232,6 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
 
         <!-- Other -->
 
-        <dependency>
-            <groupId>com.sun.activation</groupId>
-            <artifactId>javax.activation</artifactId>
-        </dependency>
         <dependency>
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
