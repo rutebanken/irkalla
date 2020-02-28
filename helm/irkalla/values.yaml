@@ -1,0 +1,21 @@
+env: dev
+
+replicas: 2
+
+rollingUpdate:
+  maxSurge: 1
+  maxUnavailable: 1
+image:
+  identifier: ${artifact.metadata.image}
+  imagePullPolicy: Always
+resources:
+  cpuLimit: 600m
+  memLimit: 1100Mi
+  cpuRequest: 100m
+  memRequest: 750Mi
+  xmx: 950m
+
+service:
+  http:
+    externalPort: 80
+    internalPort: 8080
