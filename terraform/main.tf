@@ -58,7 +58,7 @@ resource "google_service_account_key" "storage_bucket_service_account_key" {
   # Add SA key to to k8s
 resource "kubernetes_secret" "storage_bucket_service_account_credentials" {
   metadata {
-    name      = "ror-irkalla-sa-credentials"
+    name      = "ror-irkalla-sa"
     namespace = var.kube_namespace
   }
   data = {
