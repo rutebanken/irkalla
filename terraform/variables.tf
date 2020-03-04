@@ -6,10 +6,6 @@ variable "gcp_project" {
 variable "location" {
   description = "GCP bucket location"
 }
-variable "kube_context" {
-    description = "The Kubernetes context id"
-    default     = null
-}
 variable "kube_namespace" {
   description = "The Kubernetes namespace"
 }
@@ -67,5 +63,10 @@ variable "service_account_pubsub_role" {
 variable "prevent_destroy" {
   description = "Prevent destruction of bucket"
   type        = bool
+  default     = false
+}
+
+variable "load_config_file" {
+  description = "Do not load kube config file"
   default     = false
 }

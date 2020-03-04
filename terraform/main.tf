@@ -7,8 +7,7 @@ provider "google" {
   version = "~> 2.19"
 }
 provider "kubernetes" {
-  config_context = var.kube_context
-  version        = "~> 1.9"
+  load_config_file = var.load_config_file
 }
 
 # Create bucket
