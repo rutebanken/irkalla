@@ -17,8 +17,9 @@ spec:
       maxUnavailable: {{ .Values.rollingUpdate.maxUnavailable }}
     type: RollingUpdate
   template:
-    labels:
-        {{- include "common.labels" . | indent 8 }}
+    metadata:
+      labels:
+          {{- include "common.labels" . | indent 8 }}
     spec:
       containers:
         - env:
