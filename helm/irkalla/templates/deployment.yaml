@@ -33,8 +33,8 @@ spec:
           livenessProbe:
             failureThreshold: 3
             httpGet:
-              path: /health/live
-              port: {{ .Values.service.http.internalPort }}
+              path: /health
+              port: 9001
               scheme: HTTP
             initialDelaySeconds: 300
             periodSeconds: 10
@@ -48,8 +48,8 @@ spec:
           readinessProbe:
             failureThreshold: 3
             httpGet:
-              path: /health/ready
-              port: {{ .Values.service.http.internalPort }}
+              path: /health
+              port: 9001
               scheme: HTTP
             initialDelaySeconds: 20
             periodSeconds: 10
