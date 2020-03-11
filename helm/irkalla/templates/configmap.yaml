@@ -12,7 +12,7 @@ data:
     keycloak.realm=rutebanken
     etcd.url=http://etcd-client:2379
     server.admin.port={{ .Values.service.http.internalPort }}
-    tiamat.url=http://tiamat.default
+    tiamat.url=http://tiamat
     chouette.sync.stop.place.autoStartup=true
     keycloak.auth-server-url={{ .Values.configMap.keycloakUrl }}
     spring.activemq.broker-url=tcp://activemq.default:61616?jms.redeliveryPolicy.maximumRedeliveries=0
