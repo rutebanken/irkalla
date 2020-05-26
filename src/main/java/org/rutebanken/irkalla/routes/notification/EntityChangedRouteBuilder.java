@@ -19,18 +19,17 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.model.dataformat.JsonLibrary;
 import org.rutebanken.irkalla.Constants;
 import org.rutebanken.irkalla.domain.EntityChangedEvent;
-import org.rutebanken.irkalla.routes.ActiveMQBaseRouteBuilder;
+import org.rutebanken.irkalla.routes.BaseRouteBuilder;
 import org.springframework.stereotype.Component;
 
 @Component
-public class EntityChangedRouteBuilder extends ActiveMQBaseRouteBuilder {
+public class EntityChangedRouteBuilder extends BaseRouteBuilder {
 
     @Override
     public void configure() throws Exception {
         super.configure();
 
-        from("activemq:queue:IrkallaChangelogQueue?transacted=true")
-                .transacted()
+        from("entur-google-pubsub:ror.tiamat.changelog")
                 .unmarshal().json(JsonLibrary.Jackson, EntityChangedEvent.class)
                 .setHeader(Constants.HEADER_ENTITY_ID,simple("${body.entityId}"))
                 .setHeader(Constants.HEADER_ENTITY_VERSION,simple("${body.entityVersion}"))
