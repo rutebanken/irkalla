@@ -15,7 +15,7 @@ resource "google_storage_bucket" "storage_bucket" {
   name               = "${var.labels.team}-${var.labels.app}-${var.bucket_instance_suffix}"
   force_destroy      = var.force_destroy
   location           = var.location
-  project            = var.gcp_project
+  project            = var.storage_project
   storage_class      = var.storage_class
   bucket_policy_only = var.bucket_policy_only
   labels             = var.labels
@@ -45,7 +45,7 @@ resource "google_storage_bucket_iam_member" "storage_bucket_iam_member" {
 
 # add service account as member to the pubsub
 resource "google_project_iam_member" "project" {
-  project = var.gcp_project
+  project = var.pubsub_project
   role    = var.service_account_pubsub_role
   member = "serviceAccount:${google_service_account.storage_bucket_service_account.email}"
 }

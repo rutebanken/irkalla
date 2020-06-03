@@ -3,6 +3,14 @@ variable "gcp_project" {
     description = "The GCP project id"
 }
 
+variable "pubsub_project" {
+  description = "GCP project of pubsub topic"
+}
+
+  variable "storage_project" {
+  description = "GCP project of storage bucket"
+}
+
 variable "location" {
   description = "GCP bucket location"
 }
