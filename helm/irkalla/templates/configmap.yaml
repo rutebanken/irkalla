@@ -16,13 +16,13 @@ data:
     chouette.sync.stop.place.autoStartup=true
     keycloak.auth-server-url={{ .Values.configMap.keycloakUrl }}
     spring.activemq.broker-url=tcp://activemq.default:61616?jms.redeliveryPolicy.maximumRedeliveries=0
-    blobstore.gcs.project.id={{ .Values.configMap.projectId }}
+    blobstore.gcs.project.id={{ .Values.configMap.blobstoreProjectId }}
     blobstore.gcs.credential.path=/etc/irkalla-service-account/credentials.json
     blobstore.gcs.container.name={{ .Values.configMap.blobstoreName }}
     spring.profiles.active=gcs-blobstore
     # Temporary setting until bug in KeycloakWebSecurityConfigurerAdapter is fixed (The bean 'httpSessionManager', defined in class path resource [XXXSecurityConfiguration.class],could not be registered. A bean with that name has already been defined in URL)
     spring.main.allow-bean-definition-overriding=true
-    spring.cloud.gcp.pubsub.project-id={{ .Values.configMap.projectId }}
+    spring.cloud.gcp.pubsub.project-id={{ .Values.configMap.pubsubProjectId }}
     spring.cloud.gcp.pubsub.credentials.location=file:/etc/irkalla-service-account/credentials.json
     spring.cloud.gcp.pubsub.subscriber.parallel-pull-count=1
     spring.cloud.gcp.pubsub.subscriber.executor-threads=5
