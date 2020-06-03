@@ -2,6 +2,6 @@ env: production
 
 configMap:
   blobstoreProjectId: neon-1287
-  pubsubProjectId: neon-1287
+  pubsubProjectId: entur-ror-prod
   keycloakUrl: https://auth.entur.org/auth
   blobstoreName: ror-irkalla-production

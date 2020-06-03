@@ -2,6 +2,6 @@ env: dev
 
 configMap:
   blobstoreProjectId: carbon-1287
-  pubsubProjectId: carbon-1287
+  pubsubProjectId: entur-ror-dev
   keycloakUrl: https://kc-dev.devstage.entur.io/auth
   blobstoreName: ror-irkalla-dev
