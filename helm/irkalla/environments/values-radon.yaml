@@ -1,8 +1,6 @@
-env: staging
-
 configMap:
   blobstoreProjectId: radon-1287
-  pubsubProjectId: entur-ror-test
+  pubsubProjectId: radon-1287
   keycloakUrl: https://kc-stage.devstage.entur.io/auth
   blobstoreName: ror-irkalla-test
 

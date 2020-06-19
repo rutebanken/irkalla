@@ -1,0 +1,7 @@
+configMap:
+  blobstoreProjectId: entur-ror-test
+  pubsubProjectId: entur-ror-test
+  keycloakUrl: https://kc-stage.devstage.entur.io/auth
+  blobstoreName: irkalla-test
+
+

@@ -1,0 +1,5 @@
+configMap:
+  blobstoreProjectId: entur-ror-prod
+  pubsubProjectId: entur-ror-prod
+  keycloakUrl: https://auth.entur.org/auth
+  blobstoreName: irkalla-production
