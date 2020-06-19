@@ -81,7 +81,7 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
         singletonFrom("entur-google-pubsub:ChouetteStopPlaceSyncQueue?ackMode=NONE")
                 .aggregate(constant(true)).aggregationStrategy(new GroupedMessageAggregationStrategy()).completionSize(100).completionTimeout(1000)
                 .process(exchange -> addOnCompletionForAggregatedExchange(exchange))
-                .process(e -> mergeActiveMQMessages(e))
+                .process(e -> mergePubSubMessages(e))
                 .choice()
                 .when(simple("${header." + HEADER_SYNC_OPERATION + "} == '" + SYNC_OPERATION_FULL_WITH_DELETE_UNUSED_FIRST + "'"))
                 .to("direct:deleteUnusedStopPlaces")
@@ -190,7 +190,7 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
      * - Full sync, if no delete and at least one message signals that, using first msg with url set (indicating ongoing job) if any
      * - Delta sync in other cases, using first msg with url set (indicating ongoing job) if any
      */
-    private void mergeActiveMQMessages(Exchange e) {
+    private void mergePubSubMessages(Exchange e) {
         List<Message> msgList = e.getIn().getBody(List.class);
         Collections.sort(msgList, new SyncMsgComparator());
 
