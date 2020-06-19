@@ -15,7 +15,6 @@ data:
     tiamat.url=http://tiamat
     chouette.sync.stop.place.autoStartup=true
     keycloak.auth-server-url={{ .Values.configMap.keycloakUrl }}
-    spring.activemq.broker-url=tcp://activemq.default:61616?jms.redeliveryPolicy.maximumRedeliveries=0
     blobstore.gcs.project.id={{ .Values.configMap.blobstoreProjectId }}
     blobstore.gcs.credential.path=/etc/irkalla-service-account/credentials.json
     blobstore.gcs.container.name={{ .Values.configMap.blobstoreName }}
