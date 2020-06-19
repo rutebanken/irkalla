@@ -3,3 +3,5 @@ configMap:
   pubsubProjectId: entur-ror-prod
   keycloakUrl: https://auth.entur.org/auth
   blobstoreName: irkalla-production
+rbac:
+  enabled: true

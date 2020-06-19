@@ -3,3 +3,5 @@ configMap:
   pubsubProjectId: entur-ror-dev
   keycloakUrl: https://kc-dev.devstage.entur.io/auth
   blobstoreName: irkalla-dev
+rbac:
+  enabled: true

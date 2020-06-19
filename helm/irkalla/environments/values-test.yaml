@@ -4,4 +4,6 @@ configMap:
   keycloakUrl: https://kc-stage.devstage.entur.io/auth
   blobstoreName: irkalla-test
 
+rbac:
+  enabled: true
 

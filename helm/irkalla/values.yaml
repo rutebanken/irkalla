@@ -20,3 +20,6 @@ service:
     externalPort: 80
     internalPort: 8080
     managementPort: 9001
+
+rbac:
+  enabled: false

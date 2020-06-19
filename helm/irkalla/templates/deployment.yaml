@@ -25,7 +25,7 @@ spec:
         - env:
             - name: JAVA_OPTIONS
               value: -server -Xmx{{ .Values.resources.xmx }} -Dspring.config.location=/etc/application-config/application.properties
-                -Dfile.encoding=UTF-8
+                -Dfile.encoding=UTF-8 -Drutebanken.kubernetes.enabled=true -Drutebanken.kubernetes.namespace={{ .Release.Namespace }}
             - name: TZ
               value: Europe/Oslo
           image: {{ .Values.image.identifier }}
