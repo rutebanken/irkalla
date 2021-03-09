@@ -18,6 +18,10 @@ spec:
     type: RollingUpdate
   template:
     metadata:
+      annotations:
+        prometheus.io/path: /actuator/prometheus
+        prometheus.io/port: '9001'
+        prometheus.io/scrape: 'true'
       labels:
           {{- include "common.labels" . | indent 8 }}
     spec:
@@ -33,7 +37,7 @@ spec:
           livenessProbe:
             failureThreshold: 3
             httpGet:
-              path: /health
+              path: /actuator/health/liveness
               port: {{ .Values.service.http.managementPort }}
               scheme: HTTP
             initialDelaySeconds: 300
@@ -48,7 +52,7 @@ spec:
           readinessProbe:
             failureThreshold: 3
             httpGet:
-              path: /health
+              path: /actuator/health/readiness
               port: {{ .Values.service.http.managementPort }}
               scheme: HTTP
             initialDelaySeconds: 20
