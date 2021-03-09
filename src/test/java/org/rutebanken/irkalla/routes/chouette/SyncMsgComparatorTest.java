@@ -16,6 +16,7 @@
 package org.rutebanken.irkalla.routes.chouette;
 
 import org.apache.camel.Message;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultMessage;
 import org.junit.Assert;
 import org.junit.Test;
@@ -53,7 +54,7 @@ public class SyncMsgComparatorTest {
 
 
     private Message msg(String syncOperation, String nextBatchUrl) throws Exception {
-        Message msg = new DefaultMessage() {
+        Message msg = new DefaultMessage(new DefaultCamelContext()) {
             private Map<String,Object> headers = new HashMap<>();
 
             public void setHeader(String key, Object value) {
