@@ -88,6 +88,11 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
             <artifactId>common-logging-spring-boot-starter</artifactId>
             <version>${entur.common.logging.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.entur.helpers</groupId>
+            <artifactId>oauth2</artifactId>
+            <version>${entur.helpers.version}</version>
+        </dependency>
 
         <!--  Spring -->
 
@@ -201,24 +206,6 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-quartz2</artifactId>
-        </dependency>
-
-        <!-- Keycloak -->
-
-        <dependency>
-            <groupId>org.keycloak</groupId>
-            <artifactId>keycloak-spring-security-adapter</artifactId>
-            <version>${keycloak.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.keycloak</groupId>
-            <artifactId>keycloak-jetty94-adapter</artifactId>
-            <version>${keycloak.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.keycloak</groupId>
-            <artifactId>keycloak-spring-boot-2-adapter</artifactId>
-            <version>${keycloak.version}</version>
         </dependency>
 
         <!-- Other -->
