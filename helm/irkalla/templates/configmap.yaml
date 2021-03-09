@@ -1,35 +1,40 @@
 apiVersion: v1
 data:
   application.properties: |-
-    # disable local redelivery to force Camel routes to be retried entirely.
-    # this prevents a local retry from sending inconsistent requests to chouette
-    irkalla.camel.redelivery.max=0
+    spring.profiles.active=gcs-blobstore
+    server.port=8081
+    server.admin.host=0.0.0.0
+    server.admin.port={{ .Values.service.http.internalPort }}
+
+    # Chouette
     chouette.url=http://chouette:8080
     chouette.sync.stop.place.full.cron=0 30 23 ? * SAT *
-    server.admin.host=0.0.0.0
-    spring.jackson.serialization.write-dates-as-timestamps=false
-    keycloak.resource=irkalla
     chouette.sync.stop.place.cron=0 0/5 * * * ?
-    server.port=8081
+    chouette.sync.stop.place.autoStartup=true
+
+    # Tiamat
+    tiamat.url=http://tiamat
+
+    # Keycloak
+    keycloak.resource=irkalla
     keycloak.bearer-only=true
     keycloak.realm=rutebanken
-    etcd.url=http://etcd-client:2379
-    server.admin.port={{ .Values.service.http.internalPort }}
-    tiamat.url=http://tiamat
-    chouette.sync.stop.place.autoStartup=true
     keycloak.auth-server-url={{ .Values.configMap.keycloakUrl }}
+
+    # Blobstore
     blobstore.gcs.project.id={{ .Values.configMap.blobstoreProjectId }}
     blobstore.gcs.credential.path=/etc/irkalla-service-account/credentials.json
     blobstore.gcs.container.name={{ .Values.configMap.blobstoreName }}
-    spring.profiles.active=gcs-blobstore
-    # Temporary setting until bug in KeycloakWebSecurityConfigurerAdapter is fixed (The bean 'httpSessionManager', defined in class path resource [XXXSecurityConfiguration.class],could not be registered. A bean with that name has already been defined in URL)
-    spring.main.allow-bean-definition-overriding=true
+
+    # PubSub
     spring.cloud.gcp.pubsub.project-id={{ .Values.configMap.pubsubProjectId }}
     spring.cloud.gcp.pubsub.credentials.location=file:/etc/irkalla-service-account/credentials.json
     spring.cloud.gcp.pubsub.subscriber.parallel-pull-count=1
     spring.cloud.gcp.pubsub.subscriber.executor-threads=5
     spring.cloud.gcp.pubsub.subscriber.max-ack-extension-period=36000
     entur.pubsub.subscriber.autocreate=false
+
+    # Spring Actuator
     management.server.port={{ .Values.service.http.managementPort }}
     management.endpoints.enabled-by-default=false
     management.endpoint.info.enabled=true
@@ -37,6 +42,15 @@ data:
     management.endpoint.prometheus.enabled=true
     management.endpoints.web.base-path=/
     management.endpoints.web.exposure.include=info,health,prometheus
+
+    spring.jackson.serialization.write-dates-as-timestamps=false
+    etcd.url=http://etcd-client:2379
+    # disable local redelivery to force Camel routes to be retried entirely.
+    # this prevents a local retry from sending inconsistent requests to chouette
+    irkalla.camel.redelivery.max=0
+    # Temporary setting until bug in KeycloakWebSecurityConfigurerAdapter is fixed (The bean 'httpSessionManager', defined in class path resource [XXXSecurityConfiguration.class],could not be registered. A bean with that name has already been defined in URL)
+    spring.main.allow-bean-definition-overriding=true
+
 kind: ConfigMap
 metadata:
   name: {{ template "irkalla.name" . }}-config
