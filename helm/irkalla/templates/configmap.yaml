@@ -15,11 +15,14 @@ data:
     # Tiamat
     tiamat.url=http://tiamat
 
-    # Keycloak
-    keycloak.resource=irkalla
-    keycloak.bearer-only=true
-    keycloak.realm=rutebanken
-    keycloak.auth-server-url={{ .Values.configMap.keycloakUrl }}
+    #OAuth2 Resource Server
+    irkalla.oauth2.resourceserver.auth0.ror.jwt.issuer-uri={{ .Values.configMap.auth0.ror.url }}
+    irkalla.oauth2.resourceserver.auth0.ror.jwt.audience={{ .Values.configMap.auth0.ror.audience }}
+    irkalla.oauth2.resourceserver.auth0.ror.claim.namespace=https://ror.entur.io/
+
+    nabu.oauth2.resourceserver.keycloak.jwt.issuer-uri={{ .Values.configMap.keycloak.url }}/realms/rutebanken
+    nabu.oauth2.resourceserver.keycloak.jwt.jwkset-uri={{ .Values.configMap.keycloak.url }}/realms/rutebanken/protocol/openid-connect/certs
+    nabu.oauth2.resourceserver.keycloak.jwt.audience=account
 
     # Blobstore
     blobstore.gcs.project.id={{ .Values.configMap.blobstoreProjectId }}
@@ -48,8 +51,6 @@ data:
     # disable local redelivery to force Camel routes to be retried entirely.
     # this prevents a local retry from sending inconsistent requests to chouette
     irkalla.camel.redelivery.max=0
-    # Temporary setting until bug in KeycloakWebSecurityConfigurerAdapter is fixed (The bean 'httpSessionManager', defined in class path resource [XXXSecurityConfiguration.class],could not be registered. A bean with that name has already been defined in URL)
-    spring.main.allow-bean-definition-overriding=true
 
 kind: ConfigMap
 metadata:
