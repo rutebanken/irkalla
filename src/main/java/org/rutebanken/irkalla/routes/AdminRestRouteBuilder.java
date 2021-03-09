@@ -29,18 +29,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import javax.ws.rs.NotFoundException;
+import java.util.Arrays;
 import java.util.Collections;
 
 import static org.rutebanken.irkalla.Constants.*;
 
 @Component
 public class AdminRestRouteBuilder extends BaseRouteBuilder {
-
-    @Value("${server.admin.port}")
-    public String port;
-
-    @Value("${server.admin.host}")
-    public String host;
 
     @Value("${authorization.enabled:true}")
     protected boolean authorizationEnabled;
@@ -68,23 +63,12 @@ public class AdminRestRouteBuilder extends BaseRouteBuilder {
                 .setHeader(Exchange.CONTENT_TYPE, constant("text/plain"))
                 .transform(exceptionMessage());
 
-        RestPropertyDefinition corsAllowedHeaders = new RestPropertyDefinition();
-        corsAllowedHeaders.setKey("Access-Control-Allow-Headers");
-        corsAllowedHeaders.setValue("Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, Authorization");
-
-        restConfiguration().setCorsHeaders(Collections.singletonList(corsAllowedHeaders));
-
         restConfiguration()
-                .component("jetty")
-                .bindingMode(RestBindingMode.json)
-                .endpointProperty("filtersRef", "keycloakPreAuthActionsFilter,keycloakAuthenticationProcessingFilter")
-                .endpointProperty("sessionSupport", "true")
-                .endpointProperty("matchOnUriPrefix", "true")
-                .enableCORS(true)
-                .dataFormatProperty("prettyPrint", "true")
-                .host(host)
-                .port(port)
+                .component("servlet")
                 .contextPath("/services")
+                .bindingMode(RestBindingMode.json)
+                .endpointProperty("matchOnUriPrefix", "true")
+                .dataFormatProperty("prettyPrint", "true")
                 .apiContextPath("/stop_place_synchronization_timetable/swagger.json")
                 .apiProperty("api.title", "Stop place synchronization timetable API")
                 .apiProperty("api.description", "Administration of process for synchronizing stop places in the timetable database (Chouette) with the master data in the stop place registry (NSR)")

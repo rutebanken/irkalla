@@ -2,9 +2,7 @@ apiVersion: v1
 data:
   application.properties: |-
     spring.profiles.active=gcs-blobstore
-    server.port=8081
-    server.admin.host=0.0.0.0
-    server.admin.port={{ .Values.service.http.internalPort }}
+    server.port={{ .Values.service.http.internalPort }}
 
     # Chouette
     chouette.url=http://chouette:8080

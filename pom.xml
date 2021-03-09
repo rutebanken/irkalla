@@ -157,21 +157,11 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
         <!-- Camel -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-spring-boot-starter</artifactId>
+            <artifactId>camel-servlet-starter</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-http4</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.geronimo.specs</groupId>
-                    <artifactId>geronimo-servlet_3.0_spec</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-jetty9</artifactId>
+            <artifactId>camel-http4-starter</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
