@@ -42,7 +42,7 @@ aliases:
         org.jacoco:jacoco-maven-plugin:report sonar:sonar \
         -Dmaven.main.skip \
         -DskipTests \
-        -Dsonar.projectKey=entur_${CIRCLE_PROJECT_REPONAME} \
+        -Dsonar.projectKey=entur_irkalla_github \
         -Dsonar.organization=${SONAR_ORG} \
         -Dsonar.projectName=irkalla-github \
         -Dsonar.host.url=https://sonarcloud.io \
