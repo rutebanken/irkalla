@@ -18,7 +18,6 @@ package org.rutebanken.irkalla.routes;
 import org.apache.camel.Exchange;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.apache.camel.model.rest.RestParamType;
-import org.apache.camel.model.rest.RestPropertyDefinition;
 import org.rutebanken.helper.organisation.AuthorizationConstants;
 import org.rutebanken.helper.organisation.NotAuthenticatedException;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,8 +28,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import javax.ws.rs.NotFoundException;
-import java.util.Arrays;
-import java.util.Collections;
 
 import static org.rutebanken.irkalla.Constants.*;
 
@@ -39,6 +36,8 @@ public class AdminRestRouteBuilder extends BaseRouteBuilder {
 
     @Value("${authorization.enabled:true}")
     protected boolean authorizationEnabled;
+
+    private static final String DEFAULT_ROLE_PREFIX = "ROLE_";
 
 
     @Override
@@ -136,8 +135,9 @@ public class AdminRestRouteBuilder extends BaseRouteBuilder {
         }
 
         boolean authorized = false;
+        final String requiredRoleWithDefaultPrefix= DEFAULT_ROLE_PREFIX + requiredRole;
         if (!CollectionUtils.isEmpty(authentication.getAuthorities())) {
-            authorized = authentication.getAuthorities().stream().anyMatch(authority -> requiredRole.equals(authority.getAuthority()));
+            authorized = authentication.getAuthorities().stream().anyMatch(authority -> requiredRoleWithDefaultPrefix.equals(authority.getAuthority()));
         }
 
         if (!authorized) {
