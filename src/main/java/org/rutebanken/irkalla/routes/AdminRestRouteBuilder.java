@@ -18,7 +18,6 @@ package org.rutebanken.irkalla.routes;
 import org.apache.camel.Exchange;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.apache.camel.model.rest.RestParamType;
-import org.apache.camel.model.rest.RestPropertyDefinition;
 import org.rutebanken.helper.organisation.AuthorizationConstants;
 import org.rutebanken.helper.organisation.NotAuthenticatedException;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,21 +28,16 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import javax.ws.rs.NotFoundException;
-import java.util.Collections;
 
 import static org.rutebanken.irkalla.Constants.*;
 
 @Component
 public class AdminRestRouteBuilder extends BaseRouteBuilder {
 
-    @Value("${server.admin.port}")
-    public String port;
-
-    @Value("${server.admin.host}")
-    public String host;
-
     @Value("${authorization.enabled:true}")
     protected boolean authorizationEnabled;
+
+    private static final String DEFAULT_ROLE_PREFIX = "ROLE_";
 
 
     @Override
@@ -68,23 +62,12 @@ public class AdminRestRouteBuilder extends BaseRouteBuilder {
                 .setHeader(Exchange.CONTENT_TYPE, constant("text/plain"))
                 .transform(exceptionMessage());
 
-        RestPropertyDefinition corsAllowedHeaders = new RestPropertyDefinition();
-        corsAllowedHeaders.setKey("Access-Control-Allow-Headers");
-        corsAllowedHeaders.setValue("Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, Authorization");
-
-        restConfiguration().setCorsHeaders(Collections.singletonList(corsAllowedHeaders));
-
         restConfiguration()
-                .component("jetty")
-                .bindingMode(RestBindingMode.json)
-                .endpointProperty("filtersRef", "keycloakPreAuthActionsFilter,keycloakAuthenticationProcessingFilter")
-                .endpointProperty("sessionSupport", "true")
-                .endpointProperty("matchOnUriPrefix", "true")
-                .enableCORS(true)
-                .dataFormatProperty("prettyPrint", "true")
-                .host(host)
-                .port(port)
+                .component("servlet")
                 .contextPath("/services")
+                .bindingMode(RestBindingMode.json)
+                .endpointProperty("matchOnUriPrefix", "true")
+                .dataFormatProperty("prettyPrint", "true")
                 .apiContextPath("/stop_place_synchronization_timetable/swagger.json")
                 .apiProperty("api.title", "Stop place synchronization timetable API")
                 .apiProperty("api.description", "Administration of process for synchronizing stop places in the timetable database (Chouette) with the master data in the stop place registry (NSR)")
@@ -152,8 +135,9 @@ public class AdminRestRouteBuilder extends BaseRouteBuilder {
         }
 
         boolean authorized = false;
+        final String requiredRoleWithDefaultPrefix= DEFAULT_ROLE_PREFIX + requiredRole;
         if (!CollectionUtils.isEmpty(authentication.getAuthorities())) {
-            authorized = authentication.getAuthorities().stream().anyMatch(authority -> requiredRole.equals(authority.getAuthority()));
+            authorized = authentication.getAuthorities().stream().anyMatch(authority -> requiredRoleWithDefaultPrefix.equals(authority.getAuthority()));
         }
 
         if (!authorized) {
