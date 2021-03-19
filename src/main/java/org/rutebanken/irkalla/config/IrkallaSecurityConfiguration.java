@@ -47,7 +47,7 @@ public class IrkallaSecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.cors(withDefaults())
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/services/swagger.json").permitAll()
+                .antMatchers("/services/stop_place_synchronization_timetable/swagger.json").permitAll()
                 // exposed internally only, on a different port (pod-level)
                 .antMatchers("/actuator/prometheus").permitAll()
                 .antMatchers("/actuator/health").permitAll()
