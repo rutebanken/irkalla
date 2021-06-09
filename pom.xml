@@ -43,7 +43,10 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
         <camel.version>2.25.3</camel.version>
         <entur.helpers.version>1.0.40</entur.helpers.version>
         <entur.common.logging.version>1.0.14</entur.common.logging.version>
+        <netex-java-model.version>1.0.12-SNAPSHOT</netex-java-model.version>
+        <netex-parser-java.version>1.0.4</netex-parser-java.version>
         <wololo.version>0.14.3</wololo.version>
+        <kafka.clients.version>2.7.0</kafka.clients.version>
         <entur.google.pubsub.emulator.download.skip>false</entur.google.pubsub.emulator.download.skip>
     </properties>
 
@@ -97,6 +100,30 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
             <groupId>org.entur.helpers</groupId>
             <artifactId>oauth2</artifactId>
             <version>${entur.helpers.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.entur</groupId>
+            <artifactId>netex-java-model</artifactId>
+            <version>${netex-java-model.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.entur</groupId>
+            <artifactId>netex-parser-java</artifactId>
+            <version>${netex-parser-java.version}</version>
+        </dependency>
+
+        <dependency>
+            <!-- Included for recommended default producer-config -->
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-kafka</artifactId>
+            <version>${camel.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+            <version>${kafka.clients.version}</version>
         </dependency>
 
         <!--  Spring -->

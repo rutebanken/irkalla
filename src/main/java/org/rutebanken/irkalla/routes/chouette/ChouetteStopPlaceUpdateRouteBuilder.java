@@ -170,9 +170,8 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
                 .doTry()
                 .toD(toHttp4Url(chouetteUrl) + "/chouette_iev/stop_place")
                 .doCatch(HttpOperationFailedException.class).onWhen(exchange -> {
-            HttpOperationFailedException ex = exchange.getException(HttpOperationFailedException.class);
-            return (ex.getStatusCode() == 423);
-        })
+                            HttpOperationFailedException ex = exchange.getException(HttpOperationFailedException.class);
+                            return (ex.getStatusCode() == 423);})
                 .log(LoggingLevel.INFO, "Unable to sync stop places because Chouette is busy, retry in " + retryDelay + " ms")
                 .delay(retryDelay)
                 .setBody(constant(null))

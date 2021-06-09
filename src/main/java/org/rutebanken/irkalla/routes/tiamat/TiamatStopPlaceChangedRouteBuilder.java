@@ -43,6 +43,7 @@ public class TiamatStopPlaceChangedRouteBuilder extends BaseRouteBuilder {
                 .when(simple("${header." + Constants.HEADER_CRUD_ACTION + "} == ${type:org.rutebanken.irkalla.domain.CrudAction.DELETE}"))
                 .setBody(constant(null))
                 .to("entur-google-pubsub:ChouetteStopPlaceDeleteQueue")
+                .to("entur-google-pubsub:KafkaStopPlaceDeleteQueue")
                 .otherwise()
                     .bean("stopPlaceDao", "getStopPlaceChange")
                     .choice()
@@ -55,8 +56,8 @@ public class TiamatStopPlaceChangedRouteBuilder extends BaseRouteBuilder {
                     .bean("stopPlaceChangedToEvent", "toEvent")
                     .convertBodyTo(String.class)
                     .to("entur-google-pubsub:CrudEventQueue")
-
-                        .to("direct:triggerStopPlaceSyncIfChangeIsEffective")
+                    .to("direct:triggerStopPlaceSyncIfChangeIsEffective")
+                    .to("entur-google-pubsub:KafkaStopPlaceSyncQueue")
                     .endChoice()
                 .end()
                 .routeId("tiamat-stop-place-changed");
