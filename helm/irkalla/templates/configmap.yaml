@@ -52,6 +52,18 @@ data:
     # this prevents a local retry from sending inconsistent requests to chouette
     irkalla.camel.redelivery.max=0
 
+    # kafka config
+    irkalla.kafka.security.protocol ={{ .Values.configMap.kafka.secProtocol }}
+    irkalla.kafka.security.sasl.mechanism ={{ .Values.configMap.kafka.saslMechanism }}
+    irkalla.kafka.sasl.username =${KAFKA_USERNAME}
+    irkalla.kafka.sasl.password =${KAFKA_PASSWORD}
+    irkalla.kafka.brokers ={{ .Values.configMap.kafka.brokers }}
+    irkalla.kafka.clientId ={{ .Values.configMap.kafka.clientId }}
+    irkalla.stop.place.kafka.topic.name ={{ .Values.configMap.kafka.topicUpdatedStopPlaces }}
+    irkalla.stop.place.delete.kafka.topic.name ={{ .Values.configMap.kafka.topicDeletedStopPlaces }}
+    irkalla.group.of.stop.place.kafka.topic.name ={{ .Values.configMap.kafka.topicGroupOfStopPlaces }}
+    irkalla.kafka.enabled={{ .Values.configMap.kafka.enabled }}
+
 kind: ConfigMap
 metadata:
   name: {{ template "irkalla.name" . }}-config

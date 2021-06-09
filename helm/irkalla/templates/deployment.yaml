@@ -32,6 +32,16 @@ spec:
                 -Dfile.encoding=UTF-8 -Drutebanken.kubernetes.enabled=true -Drutebanken.kubernetes.namespace={{ .Release.Namespace }}
             - name: TZ
               value: Europe/Oslo
+            - name: IRKALLA_KAFKA_SASL_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  key: kafka-username
+                  name: ror-irkalla-secrets
+            - name: IRKALLA_KAFKA_SASL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: kafka-password
+                  name: ror-irkalla-secrets
           image: {{ .Values.image.identifier }}
           imagePullPolicy: {{ .Values.image.imagePullPolicy }}
           livenessProbe:
