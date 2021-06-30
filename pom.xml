@@ -40,8 +40,8 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
     </scm>
 
     <properties>
-        <camel.version>2.25.3</camel.version>
-        <entur.helpers.version>1.0.40</entur.helpers.version>
+        <camel.version>2.25.4</camel.version>
+        <entur.helpers.version>1.0.55-SNAPSHOT</entur.helpers.version>
         <entur.common.logging.version>1.0.14</entur.common.logging.version>
         <wololo.version>0.14.3</wololo.version>
         <entur.google.pubsub.emulator.download.skip>false</entur.google.pubsub.emulator.download.skip>
@@ -71,12 +71,6 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
             <groupId>org.entur.helpers</groupId>
             <artifactId>organisation</artifactId>
             <version>${entur.helpers.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.keycloak</groupId>
-                    <artifactId>keycloak-spring-security-adapter</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.entur.helpers</groupId>

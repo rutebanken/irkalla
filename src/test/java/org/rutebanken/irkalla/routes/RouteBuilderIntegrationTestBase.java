@@ -27,8 +27,8 @@ import org.springframework.test.context.ActiveProfiles;
 @RunWith(CamelSpringBootRunner.class)
 @UseAdviceWith
 @SpringBootTest(classes = IrkallaApplication.class)
-@ActiveProfiles({"default",  "in-memory-blobstore", "google-pubsub-emulator"})
-public class RouteBuilderIntegrationTestBase {
+@ActiveProfiles({"default",  "in-memory-blobstore", "google-pubsub-emulator", "test"})
+public abstract class RouteBuilderIntegrationTestBase {
 
     @Autowired
     protected ModelCamelContext context;

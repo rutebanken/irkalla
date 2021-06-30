@@ -15,6 +15,7 @@
 
 package org.rutebanken.irkalla.routes;
 
+import com.google.cloud.spring.pubsub.support.BasicAcknowledgeablePubsubMessage;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.model.RouteDefinition;
@@ -23,7 +24,6 @@ import org.apache.camel.spring.SpringRouteBuilder;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.entur.pubsub.camel.EnturGooglePubSubConstants;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.gcp.pubsub.support.BasicAcknowledgeablePubsubMessage;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -85,19 +85,19 @@ public abstract class BaseRouteBuilder extends SpringRouteBuilder {
 
         List<Message> messages = (List<Message>) exchange.getIn().getBody(List.class);
         List<BasicAcknowledgeablePubsubMessage> ackList = messages.stream()
-                .map(m->m.getHeader(EnturGooglePubSubConstants.ACK_ID, BasicAcknowledgeablePubsubMessage.class))
+                .map(m -> m.getHeader(EnturGooglePubSubConstants.ACK_ID, BasicAcknowledgeablePubsubMessage.class))
                 .collect(Collectors.toList());
 
         exchange.addOnCompletion(new Synchronization() {
 
             @Override
             public void onComplete(Exchange exchange) {
-                ackList.stream().forEach(e->e.ack());
+                ackList.stream().forEach(e -> e.ack());
             }
 
             @Override
             public void onFailure(Exchange exchange) {
-                ackList.stream().forEach(e->e.nack());
+                ackList.stream().forEach(e -> e.nack());
             }
         });
     }

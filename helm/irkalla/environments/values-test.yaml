@@ -1,8 +1,7 @@
 configMap:
   blobstoreProjectId: entur-ror-test
   pubsubProjectId: entur-ror-test
-  keycloak:
-    url:  https://kc-stage.devstage.entur.io/auth
+
   auth0:
     ror:
       url: https://ror-entur-staging.eu.auth0.com/
