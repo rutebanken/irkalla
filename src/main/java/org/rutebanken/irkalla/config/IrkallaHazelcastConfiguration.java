@@ -13,23 +13,22 @@
  * limitations under the Licence.
  */
 
-package org.rutebanken.irkalla.service;
+package org.rutebanken.irkalla.config;
 
 import org.rutebanken.hazelcasthelper.service.KubernetesService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 
-@Service
-public class IrkallaHazelcastConfiguration extends KubernetesService {
-    private static final Logger log = LoggerFactory.getLogger(IrkallaHazelcastConfiguration.class);
+@Configuration
+public class IrkallaHazelcastConfiguration {
 
-    public IrkallaHazelcastConfiguration(@Value("${rutebanken.kubernetes.url:}") String kubernetesUrl,
-                                          @Value("${rutebanken.kubernetes.namespace:default}") String namespace,
-                                          @Value("${rutebanken.kubernetes.enabled:true}") boolean kubernetesEnabled) {
-        super(kubernetesUrl, namespace, kubernetesEnabled);
+    @Bean
+    public KubernetesService irkallaKubernetesService(@Value("${rutebanken.kubernetes.url:}") String kubernetesUrl,
+                                                      @Value("${rutebanken.kubernetes.namespace:default}") String namespace,
+                                                      @Value("${rutebanken.kubernetes.enabled:true}") boolean kubernetesEnabled) {
+        return new KubernetesService(kubernetesUrl, namespace, kubernetesEnabled);
     }
 
 
