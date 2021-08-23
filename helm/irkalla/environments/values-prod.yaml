@@ -1,8 +1,7 @@
 configMap:
   blobstoreProjectId: entur-ror-prod
   pubsubProjectId: entur-ror-prod
-  keycloak:
-    url:  https://auth.entur.org/auth
+
   auth0:
     ror:
       url: https://auth2.entur.org/

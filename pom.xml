@@ -22,7 +22,7 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
     <parent>
         <groupId>org.rutebanken.superpom</groupId>
         <artifactId>superpom</artifactId>
-        <version>1.0.19</version>
+        <version>1.0.28</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -40,8 +40,9 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
     </scm>
 
     <properties>
-        <camel.version>2.25.3</camel.version>
-        <entur.helpers.version>1.0.40</entur.helpers.version>
+        <camel.version>2.25.4</camel.version>
+        <hazelcast.version>3.12.12</hazelcast.version>
+        <entur.helpers.version>1.0.59</entur.helpers.version>
         <entur.common.logging.version>1.0.14</entur.common.logging.version>
         <netex-java-model.version>1.0.12-SNAPSHOT</netex-java-model.version>
         <netex-parser-java.version>1.0.4</netex-parser-java.version>
@@ -74,12 +75,6 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
             <groupId>org.entur.helpers</groupId>
             <artifactId>organisation</artifactId>
             <version>${entur.helpers.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.keycloak</groupId>
-                    <artifactId>keycloak-spring-security-adapter</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.entur.helpers</groupId>
