@@ -49,6 +49,8 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
         <wololo.version>0.14.3</wololo.version>
         <kafka.clients.version>2.7.0</kafka.clients.version>
         <entur.google.pubsub.emulator.download.skip>false</entur.google.pubsub.emulator.download.skip>
+        <!--TODO temporary manual upgrade of Logback-->
+        <logback.version>1.2.8</logback.version>
     </properties>
 
     <dependencyManagement>
