@@ -43,7 +43,7 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
         <hazelcast.version>3.12.12</hazelcast.version>
         <entur.helpers.version>1.0.59</entur.helpers.version>
         <entur.common.logging.version>1.0.14</entur.common.logging.version>
-        <wololo.version>0.14.3</wololo.version>
+        <wololo.version>0.17.0</wololo.version>
         <entur.google.pubsub.emulator.download.skip>false</entur.google.pubsub.emulator.download.skip>
         <!--TODO temporary manual upgrade of Logback-->
         <logback.version>1.2.8</logback.version>
