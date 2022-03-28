@@ -13,7 +13,7 @@ aliases:
       git config --global user.name "circleci"
       git tag $VERSION
       git push origin $VERSION
-- &jfrog-login
+  - &jfrog-login
   name: Rename jfrog environment variable for maven setting.xml
   command: |
     echo "export JFROG_USER=$ARTIFACTORY_USER"  >> $BASH_ENV
