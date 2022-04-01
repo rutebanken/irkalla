@@ -1,6 +1,8 @@
 configMap:
   blobstoreProjectId: entur-ror-prod
   pubsubProjectId: entur-ror-prod
+  chouetteUrl: http://chouette.prd.entur.internal
+  tiamatUrl: http://tiamat.prd.entur.internal
 
   auth0:
     ror:

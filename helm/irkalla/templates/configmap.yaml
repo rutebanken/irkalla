@@ -7,13 +7,13 @@ data:
     camel.springboot.name=Irkalla
 
     # Chouette
-    chouette.url=http://chouette:8080
+    chouette.url={{ .Values.configMap.chouetteUrl }}
     chouette.sync.stop.place.full.cron=0 30 23 ? * SAT *
     chouette.sync.stop.place.cron=0 0/5 * * * ?
     chouette.sync.stop.place.autoStartup=true
 
     # Tiamat
-    tiamat.url=http://tiamat
+    tiamat.url={{ .Values.configMap.tiamatUrl }}
 
     #OAuth2 Resource Server
     spring.security.oauth2.resourceserver.jwt.issuer-uri={{ .Values.configMap.auth0.ror.url }}
