@@ -17,10 +17,11 @@ package org.rutebanken.irkalla.routes;
 
 import com.google.cloud.spring.pubsub.support.BasicAcknowledgeablePubsubMessage;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.Synchronization;
-import org.apache.camel.spring.SpringRouteBuilder;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.entur.pubsub.camel.EnturGooglePubSubConstants;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,7 +31,7 @@ import java.util.stream.Collectors;
 
 import static org.rutebanken.irkalla.Constants.SINGLETON_ROUTE_DEFINITION_GROUP_NAME;
 
-public abstract class BaseRouteBuilder extends SpringRouteBuilder {
+public abstract class BaseRouteBuilder extends RouteBuilder {
 
 
     @Value("${irkalla.camel.redelivery.max:3}")
@@ -88,17 +89,26 @@ public abstract class BaseRouteBuilder extends SpringRouteBuilder {
                 .map(m -> m.getHeader(EnturGooglePubSubConstants.ACK_ID, BasicAcknowledgeablePubsubMessage.class))
                 .collect(Collectors.toList());
 
-        exchange.addOnCompletion(new Synchronization() {
+        exchange.adapt(ExtendedExchange.class).addOnCompletion(new AckSynchronization(ackList));
 
-            @Override
-            public void onComplete(Exchange exchange) {
-                ackList.stream().forEach(e -> e.ack());
-            }
+    }
 
-            @Override
-            public void onFailure(Exchange exchange) {
-                ackList.stream().forEach(e -> e.nack());
-            }
-        });
+    private static class AckSynchronization implements Synchronization {
+
+        private final List<BasicAcknowledgeablePubsubMessage> ackList;
+
+        public AckSynchronization(List<BasicAcknowledgeablePubsubMessage> ackList) {
+            this.ackList = ackList;
+        }
+
+        @Override
+        public void onComplete(Exchange exchange) {
+            ackList.forEach(BasicAcknowledgeablePubsubMessage::ack);
+        }
+
+        @Override
+        public void onFailure(Exchange exchange) {
+            ackList.forEach(BasicAcknowledgeablePubsubMessage::nack);
+        }
     }
 }

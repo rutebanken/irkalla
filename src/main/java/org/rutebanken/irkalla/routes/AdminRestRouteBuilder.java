@@ -16,6 +16,7 @@
 package org.rutebanken.irkalla.routes;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.apache.camel.model.rest.RestParamType;
 import org.rutebanken.helper.organisation.AuthorizationConstants;
@@ -29,7 +30,10 @@ import org.springframework.util.CollectionUtils;
 
 import javax.ws.rs.NotFoundException;
 
-import static org.rutebanken.irkalla.Constants.*;
+import static org.rutebanken.irkalla.Constants.HEADER_SYNC_OPERATION;
+import static org.rutebanken.irkalla.Constants.SYNC_OPERATION_DELTA;
+import static org.rutebanken.irkalla.Constants.SYNC_OPERATION_FULL;
+import static org.rutebanken.irkalla.Constants.SYNC_OPERATION_FULL_WITH_DELETE_UNUSED_FIRST;
 
 @Component
 public class AdminRestRouteBuilder extends BaseRouteBuilder {
@@ -102,7 +106,7 @@ public class AdminRestRouteBuilder extends BaseRouteBuilder {
                 .removeHeaders("CamelHttp*")
                 .setHeader(HEADER_SYNC_OPERATION, constant(SYNC_OPERATION_DELTA))
                 .setBody(constant(null))
-                .inOnly("entur-google-pubsub:ChouetteStopPlaceSyncQueue")
+                .to(ExchangePattern.InOnly,"entur-google-pubsub:ChouetteStopPlaceSyncQueue")
                 .endRest()
                 .post("/full")
                 .description("Full synchronization of all stop places from Tiamat to Chouette")
@@ -119,7 +123,7 @@ public class AdminRestRouteBuilder extends BaseRouteBuilder {
                     .setHeader(HEADER_SYNC_OPERATION, constant(SYNC_OPERATION_FULL))
                 .end()
                 .setBody(constant(null))
-                .inOnly("entur-google-pubsub:ChouetteStopPlaceSyncQueue")
+                .to(ExchangePattern.InOnly,"entur-google-pubsub:ChouetteStopPlaceSyncQueue")
                 .endRest();
 
 

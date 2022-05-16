@@ -17,9 +17,9 @@ package org.rutebanken.irkalla.routes.chouette;
 
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultMessage;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.support.DefaultMessage;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,7 +28,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.rutebanken.irkalla.Constants.*;
+import static org.rutebanken.irkalla.Constants.HEADER_NEXT_BATCH_URL;
+import static org.rutebanken.irkalla.Constants.HEADER_SYNC_OPERATION;
+import static org.rutebanken.irkalla.Constants.SYNC_OPERATION_DELTA;
+import static org.rutebanken.irkalla.Constants.SYNC_OPERATION_FULL;
+import static org.rutebanken.irkalla.Constants.SYNC_OPERATION_FULL_WITH_DELETE_UNUSED_FIRST;
 
 public class SyncMsgComparatorTest {
 
@@ -41,15 +45,15 @@ public class SyncMsgComparatorTest {
 
 
         List<Message> toBeSortedList = new ArrayList<>(sortedList);
-        Collections.sort(toBeSortedList, new SyncMsgComparator());
+        toBeSortedList.sort(new SyncMsgComparator());
 
-        Assert.assertEquals(sortedList, toBeSortedList);
+        Assertions.assertEquals(sortedList, toBeSortedList);
 
 
         List<Message> toBeSortedListReversed = new ArrayList<>(sortedList);
         Collections.reverse(toBeSortedListReversed);
-        Collections.sort(toBeSortedListReversed, new SyncMsgComparator());
-        Assert.assertEquals(sortedList, toBeSortedListReversed);
+        toBeSortedListReversed.sort(new SyncMsgComparator());
+        Assertions.assertEquals(sortedList, toBeSortedListReversed);
     }
 
 
