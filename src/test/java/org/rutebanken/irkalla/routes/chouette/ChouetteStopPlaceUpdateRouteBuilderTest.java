@@ -29,6 +29,7 @@ import org.rutebanken.irkalla.IrkallaApplication;
 import org.rutebanken.irkalla.routes.RouteBuilderIntegrationTestBase;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 
 
 @CamelSpringBootTest
@@ -106,6 +107,7 @@ public class ChouetteStopPlaceUpdateRouteBuilderTest extends RouteBuilderIntegra
 
 
     @Test
+    @DirtiesContext
     public void testUpdateStopPlacesNoChanges() throws Exception {
         String exportPath = tiamatUrl + publicationDeliveryPath + "*";
 
@@ -127,6 +129,7 @@ public class ChouetteStopPlaceUpdateRouteBuilderTest extends RouteBuilderIntegra
     }
 
     @Test
+    @DirtiesContext
     public void testUpdateStopPlacesRetryWhenChouetteIsBusy() throws Exception {
         String exportPath = tiamatUrl + publicationDeliveryPath + "*";
 
