@@ -34,6 +34,7 @@ import org.springframework.test.annotation.DirtiesContext;
 
 @CamelSpringBootTest
 @SpringBootTest(classes = IrkallaApplication.class, properties = "irkalla.camel.redelivery.max=0")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class ChouetteStopPlaceUpdateRouteBuilderTest extends RouteBuilderIntegrationTestBase {
 
 
@@ -107,7 +108,6 @@ public class ChouetteStopPlaceUpdateRouteBuilderTest extends RouteBuilderIntegra
 
 
     @Test
-    @DirtiesContext
     public void testUpdateStopPlacesNoChanges() throws Exception {
         String exportPath = tiamatUrl + publicationDeliveryPath + "*";
 
@@ -129,7 +129,6 @@ public class ChouetteStopPlaceUpdateRouteBuilderTest extends RouteBuilderIntegra
     }
 
     @Test
-    @DirtiesContext
     public void testUpdateStopPlacesRetryWhenChouetteIsBusy() throws Exception {
         String exportPath = tiamatUrl + publicationDeliveryPath + "*";
 
