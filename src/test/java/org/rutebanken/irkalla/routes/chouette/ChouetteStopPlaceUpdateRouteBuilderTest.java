@@ -23,7 +23,6 @@ import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.http.base.HttpOperationFailedException;
 import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.rutebanken.irkalla.IrkallaApplication;
 import org.rutebanken.irkalla.routes.RouteBuilderIntegrationTestBase;
@@ -64,7 +63,6 @@ public class ChouetteStopPlaceUpdateRouteBuilderTest extends RouteBuilderIntegra
     protected MockEndpoint chouetteStopPlaceSyncQueueMock;
 
     @Test
-    @Disabled
     public void testUpdateStopPlaces() throws Exception {
         String exportPath = tiamatUrl + publicationDeliveryPath + "*";
 
