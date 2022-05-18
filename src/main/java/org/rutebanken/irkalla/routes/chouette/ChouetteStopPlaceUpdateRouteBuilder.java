@@ -101,7 +101,7 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
                 .log(LoggingLevel.INFO, "${header." + HEADER_SYNC_OPERATION + "} synchronization of stop places in Chouette resumed.")
                 .end()
 
-                .setBody(constant(""))
+                //.setBody(constant(""))
                 .to("direct:processChangedStopPlacesAsNetex")
                 .choice()
                 .when(header(HEADER_NEXT_BATCH_URL).isNotNull())
@@ -119,7 +119,7 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
                 .log(LoggingLevel.INFO, "${header." + HEADER_SYNC_OPERATION + "} synchronization of stop places in Chouette started.")
                 .choice()
                 .when(simple("${header." + HEADER_SYNC_OPERATION + "} == '" + SYNC_OPERATION_DELTA + "'"))
-                .setBody(constant(""))
+                //.setBody(constant(""))
                 .to("direct:getSyncStatusUntilTime")
                 .setHeader(Constants.HEADER_SYNC_STATUS_FROM, simple("${body}"))
                 .end()
