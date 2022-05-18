@@ -101,11 +101,11 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
                 .log(LoggingLevel.INFO, "${header." + HEADER_SYNC_OPERATION + "} synchronization of stop places in Chouette resumed.")
                 .end()
 
-                .setBody(constant(null))
+                .setBody(constant(""))
                 .to("direct:processChangedStopPlacesAsNetex")
                 .choice()
                 .when(header(HEADER_NEXT_BATCH_URL).isNotNull())
-                .setBody(constant(null))
+                .setBody(constant(""))
                 .to("entur-google-pubsub:ChouetteStopPlaceSyncQueue")  // Prepare new iteration
                 .otherwise()
                 .to("direct:completeSynchronization") // Completed
@@ -119,7 +119,7 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
                 .log(LoggingLevel.INFO, "${header." + HEADER_SYNC_OPERATION + "} synchronization of stop places in Chouette started.")
                 .choice()
                 .when(simple("${header." + HEADER_SYNC_OPERATION + "} == '" + SYNC_OPERATION_DELTA + "'"))
-                .setBody(constant(null))
+                .setBody(constant(""))
                 .to("direct:getSyncStatusUntilTime")
                 .setHeader(Constants.HEADER_SYNC_STATUS_FROM, simple("${body}"))
                 .end()
@@ -144,13 +144,13 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
         from("direct:deleteUnusedStopPlaces")
                 .log(LoggingLevel.INFO, "Full synchronization of stop places in Chouette, deleting unused stops first")
                 .removeHeaders("CamelHttp*")
-                .setBody(constant(null))
+                .setBody(constant(""))
                 .setHeader(Exchange.HTTP_METHOD, constant(HttpMethods.DELETE))
                 .doTry()
                 .toD(chouetteUrl + "/chouette_iev/stop_place/unused")
                 .setHeader(HEADER_SYNC_OPERATION, constant(SYNC_OPERATION_FULL))
                 .log(LoggingLevel.INFO, "Deleting unused stop places in Chouette completed.")
-                .setBody(constant(null))
+                .setBody(constant(""))
                 .to("entur-google-pubsub:ChouetteStopPlaceSyncQueue")
                 .doCatch(HttpOperationFailedException.class).onWhen(exchange -> {
             HttpOperationFailedException ex = exchange.getException(HttpOperationFailedException.class);
@@ -158,7 +158,7 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
         })
                 .log(LoggingLevel.INFO, "Unable to delete unused stop places because Chouette is busy, retry in " + retryDelay + " ms")
                 .delay(retryDelay)
-                .setBody(constant(null))
+                .setBody(constant(""))
                 .to("entur-google-pubsub:ChouetteStopPlaceSyncQueue")
                 .stop()
                 .routeId("chouette-synchronize-stop-places-delete-unused");
@@ -175,7 +175,7 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
                             return (ex.getStatusCode() == 423);})
                 .log(LoggingLevel.INFO, "Unable to sync stop places because Chouette is busy, retry in " + retryDelay + " ms")
                 .delay(retryDelay)
-                .setBody(constant(null))
+                .setBody(constant(""))
                 .to("entur-google-pubsub:ChouetteStopPlaceSyncQueue")
                 .stop()
                 .routeId("chouette-synchronize-stop-place-batch");
