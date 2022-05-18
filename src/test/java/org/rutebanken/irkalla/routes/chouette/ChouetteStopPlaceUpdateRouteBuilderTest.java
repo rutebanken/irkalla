@@ -98,7 +98,7 @@ public class ChouetteStopPlaceUpdateRouteBuilderTest extends RouteBuilderIntegra
 
         chouetteUpdateStopPlaces.expectedMessageCount(2);
 
-        updateStopPlaces.sendBody("");
+        updateStopPlaces.sendBody("dummy");
 
         tiamatExportChanges.assertIsSatisfied();
         chouetteUpdateStopPlaces.assertIsSatisfied();
@@ -120,7 +120,7 @@ public class ChouetteStopPlaceUpdateRouteBuilderTest extends RouteBuilderIntegra
         tiamatExportChanges.whenExchangeReceived(1, e -> e.getIn().setHeader(Exchange.HTTP_RESPONSE_CODE, "204"));
 
 
-        updateStopPlaces.sendBody("");
+        updateStopPlaces.sendBody("dummy");
 
 
         tiamatExportChanges.assertIsSatisfied();
@@ -158,7 +158,7 @@ public class ChouetteStopPlaceUpdateRouteBuilderTest extends RouteBuilderIntegra
 
         context.start();
 
-        updateStopPlaces.sendBody("");
+        updateStopPlaces.sendBody("dummy");
 
         tiamatExportChanges.assertIsSatisfied();
         chouetteUpdateStopPlaces.assertIsSatisfied();
