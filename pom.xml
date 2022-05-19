@@ -132,13 +132,10 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jersey</artifactId>
         </dependency>
-
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-config</artifactId>
@@ -147,7 +144,6 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-web</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
@@ -199,7 +195,6 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
             <groupId>org.apache.camel.springboot</groupId>
             <artifactId>camel-hazelcast-starter</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.apache.camel.springboot</groupId>
             <artifactId>camel-quartz-starter</artifactId>
