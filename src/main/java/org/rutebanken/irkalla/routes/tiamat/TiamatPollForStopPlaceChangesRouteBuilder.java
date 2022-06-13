@@ -17,7 +17,7 @@ package org.rutebanken.irkalla.routes.tiamat;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
-import org.apache.camel.component.http4.HttpMethods;
+import org.apache.camel.http.common.HttpMethods;
 import org.glassfish.jersey.uri.internal.JerseyUriBuilder;
 import org.rutebanken.irkalla.Constants;
 import org.rutebanken.irkalla.routes.BaseRouteBuilder;
@@ -29,8 +29,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
-import static org.rutebanken.irkalla.Constants.*;
-import static org.rutebanken.irkalla.util.Http4URL.toHttp4Url;
+import static org.rutebanken.irkalla.Constants.HEADER_NEXT_BATCH_URL;
 
 @Component
 public class TiamatPollForStopPlaceChangesRouteBuilder extends BaseRouteBuilder {
@@ -70,7 +69,7 @@ public class TiamatPollForStopPlaceChangesRouteBuilder extends BaseRouteBuilder 
                 .log(LoggingLevel.INFO, "Fetching batch of changed stop places: ${header." + HEADER_NEXT_BATCH_URL + "}")
                 .removeHeader("Link")
                 .setHeader(Exchange.HTTP_METHOD, constant(HttpMethods.GET))
-                .setBody(constant(null))
+                .setBody(constant(""))
                 .toD("${header." + HEADER_NEXT_BATCH_URL + "}")
                 .removeHeader(HEADER_NEXT_BATCH_URL)
                 .choice()
@@ -88,7 +87,7 @@ public class TiamatPollForStopPlaceChangesRouteBuilder extends BaseRouteBuilder 
         Long fromAsEpocMillis = e.getIn().getHeader(Constants.HEADER_SYNC_STATUS_FROM, Long.class);
         Long toAsEpocMillis = e.getIn().getHeader(Constants.HEADER_SYNC_STATUS_TO, Long.class);
 
-        UriBuilder uriBuilder = new JerseyUriBuilder().path(toHttp4Url(tiamatUrl) + publicationDeliveryPath);
+        UriBuilder uriBuilder = new JerseyUriBuilder().path(tiamatUrl + publicationDeliveryPath);
 
         uriBuilder.queryParam("topographicPlaceExportMode", "NONE");
         uriBuilder.queryParam("tariffZoneExportMode", "NONE");
@@ -113,9 +112,9 @@ public class TiamatPollForStopPlaceChangesRouteBuilder extends BaseRouteBuilder 
      * URL to next page of result set is encoded as Link header (rel="next")
      */
     private void setURLToNextBatch(Exchange e) {
-        e.getIn().setHeader(HEADER_NEXT_BATCH_URL, toHttp4Url(e.getIn().getHeader("Link", String.class)
+        e.getIn().setHeader(HEADER_NEXT_BATCH_URL, e.getIn().getHeader("Link", String.class)
                 .replaceFirst("\\<", "")
-                .replaceFirst("\\>; rel=\"next\"", "")));
+                .replaceFirst("\\>; rel=\"next\"", ""));
     }
 
 }

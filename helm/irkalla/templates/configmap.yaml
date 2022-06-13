@@ -43,7 +43,6 @@ data:
     management.endpoints.web.exposure.include=info,health,prometheus
 
     spring.jackson.serialization.write-dates-as-timestamps=false
-    etcd.url=http://etcd-client:2379
     # disable local redelivery to force Camel routes to be retried entirely.
     # this prevents a local retry from sending inconsistent requests to chouette
     irkalla.camel.redelivery.max=0

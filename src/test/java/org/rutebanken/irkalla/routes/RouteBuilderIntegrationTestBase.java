@@ -16,18 +16,16 @@
 package org.rutebanken.irkalla.routes;
 
 import org.apache.camel.model.ModelCamelContext;
-import org.apache.camel.test.spring.CamelSpringBootRunner;
-import org.apache.camel.test.spring.UseAdviceWith;
-import org.junit.runner.RunWith;
-import org.rutebanken.irkalla.IrkallaApplication;
+import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
+import org.apache.camel.test.spring.junit5.UseAdviceWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
-@RunWith(CamelSpringBootRunner.class)
+@CamelSpringBootTest
 @UseAdviceWith
-@SpringBootTest(classes = IrkallaApplication.class)
 @ActiveProfiles({"default",  "in-memory-blobstore", "google-pubsub-emulator", "test"})
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public abstract class RouteBuilderIntegrationTestBase {
 
     @Autowired

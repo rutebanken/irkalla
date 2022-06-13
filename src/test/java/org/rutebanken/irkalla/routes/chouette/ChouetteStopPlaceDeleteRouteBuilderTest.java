@@ -18,41 +18,38 @@ package org.rutebanken.irkalla.routes.chouette;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.builder.AdviceWithRouteBuilder;
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
+import org.junit.jupiter.api.Test;
 import org.rutebanken.irkalla.Constants;
 import org.rutebanken.irkalla.routes.RouteBuilderIntegrationTestBase;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.rutebanken.irkalla.util.Http4URL.toHttp4Url;
 
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@SpringBootTest
+@CamelSpringBootTest
 public class ChouetteStopPlaceDeleteRouteBuilderTest extends RouteBuilderIntegrationTestBase {
 
-
-    @Produce(uri = "entur-google-pubsub:ChouetteStopPlaceDeleteQueue")
+    @Produce("entur-google-pubsub:ChouetteStopPlaceDeleteQueue")
     protected ProducerTemplate deleteStopPlaces;
 
     @Value("${chouette.url}")
     private String chouetteUrl;
 
-    @EndpointInject(uri = "mock:chouetteDeleteStopPlace")
+    @EndpointInject("mock:chouetteDeleteStopPlace")
     protected MockEndpoint chouetteDeleteStopPlace;
+
 
     @Test
     public void testDeleteStopPlace() throws Exception {
 
         String stopPlaceId = "NSR:StopPlace:33";
 
-        context.getRouteDefinition("chouette-delete-stop-place").adviceWith(context, new AdviceWithRouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                interceptSendToEndpoint(toHttp4Url(chouetteUrl) + "/chouette_iev/stop_place/NSR:StopPlace:33")
-                        .skipSendToOriginalEndpoint().to("mock:chouetteDeleteStopPlace");
-            }
-        });
+        AdviceWith.adviceWith(context, "chouette-delete-stop-place",
+                a -> a.interceptSendToEndpoint(chouetteUrl + "/chouette_iev/stop_place/NSR:StopPlace:33")
+                        .skipSendToOriginalEndpoint().to("mock:chouetteDeleteStopPlace"));
 
 
         context.start();

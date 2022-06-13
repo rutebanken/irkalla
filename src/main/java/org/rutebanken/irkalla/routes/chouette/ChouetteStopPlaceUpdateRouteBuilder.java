@@ -16,10 +16,11 @@
 package org.rutebanken.irkalla.routes.chouette;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Message;
-import org.apache.camel.component.http4.HttpMethods;
-import org.apache.camel.http.common.HttpOperationFailedException;
+import org.apache.camel.http.base.HttpOperationFailedException;
+import org.apache.camel.http.common.HttpMethods;
 import org.apache.camel.processor.aggregate.GroupedMessageAggregationStrategy;
 import org.rutebanken.irkalla.Constants;
 import org.rutebanken.irkalla.routes.BaseRouteBuilder;
@@ -36,7 +37,7 @@ import static org.rutebanken.irkalla.Constants.HEADER_SYNC_STATUS_TO;
 import static org.rutebanken.irkalla.Constants.SYNC_OPERATION_DELTA;
 import static org.rutebanken.irkalla.Constants.SYNC_OPERATION_FULL;
 import static org.rutebanken.irkalla.Constants.SYNC_OPERATION_FULL_WITH_DELETE_UNUSED_FIRST;
-import static org.rutebanken.irkalla.util.Http4URL.toHttp4Url;
+
 
 @Component
 public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
@@ -62,18 +63,18 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
     public void configure() throws Exception {
         super.configure();
 
-        from("quartz2://irkalla/stopPlaceDeltaSync?cron=" + deltaSyncCronSchedule + "&trigger.timeZone=Europe/Oslo")
+        from("quartz://irkalla/stopPlaceDeltaSync?cron=" + deltaSyncCronSchedule + "&trigger.timeZone=Europe/Oslo")
                 .autoStartup("{{chouette.sync.stop.place.autoStartup:true}}")
                 .log(LoggingLevel.DEBUG, "Quartz triggers delta sync of changed stop places.")
                 .setHeader(HEADER_SYNC_OPERATION, constant(SYNC_OPERATION_DELTA))
-                .inOnly("entur-google-pubsub:ChouetteStopPlaceSyncQueue")
+                .to(ExchangePattern.InOnly,"entur-google-pubsub:ChouetteStopPlaceSyncQueue")
                 .routeId("chouette-synchronize-stop-places-delta-quartz");
 
-        from("quartz2://irkalla/stopPlaceSync?cron=" + fullSyncCronSchedule + "&trigger.timeZone=Europe/Oslo")
+        from("quartz://irkalla/stopPlaceSync?cron=" + fullSyncCronSchedule + "&trigger.timeZone=Europe/Oslo")
                 .autoStartup("{{chouette.sync.stop.place.autoStartup:true}}")
                 .log(LoggingLevel.DEBUG, "Quartz triggers full sync of changed stop places.")
                 .setHeader(HEADER_SYNC_OPERATION, constant(SYNC_OPERATION_FULL_WITH_DELETE_UNUSED_FIRST))
-                .inOnly("entur-google-pubsub:ChouetteStopPlaceSyncQueue")
+                .to(ExchangePattern.InOnly,"entur-google-pubsub:ChouetteStopPlaceSyncQueue")
                 .routeId("chouette-synchronize-stop-places-full-quartz");
 
 
@@ -100,11 +101,11 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
                 .log(LoggingLevel.INFO, "${header." + HEADER_SYNC_OPERATION + "} synchronization of stop places in Chouette resumed.")
                 .end()
 
-                .setBody(constant(null))
+                //.setBody(constant(""))
                 .to("direct:processChangedStopPlacesAsNetex")
                 .choice()
                 .when(header(HEADER_NEXT_BATCH_URL).isNotNull())
-                .setBody(constant(null))
+                .setBody(constant(""))
                 .to("entur-google-pubsub:ChouetteStopPlaceSyncQueue")  // Prepare new iteration
                 .otherwise()
                 .to("direct:completeSynchronization") // Completed
@@ -118,7 +119,7 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
                 .log(LoggingLevel.INFO, "${header." + HEADER_SYNC_OPERATION + "} synchronization of stop places in Chouette started.")
                 .choice()
                 .when(simple("${header." + HEADER_SYNC_OPERATION + "} == '" + SYNC_OPERATION_DELTA + "'"))
-                .setBody(constant(null))
+                //.setBody(constant(""))
                 .to("direct:getSyncStatusUntilTime")
                 .setHeader(Constants.HEADER_SYNC_STATUS_FROM, simple("${body}"))
                 .end()
@@ -143,13 +144,13 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
         from("direct:deleteUnusedStopPlaces")
                 .log(LoggingLevel.INFO, "Full synchronization of stop places in Chouette, deleting unused stops first")
                 .removeHeaders("CamelHttp*")
-                .setBody(constant(null))
+                .setBody(constant(""))
                 .setHeader(Exchange.HTTP_METHOD, constant(HttpMethods.DELETE))
                 .doTry()
-                .toD(toHttp4Url(chouetteUrl) + "/chouette_iev/stop_place/unused")
+                .toD(chouetteUrl + "/chouette_iev/stop_place/unused")
                 .setHeader(HEADER_SYNC_OPERATION, constant(SYNC_OPERATION_FULL))
                 .log(LoggingLevel.INFO, "Deleting unused stop places in Chouette completed.")
-                .setBody(constant(null))
+                .setBody(constant(""))
                 .to("entur-google-pubsub:ChouetteStopPlaceSyncQueue")
                 .doCatch(HttpOperationFailedException.class).onWhen(exchange -> {
             HttpOperationFailedException ex = exchange.getException(HttpOperationFailedException.class);
@@ -157,7 +158,7 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
         })
                 .log(LoggingLevel.INFO, "Unable to delete unused stop places because Chouette is busy, retry in " + retryDelay + " ms")
                 .delay(retryDelay)
-                .setBody(constant(null))
+                .setBody(constant(""))
                 .to("entur-google-pubsub:ChouetteStopPlaceSyncQueue")
                 .stop()
                 .routeId("chouette-synchronize-stop-places-delete-unused");
@@ -168,14 +169,14 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
                 .removeHeaders("CamelHttp*")
                 .setHeader(Exchange.HTTP_METHOD, constant(HttpMethods.POST))
                 .doTry()
-                .toD(toHttp4Url(chouetteUrl) + "/chouette_iev/stop_place")
+                .toD(chouetteUrl + "/chouette_iev/stop_place")
                 .doCatch(HttpOperationFailedException.class).onWhen(exchange -> {
             HttpOperationFailedException ex = exchange.getException(HttpOperationFailedException.class);
             return (ex.getStatusCode() == 423);
         })
                 .log(LoggingLevel.INFO, "Unable to sync stop places because Chouette is busy, retry in " + retryDelay + " ms")
                 .delay(retryDelay)
-                .setBody(constant(null))
+                .setBody(constant(""))
                 .to("entur-google-pubsub:ChouetteStopPlaceSyncQueue")
                 .stop()
                 .routeId("chouette-synchronize-stop-place-batch");
