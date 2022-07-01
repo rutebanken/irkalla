@@ -3,9 +3,9 @@ package org.rutebanken.irkalla.routes.tiamat.netex;
 
 import org.entur.netex.NetexParser;
 import org.entur.netex.index.api.NetexEntitiesIndex;
-import org.junit.Assert;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.rutebanken.netex.model.LocaleStructure;
 import org.rutebanken.netex.model.LocationStructure;
 import org.rutebanken.netex.model.MultilingualString;
@@ -93,7 +93,7 @@ public class PublicationDeliverySplitterTest {
 
         final List<PublicationDeliveryStructure> result = new PublicationDeliverySplitter().transform(inputStream);
 
-        Assert.assertEquals(2,result.size());
+        Assertions.assertEquals(2,result.size());
 
 
 
@@ -117,7 +117,7 @@ public class PublicationDeliverySplitterTest {
 
         }
 
-        Assert.assertEquals(5,result.size());
+        Assertions.assertEquals(5,result.size());
     }
 
     @SuppressWarnings("unchecked")
