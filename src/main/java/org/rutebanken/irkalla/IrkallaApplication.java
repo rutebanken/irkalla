@@ -15,7 +15,7 @@
 
 package org.rutebanken.irkalla;
 
-import org.entur.pubsub.camel.config.GooglePubSubCamelComponentConfig;
+import org.entur.pubsub.base.config.GooglePubSubConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
@@ -24,7 +24,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication(exclude={UserDetailsServiceAutoConfiguration.class})
 @EnableScheduling
-@Import({GooglePubSubCamelComponentConfig.class})
+@Import({GooglePubSubConfig.class})
 public class IrkallaApplication {
 
 	public static void main(String[] args) {

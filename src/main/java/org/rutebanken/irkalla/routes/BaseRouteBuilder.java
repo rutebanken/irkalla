@@ -20,16 +20,18 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.component.google.pubsub.GooglePubsubConstants;
 import org.apache.camel.spi.Synchronization;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.entur.pubsub.camel.EnturGooglePubSubConstants;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static org.rutebanken.irkalla.Constants.SINGLETON_ROUTE_DEFINITION_GROUP_NAME;
+import static org.apache.camel.component.google.pubsub.GooglePubsubConstants.ACK_ID;
 
 public abstract class BaseRouteBuilder extends RouteBuilder {
 
@@ -55,6 +57,32 @@ public abstract class BaseRouteBuilder extends RouteBuilder {
                 .logExhausted(true)
                 .logRetryStackTrace(true));
 
+        // Copy all PubSub headers except the internal Camel PubSub headers from the PubSub message into the Camel message headers.
+        interceptFrom(".*google-pubsub:.*")
+                .process(exchange ->
+                {
+                    Map<String, String> pubSubAttributes = exchange.getIn().getHeader(GooglePubsubConstants.ATTRIBUTES, Map.class);
+                    if (pubSubAttributes == null) {
+                        throw new IllegalStateException("Missing PubSub attribute maps in Exchange");
+                    }
+                    pubSubAttributes.entrySet()
+                            .stream()
+                            .filter(entry -> !entry.getKey().startsWith("CamelGooglePubsub"))
+                            .forEach(entry -> exchange.getIn().setHeader(entry.getKey(), entry.getValue()));
+                });
+
+        // Copy all PubSub headers except the internal Camel PubSub headers from the Camel message into the PubSub message.
+        interceptSendToEndpoint("google-pubsub:*").process(
+                exchange -> {
+                    Map<String, String> pubSubAttributes = new HashMap<>();
+                    exchange.getIn().getHeaders().entrySet().stream()
+                            .filter(entry -> !entry.getKey().startsWith("CamelGooglePubsub"))
+                            .filter(entry -> Objects.toString(entry.getValue()).length() <= 1024)
+                            .forEach(entry -> pubSubAttributes.put(entry.getKey(), Objects.toString(entry.getValue(), "")));
+                    exchange.getIn().setHeader(GooglePubsubConstants.ATTRIBUTES, pubSubAttributes);
+
+                });
+
     }
 
     protected void logRedelivery(Exchange exchange) {
@@ -69,13 +97,9 @@ public abstract class BaseRouteBuilder extends RouteBuilder {
         log.warn("Exchange failed ({}: {}) . Redelivering the message locally, attempt {}/{}...", rootCauseType, rootCauseMessage, redeliveryCounter, redeliveryMaxCounter);
     }
 
-    /**
-     * Create a new singleton route definition from URI. Only one such route should be active throughout the cluster at any time.
-     */
-    protected RouteDefinition singletonFrom(String uri) {
-        return this.from(uri).group(SINGLETON_ROUTE_DEFINITION_GROUP_NAME);
+    protected String logDebugShowAll() {
+        return "log:" + getClass().getName() + "?level=DEBUG&showAll=true&multiline=true";
     }
-
 
     /**
      * Add ACK/NACK completion callback for an aggregated exchange.
@@ -86,7 +110,7 @@ public abstract class BaseRouteBuilder extends RouteBuilder {
 
         List<Message> messages = (List<Message>) exchange.getIn().getBody(List.class);
         List<BasicAcknowledgeablePubsubMessage> ackList = messages.stream()
-                .map(m -> m.getHeader(EnturGooglePubSubConstants.ACK_ID, BasicAcknowledgeablePubsubMessage.class))
+                .map(m -> m.getHeader(ACK_ID, BasicAcknowledgeablePubsubMessage.class))
                 .collect(Collectors.toList());
 
         exchange.adapt(ExtendedExchange.class).addOnCompletion(new AckSynchronization(ackList));

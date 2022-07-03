@@ -28,7 +28,7 @@ import org.rutebanken.irkalla.IrkallaApplication;
 import org.rutebanken.irkalla.routes.RouteBuilderIntegrationTestBase;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
+
 
 
 @CamelSpringBootTest
@@ -36,7 +36,7 @@ import org.springframework.test.annotation.DirtiesContext;
 public class ChouetteStopPlaceUpdateRouteBuilderTest extends RouteBuilderIntegrationTestBase {
 
 
-    @Produce( "entur-google-pubsub:ChouetteStopPlaceSyncQueue")
+    @Produce( "google-pubsub:{{irkalla.pubsub.project.id}}:ChouetteStopPlaceSyncQueue")
     protected ProducerTemplate updateStopPlaces;
 
     @Value("${chouette.url}")
@@ -135,10 +135,8 @@ public class ChouetteStopPlaceUpdateRouteBuilderTest extends RouteBuilderIntegra
 
         AdviceWith.adviceWith(context, "chouette-synchronize-stop-place-batch",
                 a -> {
-                    a.interceptSendToEndpoint(chouetteUrl + "/chouette_iev/stop_place/*")
-                            .skipSendToOriginalEndpoint().to("mock:chouetteUpdateStopPlaces");
-                    a.weaveByToUri("entur-google-pubsub:ChouetteStopPlaceSyncQueue")
-                            .replace().to("mock:chouetteStopPlaceSyncQueue");
+                    a.interceptSendToEndpoint(chouetteUrl + "/chouette_iev/stop_place/*").skipSendToOriginalEndpoint().to("mock:chouetteUpdateStopPlaces");
+                    a.weaveByToUri("google-pubsub:(.*):ChouetteStopPlaceSyncQueue").replace().to("mock:chouetteStopPlaceSyncQueue");
                 }
         );
 

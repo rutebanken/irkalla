@@ -19,20 +19,22 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.AdviceWith;
+import org.apache.camel.component.google.pubsub.GooglePubsubConstants;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
 import org.junit.jupiter.api.Test;
 import org.rutebanken.irkalla.Constants;
 import org.rutebanken.irkalla.routes.RouteBuilderIntegrationTestBase;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 @SpringBootTest
-@CamelSpringBootTest
 public class ChouetteStopPlaceDeleteRouteBuilderTest extends RouteBuilderIntegrationTestBase {
 
-    @Produce("entur-google-pubsub:ChouetteStopPlaceDeleteQueue")
+    @Produce("google-pubsub:{{irkalla.pubsub.project.id}}:ChouetteStopPlaceDeleteQueue")
     protected ProducerTemplate deleteStopPlaces;
 
     @Value("${chouette.url}")
@@ -45,17 +47,22 @@ public class ChouetteStopPlaceDeleteRouteBuilderTest extends RouteBuilderIntegra
     @Test
     public void testDeleteStopPlace() throws Exception {
 
+        Map<String, String> headers = new HashMap<>();
+
         String stopPlaceId = "NSR:StopPlace:33";
+
+        headers.put(Constants.HEADER_ENTITY_ID,stopPlaceId);
 
         AdviceWith.adviceWith(context, "chouette-delete-stop-place",
                 a -> a.interceptSendToEndpoint(chouetteUrl + "/chouette_iev/stop_place/NSR:StopPlace:33")
                         .skipSendToOriginalEndpoint().to("mock:chouetteDeleteStopPlace"));
 
-
         context.start();
+
+        deleteStopPlaces.sendBodyAndHeader(null, GooglePubsubConstants.ATTRIBUTES, headers);
+
         chouetteDeleteStopPlace.expectedMessageCount(1);
 
-        deleteStopPlaces.sendBodyAndHeader(null, Constants.HEADER_ENTITY_ID, stopPlaceId);
 
         chouetteDeleteStopPlace.assertIsSatisfied();
     }

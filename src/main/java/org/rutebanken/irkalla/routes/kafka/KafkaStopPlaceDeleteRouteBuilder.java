@@ -20,7 +20,7 @@ public class KafkaStopPlaceDeleteRouteBuilder extends BaseRouteBuilder {
     @Override
     public void configure() throws Exception {
         super.configure();
-        singletonFrom("entur-google-pubsub:KafkaStopPlaceDeleteQueue")
+        from("master:lockOnKafkaStopPlaceDeleteRoute:google-pubsub:{{irkalla.pubsub.project.id}}:KafkaStopPlaceDeleteQueue")
                 .log(LoggingLevel.INFO,"Stream Deleted StopPlace ${header." + Constants.HEADER_ENTITY_ID + "} to Kafka")
                 .choice().when(e -> !StringUtils.isEmpty(kafkaStopPlaceTopic))
                 .setHeader("topic", simple(kafkaStopPlaceTopic))

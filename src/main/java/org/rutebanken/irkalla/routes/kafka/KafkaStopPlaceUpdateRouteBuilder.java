@@ -39,7 +39,7 @@ public class KafkaStopPlaceUpdateRouteBuilder  extends BaseRouteBuilder {
         super.configure();
 
 
-        singletonFrom("entur-google-pubsub:KafkaStopPlaceSyncQueue")
+        from("master:lockOnKafkaStopPlaceUpdateRoute:google-pubsub:{{irkalla.pubsub.project.id}}:KafkaStopPlaceSyncQueue")
                 .log(LoggingLevel.INFO,"Stream StopPlace ${header." + Constants.HEADER_ENTITY_ID + "} to Kafka")
                 .to("direct:processChangedStopPlacesAsNetexKafka")
                 .routeId("kafka-synchronize-stop-places-route");
