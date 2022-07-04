@@ -4,7 +4,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.http.common.HttpMethods;
 import org.rutebanken.irkalla.Constants;
-import org.rutebanken.irkalla.avro.StopPlaceChangelogEvent;
 import org.rutebanken.irkalla.routes.BaseRouteBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -23,7 +22,6 @@ public class KafkaStopPlaceChangeRouteBuilder extends BaseRouteBuilder {
                 .log(LoggingLevel.INFO,"Process changed StopPlace ${header." + Constants.HEADER_ENTITY_ID + "} to Kafka")
                 .log(LoggingLevel.INFO,"Exchange body is ${body}")
                 .setHeader(Exchange.HTTP_METHOD, constant(HttpMethods.GET))
-                //.setBody(constant(null))
                 .setHeader("stopPlaceId", simple("${header." + Constants.HEADER_ENTITY_ID + "}"))
                 .to("direct:notifyConsumers")
                 .routeId("process-changed-stop-place-kafka");
@@ -36,6 +34,10 @@ public class KafkaStopPlaceChangeRouteBuilder extends BaseRouteBuilder {
                 .log(LoggingLevel.INFO,   "Notified changelog: ${body}")
                 .routeId("notify-consumers");
 
+        /*
+         *This route is for local testing
+
+        /
         from("kafka:{{irkalla.kafka.topic.event}}?clientId=irkalla-event-reader&valueDeserializer=io.confluent.kafka.serializers.KafkaAvroDeserializer&specificAvroReader=true&seekTo=beginning&autoOffsetReset=earliest&offsetRepository=#irkallaEventReaderOffsetRepo")
                 .log(LoggingLevel.INFO,  "Received notification event from ${properties:irkalla.kafka.topic.event}")
                 .to("direct:processStopPlaceChangelog")
@@ -43,11 +45,10 @@ public class KafkaStopPlaceChangeRouteBuilder extends BaseRouteBuilder {
 
         from("direct:processStopPlaceChangelog")
                 .process(exchange -> {
-                    final StopPlaceChangelogEvent stopPlaceChangelogEvent = exchange.getIn().getBody(StopPlaceChangelogEvent.class);
-                    log.info("Event from kafka: stopPlaceId: {}, version: {}, eventType: {} ",stopPlaceChangelogEvent.getStopPlaceId(),stopPlaceChangelogEvent.getStopPlaceVersion(),stopPlaceChangelogEvent.getEventType());
+                    log.info("Event from kafka: {} ",exchange.getIn().getBody());
                 })
                 .routeId("process-stop-place-changelog");
-
+        */
 
     }
 

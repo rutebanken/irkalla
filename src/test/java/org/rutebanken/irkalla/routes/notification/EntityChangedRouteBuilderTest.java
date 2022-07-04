@@ -40,12 +40,9 @@ public class EntityChangedRouteBuilderTest extends RouteBuilderIntegrationTestBa
                 a -> a.interceptSendToEndpoint( "direct:handleStopPlaceChanged")
                         .skipSendToOriginalEndpoint().to("mock:handleStopPlaceChanges"));
 
-        /*
+
         AdviceWith.adviceWith(context, "notify-consumers",
                 a -> a.weaveById("to-kafka-topic-event").replace().to("mock:sendToKafka"));
-
-         */
-
 
 
         context.start();
