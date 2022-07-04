@@ -39,6 +39,7 @@ public class EntityChangedRouteBuilder extends BaseRouteBuilder {
                 .choice()
                 .when(simple("${body.entityType} == '" + EntityChangedEvent.EntityType.STOP_PLACE + "'"))
                 .to("direct:handleStopPlaceChanged")
+                .to("direct:processChangedStopPlacesAsNetexKafka")
                 .end()
 
                 .routeId("entity-changed-route");

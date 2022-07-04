@@ -45,10 +45,9 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
         <netex-java-model.version>1.0.13</netex-java-model.version>
         <netex-parser-java.version>1.0.4</netex-parser-java.version>
         <wololo.version>0.14.3</wololo.version>
-        <kafka.clients.version>2.7.0</kafka.clients.version>
         <entur.google.pubsub.emulator.download.skip>false</entur.google.pubsub.emulator.download.skip>
-        <!--TODO temporary manual upgrade of Logback-->
-        <logback.version>1.2.8</logback.version>
+        <avro.version>1.11.0</avro.version>
+        <confluent-kafka-client.version>6.1.1</confluent-kafka-client.version>
     </properties>
 
     <dependencyManagement>
@@ -82,9 +81,9 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
             <version>${entur.helpers.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.entur.logging</groupId>
-            <artifactId>common-logging-spring-boot-starter</artifactId>
-            <version>${entur.common.logging.version}</version>
+            <groupId>org.entur.helpers</groupId>
+            <artifactId>logging</artifactId>
+            <version>${entur.helpers.version}</version>
         </dependency>
         <dependency>
             <groupId>org.entur.helpers</groupId>
@@ -102,18 +101,6 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
             <groupId>org.entur</groupId>
             <artifactId>netex-parser-java</artifactId>
             <version>${netex-parser-java.version}</version>
-        </dependency>
-
-        <dependency>
-            <!-- Included for recommended default producer-config -->
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-kafka</artifactId>
-            <version>${camel.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka-clients</artifactId>
-            <version>${kafka.clients.version}</version>
         </dependency>
 
         <!--  Spring -->
@@ -205,6 +192,11 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
             <artifactId>camel-file-starter</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.camel.springboot</groupId>
+            <artifactId>camel-kafka-starter</artifactId>
+        </dependency>
+
         <!-- Other -->
 
         <dependency>
@@ -219,6 +211,27 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
         <dependency>
             <groupId>net.logstash.logback</groupId>
             <artifactId>logstash-logback-encoder</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.avro</groupId>
+            <artifactId>avro</artifactId>
+            <version>${avro.version}</version>
+        </dependency>
+
+        <!-- Required for Avro schema registration -->
+        <dependency>
+            <groupId>io.confluent</groupId>
+            <artifactId>kafka-schema-registry-client</artifactId>
+            <version>${confluent-kafka-client.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+
+            <groupId>io.confluent</groupId>
+            <artifactId>kafka-avro-serializer</artifactId>
+            <version>${confluent-kafka-client.version}</version>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- janino gives logback conditionals -->
@@ -276,6 +289,26 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
                         <goals>
                             <goal>repackage</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.avro</groupId>
+                <artifactId>avro-maven-plugin</artifactId>
+                <version>${avro.version}</version>
+                <executions>
+                    <execution>
+                        <id>schemas</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>schema</goal>
+                            <goal>protocol</goal>
+                            <goal>idl-protocol</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDirectory>${project.basedir}/src/main/avro/</sourceDirectory>
+                            <outputDirectory>${project.basedir}/target/generated-sources</outputDirectory>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
