@@ -191,7 +191,6 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
             <groupId>org.apache.camel.springboot</groupId>
             <artifactId>camel-file-starter</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.apache.camel.springboot</groupId>
             <artifactId>camel-kafka-starter</artifactId>

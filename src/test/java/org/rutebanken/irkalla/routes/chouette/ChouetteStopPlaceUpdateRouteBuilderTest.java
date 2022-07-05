@@ -30,11 +30,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
 
-
 @CamelSpringBootTest
 @SpringBootTest(classes = IrkallaApplication.class, properties = "irkalla.camel.redelivery.max=0")
 public class ChouetteStopPlaceUpdateRouteBuilderTest extends RouteBuilderIntegrationTestBase {
-
 
     @Produce( "google-pubsub:{{irkalla.pubsub.project.id}}:ChouetteStopPlaceSyncQueue")
     protected ProducerTemplate updateStopPlaces;
