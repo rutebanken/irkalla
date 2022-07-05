@@ -11,10 +11,7 @@ configMap:
   blobstoreName: irkalla-dev
   kafka:
     brokers: bootstrap.test-int.kafka.entur.io:9095
-    clientId: ror-irkalla-dev
+    registry: http://schema-registry.test-int.kafka.entur.io:8001
     topicUpdatedStopPlaces: ror-stop-places-updated-dev
-    topicDeletedStopPlaces: ror-stop-places-deleted-dev
-    topicGroupOfStopPlaces: ror-group-of-stop-places-updated-dev
-    enabled: true
 rbac:
   enabled: true

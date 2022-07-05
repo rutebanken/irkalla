@@ -31,6 +31,20 @@ metadata:
     {{- include "common.labels" . | indent 4 }}
 rules:
   - apiGroups: [""] # "" indicates the core API group
-    resources: ["services", "pods", "configmaps", "endpoints"]
+    resources: ["services", "pods", "endpoints"]
     verbs: ["get", "watch", "list"]
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["get", "watch", "list", "create"]
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    resourceNames: ["irkalla-leaders"]
+    verbs: ["get", "watch", "list", "update", "patch", "delete"]
+  - apiGroups: ["coordination.k8s.io"]
+    resources: ["leases"]
+    verbs: ["create"]
+  - apiGroups: ["coordination.k8s.io"]
+    resources: ["leases"]
+    resourceNames: ["irkalla-leaders-lockonchouettestopplacesyncqueue","lockonentitychangelog"]
+    verbs: ["get", "update", "list"]
 {{- end }}
