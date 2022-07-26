@@ -42,9 +42,5 @@ rules:
     verbs: ["get", "watch", "list", "update", "patch", "delete"]
   - apiGroups: ["coordination.k8s.io"]
     resources: ["leases"]
-    verbs: ["create"]
-  - apiGroups: ["coordination.k8s.io"]
-    resources: ["leases"]
-    resourceNames: ["irkalla-leaders-lockonchouettestopplacesyncqueue","lockonentitychangelog"]
-    verbs: ["get", "update", "list"]
+    verbs: ["create", "get", "update", "list"]
 {{- end }}
