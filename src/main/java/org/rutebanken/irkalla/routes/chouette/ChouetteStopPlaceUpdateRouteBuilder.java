@@ -79,9 +79,10 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
 
 
         // acknowledgment mode switched to NONE so that the ack/nack callback can be set after message aggregation.
-        from("master:lockOnChouetteStopPlaceSyncQueue:google-pubsub:{{irkalla.pubsub.project.id}}:ChouetteStopPlaceSyncQueue?ackMode=NONE")
+        from("master:lockOnChouetteStopPlaceSyncQueue:google-pubsub:{{irkalla.pubsub.project.id}}:ChouetteStopPlaceSyncQueue")
+                .process(this::removeSynchronizationForAggregatedExchange)
                 .aggregate(constant(true)).aggregationStrategy(new GroupedMessageAggregationStrategy()).completionSize(100).completionTimeout(1000)
-                .process(exchange -> addOnCompletionForAggregatedExchange(exchange))
+                .process(this::addSynchronizationForAggregatedExchange)
                 .process(e -> mergePubSubMessages(e))
                 .choice()
                 .when(simple("${header." + HEADER_SYNC_OPERATION + "} == '" + SYNC_OPERATION_FULL_WITH_DELETE_UNUSED_FIRST + "'"))
