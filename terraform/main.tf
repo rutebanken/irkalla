@@ -90,6 +90,40 @@ resource "google_pubsub_subscription" "stopplace-delete-queue-subscription" {
   labels = var.labels
 }
 
+# pubsub topics KafkaStopPlaceDeleteQueue, KafkaStopPlaceSyncQueue
+
+# Create pubsub topic
+resource "google_pubsub_topic" "kafka-stopplace-delete-queue" {
+  name   = "KafkaStopPlaceDeleteQueue"
+  project = var.pubsub_project
+  labels = var.labels
+}
+
+# Create pubsub subscription
+resource "google_pubsub_subscription" "kafka-stopplace-delete-queue-subscription" {
+  name  = "KafkaStopPlaceDeleteQueue"
+  topic = google_pubsub_topic.kafka-stopplace-delete-queue.name
+  project = var.pubsub_project
+  labels = var.labels
+}
+
+
+# Create pubsub topic
+resource "google_pubsub_topic" "kafka-stopplace-sync-queue" {
+  name   = "KafkaStopPlaceSyncQueue"
+  project = var.pubsub_project
+  labels = var.labels
+}
+
+# Create pubsub subscription
+resource "google_pubsub_subscription" "kafka-stopplace-sync-queue-subscription" {
+  name  = "KafkaStopPlaceSyncQueue"
+  topic = google_pubsub_topic.kafka-stopplace-sync-queue.name
+  project = var.pubsub_project
+  labels = var.labels
+}
+
+
 # create key for service account
 resource "google_service_account_key" "storage_bucket_service_account_key" {
   service_account_id = google_service_account.storage_bucket_service_account.name
@@ -103,5 +137,18 @@ resource "kubernetes_secret" "storage_bucket_service_account_credentials" {
   }
   data = {
     "credentials.json" = "${base64decode(google_service_account_key.storage_bucket_service_account_key.private_key)}"
+  }
+}
+
+# Add irkalla secrets
+resource "kubernetes_secret" "ror-irkalla-client-secrets" {
+  metadata {
+    name      = "${var.labels.team}-${var.labels.app}-secrets"
+    namespace = var.kube_namespace
+  }
+
+  data = {
+    "kafka-username"    = var.ror-irkalla-kafka-username
+    "kafka-password"    = var.ror-irkalla-kafka-password
   }
 }

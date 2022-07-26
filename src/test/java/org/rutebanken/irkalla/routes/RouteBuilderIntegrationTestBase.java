@@ -24,7 +24,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 @CamelSpringBootTest
 @UseAdviceWith
-@ActiveProfiles({"default",  "in-memory-blobstore", "google-pubsub-emulator", "test"})
+@ActiveProfiles({"default",  "in-memory-blobstore", "google-pubsub-emulator", "test","google-pubsub-autocreate"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public abstract class RouteBuilderIntegrationTestBase {
 

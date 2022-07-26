@@ -19,9 +19,9 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <groupId>org.rutebanken.superpom</groupId>
+        <groupId>org.entur.ror</groupId>
         <artifactId>superpom</artifactId>
-        <version>1.0.31</version>
+        <version>1.0.41</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -39,21 +39,22 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
     </scm>
 
     <properties>
-        <camel.version>3.11.5</camel.version>
-        <hazelcast.version>3.12.12</hazelcast.version>
-        <entur.helpers.version>1.0.61</entur.helpers.version>
+        <camel.version>3.14.3</camel.version>
+        <entur.helpers.version>1.0.76</entur.helpers.version>
         <entur.common.logging.version>1.0.14</entur.common.logging.version>
+        <netex-java-model.version>1.0.13</netex-java-model.version>
+        <netex-parser-java.version>1.0.4</netex-parser-java.version>
         <wololo.version>0.14.3</wololo.version>
         <entur.google.pubsub.emulator.download.skip>false</entur.google.pubsub.emulator.download.skip>
-        <!--TODO temporary manual upgrade of Logback-->
-        <logback.version>1.2.8</logback.version>
+        <avro.version>1.11.0</avro.version>
+        <confluent-kafka-client.version>6.1.1</confluent-kafka-client.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>org.apache.camel.springboot</groupId>
-                <artifactId>camel-spring-boot-dependencies</artifactId>
+                <artifactId>camel-spring-boot-bom</artifactId>
                 <version>${camel.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
@@ -66,11 +67,6 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
         <!-- Entur -->
         <dependency>
             <groupId>org.entur.helpers</groupId>
-            <artifactId>hazelcast-helper</artifactId>
-            <version>${entur.helpers.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.entur.helpers</groupId>
             <artifactId>organisation</artifactId>
             <version>${entur.helpers.version}</version>
         </dependency>
@@ -81,18 +77,30 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
         </dependency>
         <dependency>
             <groupId>org.entur.helpers</groupId>
-            <artifactId>camel3-entur-google-pubsub</artifactId>
+            <artifactId>entur-google-pubsub</artifactId>
             <version>${entur.helpers.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.entur.logging</groupId>
-            <artifactId>common-logging-spring-boot-starter</artifactId>
-            <version>${entur.common.logging.version}</version>
+            <groupId>org.entur.helpers</groupId>
+            <artifactId>logging</artifactId>
+            <version>${entur.helpers.version}</version>
         </dependency>
         <dependency>
             <groupId>org.entur.helpers</groupId>
             <artifactId>oauth2</artifactId>
             <version>${entur.helpers.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.entur</groupId>
+            <artifactId>netex-java-model</artifactId>
+            <version>${netex-java-model.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.entur</groupId>
+            <artifactId>netex-parser-java</artifactId>
+            <version>${netex-parser-java.version}</version>
         </dependency>
 
         <!--  Spring -->
@@ -163,14 +171,30 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
             <groupId>org.apache.camel.springboot</groupId>
             <artifactId>camel-jsonpath-starter</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>org.apache.camel.springboot</groupId>
-            <artifactId>camel-hazelcast-starter</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.apache.camel.springboot</groupId>
             <artifactId>camel-quartz-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel.springboot</groupId>
+            <artifactId>camel-google-pubsub-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel.springboot</groupId>
+            <artifactId>camel-master-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel.springboot</groupId>
+            <artifactId>camel-kubernetes-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel.springboot</groupId>
+            <artifactId>camel-file-starter</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.camel.springboot</groupId>
+            <artifactId>camel-kafka-starter</artifactId>
         </dependency>
 
         <!-- Other -->
@@ -187,6 +211,27 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
         <dependency>
             <groupId>net.logstash.logback</groupId>
             <artifactId>logstash-logback-encoder</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.avro</groupId>
+            <artifactId>avro</artifactId>
+            <version>${avro.version}</version>
+        </dependency>
+
+        <!-- Required for Avro schema registration -->
+        <dependency>
+            <groupId>io.confluent</groupId>
+            <artifactId>kafka-schema-registry-client</artifactId>
+            <version>${confluent-kafka-client.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+
+            <groupId>io.confluent</groupId>
+            <artifactId>kafka-avro-serializer</artifactId>
+            <version>${confluent-kafka-client.version}</version>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- janino gives logback conditionals -->
@@ -244,6 +289,26 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
                         <goals>
                             <goal>repackage</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.avro</groupId>
+                <artifactId>avro-maven-plugin</artifactId>
+                <version>${avro.version}</version>
+                <executions>
+                    <execution>
+                        <id>schemas</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>schema</goal>
+                            <goal>protocol</goal>
+                            <goal>idl-protocol</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDirectory>${project.basedir}/src/main/avro/</sourceDirectory>
+                            <outputDirectory>${project.basedir}/target/generated-sources</outputDirectory>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

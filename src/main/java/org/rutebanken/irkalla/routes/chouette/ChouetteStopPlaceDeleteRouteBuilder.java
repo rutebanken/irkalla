@@ -37,8 +37,7 @@ public class ChouetteStopPlaceDeleteRouteBuilder extends BaseRouteBuilder {
     public void configure() throws Exception {
         super.configure();
 
-        singletonFrom("entur-google-pubsub:ChouetteStopPlaceDeleteQueue")
-
+        from("master:lockOnChouetteStopPlaceDeleteRoute:google-pubsub:{{irkalla.pubsub.project.id}}:ChouetteStopPlaceDeleteQueue")
                 .log(LoggingLevel.INFO, "Delete stop place ${header." + Constants.HEADER_ENTITY_ID + "} in Chouette")
                 .setBody(constant(null))
                 .removeHeaders("CamelHttp*")
@@ -54,7 +53,7 @@ public class ChouetteStopPlaceDeleteRouteBuilder extends BaseRouteBuilder {
                 .log(LoggingLevel.INFO, "Unable to delete stop place because Chouette is busy, retry in " + retryDelay + " ms")
                 .delay(retryDelay)
                 .setBody(constant(null))
-                .to("entur-google-pubsub:ChouetteStopPlaceSyncQueue")
+                .to("google-pubsub:{{irkalla.pubsub.project.id}}:ChouetteStopPlaceSyncQueue")
                 .end()
                 .routeId("chouette-delete-stop-place");
 

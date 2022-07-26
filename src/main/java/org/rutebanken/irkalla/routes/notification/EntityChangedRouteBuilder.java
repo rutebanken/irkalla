@@ -29,7 +29,7 @@ public class EntityChangedRouteBuilder extends BaseRouteBuilder {
     public void configure() throws Exception {
         super.configure();
 
-        from("entur-google-pubsub:ror.tiamat.changelog")
+        from("master:lockOnEntityChangeLog:google-pubsub:{{irkalla.pubsub.project.id}}:ror.tiamat.changelog")
                 .unmarshal().json(JsonLibrary.Jackson, EntityChangedEvent.class)
                 .setHeader(Constants.HEADER_ENTITY_ID,simple("${body.entityId}"))
                 .setHeader(Constants.HEADER_ENTITY_VERSION,simple("${body.entityVersion}"))
@@ -39,6 +39,7 @@ public class EntityChangedRouteBuilder extends BaseRouteBuilder {
                 .choice()
                 .when(simple("${body.entityType} == '" + EntityChangedEvent.EntityType.STOP_PLACE + "'"))
                 .to("direct:handleStopPlaceChanged")
+                .to("direct:processChangedStopPlacesAsNetexKafka")
                 .end()
 
                 .routeId("entity-changed-route");

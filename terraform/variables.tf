@@ -83,3 +83,11 @@ variable "load_config_file" {
   description = "Do not load kube config file"
   default     = false
 }
+
+variable  ror-irkalla-kafka-username {
+  description = "Irkalla kafka user name"
+}
+
+variable ror-irkalla-kafka-password {
+  description = "Irkalla kafka user password"
+}

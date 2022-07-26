@@ -3,8 +3,6 @@ data:
   application.properties: |-
     spring.profiles.active=gcs-blobstore
     server.port={{ .Values.service.http.internalPort }}
-    camel.component.servlet.mapping.context-path=/services/*
-    camel.springboot.name=Irkalla
 
     # Chouette
     chouette.url={{ .Values.configMap.chouetteUrl }}
@@ -26,12 +24,10 @@ data:
     blobstore.gcs.container.name={{ .Values.configMap.blobstoreName }}
 
     # PubSub
-    spring.cloud.gcp.pubsub.project-id={{ .Values.configMap.pubsubProjectId }}
-    spring.cloud.gcp.pubsub.credentials.location=file:/etc/irkalla-service-account/credentials.json
-    spring.cloud.gcp.pubsub.subscriber.parallel-pull-count=1
-    spring.cloud.gcp.pubsub.subscriber.executor-threads=5
-    spring.cloud.gcp.pubsub.subscriber.max-ack-extension-period=36000
-    entur.pubsub.subscriber.autocreate=false
+    irkalla.pubsub.project.id={{ .Values.configMap.pubsubProjectId }}
+    spring.cloud.gcp.pubsub.project-id=${irkalla.pubsub.project.id}
+    camel.component.google-pubsub.service-account-key=file:/etc/irkalla-service-account/credentials.json
+
 
     # Spring Actuator
     management.server.port={{ .Values.service.http.managementPort }}
@@ -46,6 +42,25 @@ data:
     # disable local redelivery to force Camel routes to be retried entirely.
     # this prevents a local retry from sending inconsistent requests to chouette
     irkalla.camel.redelivery.max=0
+
+    # Kafka
+    irkalla.kafka.topic.event={{ .Values.configMap.kafka.topicUpdatedStopPlaces }}
+    camel.component.kafka.brokers={{ .Values.configMap.kafka.brokers }}
+    camel.component.kafka.security-protocol={{ .Values.configMap.kafka.secProtocol }}
+    camel.component.kafka.sasl-mechanism={{ .Values.configMap.kafka.saslMechanism }}
+    camel.component.kafka.sasl-jaas-config=org.apache.kafka.common.security.scram.ScramLoginModule required username="${irkalla.kafka.sasl.username}" password="${irkalla.kafka.sasl.password}";
+    camel.component.kafka.schema-registry-u-r-l={{ .Values.configMap.kafka.registry }}
+
+    # Camel
+    camel.springboot.name=Irkalla
+    camel.dataformat.json-jackson.module-refs=jacksonJavaTimeModule
+    camel.servlet.mapping.context-path=/services/*
+    camel.cluster.kubernetes.enabled=true
+    camel.cluster.kubernetes.cluster-labels[app]=irkalla
+    camel.cluster.kubernetes.config-map-name=irkalla-leaders
+
+
+
 
 kind: ConfigMap
 metadata:

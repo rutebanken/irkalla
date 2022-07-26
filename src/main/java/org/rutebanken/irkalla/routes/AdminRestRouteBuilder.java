@@ -106,7 +106,7 @@ public class AdminRestRouteBuilder extends BaseRouteBuilder {
                 .removeHeaders("CamelHttp*")
                 .setHeader(HEADER_SYNC_OPERATION, constant(SYNC_OPERATION_DELTA))
                 .setBody(constant(null))
-                .to(ExchangePattern.InOnly,"entur-google-pubsub:ChouetteStopPlaceSyncQueue")
+                .to(ExchangePattern.InOnly,"google-pubsub:{{irkalla.pubsub.project.id}}:ChouetteStopPlaceSyncQueue")
                 .endRest()
                 .post("/full")
                 .description("Full synchronization of all stop places from Tiamat to Chouette")
@@ -123,7 +123,7 @@ public class AdminRestRouteBuilder extends BaseRouteBuilder {
                     .setHeader(HEADER_SYNC_OPERATION, constant(SYNC_OPERATION_FULL))
                 .end()
                 .setBody(constant(null))
-                .to(ExchangePattern.InOnly,"entur-google-pubsub:ChouetteStopPlaceSyncQueue")
+                .to(ExchangePattern.InOnly,"google-pubsub:{{irkalla.pubsub.project.id}}:ChouetteStopPlaceSyncQueue")
                 .endRest();
 
 
