@@ -10,8 +10,8 @@ configMap:
       audience: https://ror.api.dev.entur.io
   blobstoreName: irkalla-dev
   kafka:
-    brokers: bootstrap.test-int.kafka.entur.io:9095
-    registry: http://schema-registry.test-int.kafka.entur.io:8001
-    topicUpdatedStopPlaces: ror-stop-places-updated-dev
+    brokers: bootstrap.test-ext.kafka.entur.io:9095
+    registry: http://schema-registry.test-ext.kafka.entur.io:8001
+    topicUpdatedStopPlaces: ror-stop-place-changelog-dev
 rbac:
   enabled: true
