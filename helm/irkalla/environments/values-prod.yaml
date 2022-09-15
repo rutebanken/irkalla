@@ -9,5 +9,9 @@ configMap:
       url: https://auth2.entur.org/
       audience: https://ror.api.entur.io
   blobstoreName: irkalla-production
+  kafka:
+    brokers: bootstrap.prod-ext.kafka.entur.io:9095
+    registry: http://schema-registry.prod-ext.kafka.entur.io:8001
+    topicUpdatedStopPlaces: ror-stop-place-changelog-production
 rbac:
   enabled: true
