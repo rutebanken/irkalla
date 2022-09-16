@@ -47,7 +47,7 @@ data:
     camel.component.kafka.brokers={{ .Values.configMap.kafka.brokers }}
     camel.component.kafka.security-protocol={{ .Values.configMap.kafka.secProtocol }}
     camel.component.kafka.sasl-mechanism={{ .Values.configMap.kafka.saslMechanism }}
-    camel.component.kafka.sasl-jaas-config=org.apache.kafka.common.security.scram.ScramLoginModule required username="${irkalla.kafka.sasl.username}" password="${irkalla.kafka.sasl.password}";
+    camel.component.kafka.sasl-jaas-config=org.apache.kafka.common.security.scram.ScramLoginModule required username="${KAFKAUSERNAME}" password="${KAFKAPASSWORD}";
     camel.component.kafka.schema-registry-u-r-l={{ .Values.configMap.kafka.registry }}
 
     # Camel

@@ -18,8 +18,8 @@ common:
       readiness:
         path: /actuator/health/readiness
     envFrom:
-      - configMapRef:
-          name: irkalla-application
+      - secretRef:
+          name: ror-irkalla-secrets
     prometheus:
       enabled: true
       path: /actuator/prometheus
