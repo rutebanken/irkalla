@@ -19,7 +19,7 @@ public class GcsBlobStoreRepository implements BlobStoreRepository {
     @Value("${blobstore.gcs.container.name}")
     private String containerName;
 
-    @Value("${blobstore.gcs.credential.path}")
+    @Value("${blobstore.gcs.credential.path:#{null}}")
     private String credentialPath;
 
     @Value("${blobstore.gcs.project.id}")
@@ -29,7 +29,12 @@ public class GcsBlobStoreRepository implements BlobStoreRepository {
 
     @PostConstruct
     private void init() {
-        storage = BlobStoreHelper.getStorage(credentialPath, projectId);
+        if (credentialPath == null || credentialPath.isEmpty()) {
+            // Used default gcp credentials
+            storage = BlobStoreHelper.getStorage(projectId);
+        } else {
+            storage = BlobStoreHelper.getStorage(credentialPath, projectId);
+        }
     }
 
     @Override
