@@ -1,0 +1,37 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: irkalla-service-account
+  namespace: irkalla
+  labels:
+    {{- include "irkalla.labels" . | indent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: irkalla-service-account
+subjects:
+  - kind: ServiceAccount
+    name: application
+    namespace: irkalla
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: irkalla-service-account
+  namespace: irkalla
+  labels:
+    {{- include "irkalla.labels" . | indent 4 }}
+rules:
+  - apiGroups: [""] # "" indicates the core API group
+    resources: ["services", "pods", "endpoints"]
+    verbs: ["get", "watch", "list"]
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["get", "watch", "list", "create"]
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    resourceNames: ["irkalla-leaders"]
+    verbs: ["get", "watch", "list", "update", "patch", "delete"]
+  - apiGroups: ["coordination.k8s.io"]
+    resources: ["leases"]
+    verbs: ["create", "get", "update", "list"]
