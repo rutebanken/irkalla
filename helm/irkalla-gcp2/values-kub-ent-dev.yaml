@@ -17,3 +17,5 @@ configMap:
     brokers: bootstrap.test-ext.kafka.entur.io:9095
     registry: http://schema-registry.test-ext.kafka.entur.io:8001
     topicUpdatedStopPlaces: ror-stop-place-changelog-dev
+    secProtocol: SASL_SSL
+    saslMechanism: SCRAM-SHA-512
