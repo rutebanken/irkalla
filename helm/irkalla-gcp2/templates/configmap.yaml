@@ -63,7 +63,7 @@ data:
 
 kind: ConfigMap
 metadata:
-  name: irkalla-config
+  name: irkalla-application
   namespace: irkalla
   labels:
     {{- include "irkalla.labels" . | indent 4 }}
