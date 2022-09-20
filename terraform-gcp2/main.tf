@@ -80,25 +80,17 @@ resource "google_pubsub_topic" "kafka-stopplace-delete-queue" {
   labels = var.labels
 }
 
-resource "google_pubsub_subscription" "kafka-stopplace-delete-queue-subscription" {
-  name  = "KafkaStopPlaceDeleteQueue"
-  topic = google_pubsub_topic.kafka-stopplace-delete-queue.name
-  project = var.pubsub_project
-  labels = var.labels
-}
-
-
-# Create pubsub topic
-resource "google_pubsub_topic" "kafka-stopplace-sync-queue" {
-  name   = "KafkaStopPlaceSyncQueue"
+# pubsub topics  KafkaStopPlaceChangeLog
+resource "google_pubsub_topic" "kafka-stopplace-changelog-topic" {
+  name   = "KafkaStopPlaceChangelog"
   project = var.pubsub_project
   labels = var.labels
 }
 
 # Create pubsub subscription
-resource "google_pubsub_subscription" "kafka-stopplace-sync-queue-subscription" {
-  name  = "KafkaStopPlaceSyncQueue"
-  topic = google_pubsub_topic.kafka-stopplace-sync-queue.name
+resource "google_pubsub_subscription" "kafka-stopplace-changelog-subscription" {
+  name  = "KafkaStopPlaceChangelog"
+  topic = google_pubsub_topic.kafka-stopplace-changelog-topic.name
   project = var.pubsub_project
   labels = var.labels
 }

@@ -18,7 +18,7 @@ public class KafkaStopPlaceChangeRouteBuilder extends BaseRouteBuilder {
     public void configure() throws Exception {
         super.configure();
 
-        from("direct:processChangedStopPlacesAsNetexKafka")
+        from("google-pubsub:{{irkalla.pubsub.project.id}}:KafkaStopPlaceChangelog")
                 .log(LoggingLevel.INFO,"Process changed StopPlace ${header." + Constants.HEADER_ENTITY_ID + "} to Kafka")
                 .log(LoggingLevel.INFO,"Exchange body is ${body}")
                 .setHeader(Exchange.HTTP_METHOD, constant(HttpMethods.GET))
