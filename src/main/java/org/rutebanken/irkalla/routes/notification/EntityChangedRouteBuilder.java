@@ -38,8 +38,8 @@ public class EntityChangedRouteBuilder extends BaseRouteBuilder {
                 .log(LoggingLevel.INFO,"Received changelog event: ${body.crudAction} ${body.entityType} ${body.entityId} v${body.entityVersion}")
                 .choice()
                 .when(simple("${body.entityType} == '" + EntityChangedEvent.EntityType.STOP_PLACE + "'"))
-                .multicast().parallelProcessing()
-                .to("direct:handleStopPlaceChanged","google-pubsub:{{irkalla.pubsub.project.id}}:KafkaStopPlaceChangelog")
+                .to("direct:handleStopPlaceChanged")
+                .to("google-pubsub:{{irkalla.pubsub.project.id}}:KafkaStopPlaceChangelog")
                 .end()
 
                 .routeId("entity-changed-route");
