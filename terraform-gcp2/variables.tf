@@ -41,10 +41,6 @@ variable "pubsub_project" {
   description = "GCP project of pubsub topic"
 }
 
-variable "tiamat-project" {
-  description = "GCP project of tiamat pubsub topic"
-}
-
 variable "kube_namespace" {
   description = "The Kubernetes namespace"
   default = "irkalla"
@@ -55,4 +51,8 @@ variable  ror-irkalla-kafka-username {
 
 variable ror-irkalla-kafka-password {
   description = "Irkalla kafka user password"
+}
+
+variable "tiamat-changelog-topic" {
+  description = "Tiamat stop-place changelog"
 }

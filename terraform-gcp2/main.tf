@@ -95,12 +95,11 @@ resource "google_pubsub_subscription" "kafka-stopplace-changelog-subscription" {
   labels = var.labels
 }
 
-# TODO: Create pubsub subscription tiamat stop.place change log
-
-#resource "google_pubsub_subscription" "tiamat-changelog-subscription" {
-#  name ="ror.tiamat.changelog"
-#  topic = google_pubsub_topic.tiamat-changelog-topic.name
-#}
+resource "google_pubsub_subscription" "tiamat-changelog-subscription" {
+  name ="ror.tiamat.changelog"
+  topic = var.tiamat-changelog-topic
+  project = var.pubsub_project
+}
 
 # Add irkalla secrets
 

@@ -1,6 +1,6 @@
 kube_namespace = "irkalla"
 pubsub_project = "ent-irkalla-dev"
 storage_project = "ent-irkalla-dev"
-tiamat-project = "ent-tiamat-dev"
 location = "europe-west1"
 bucket_instance_suffix = "dev"
+tiamat-changelog-topic ="projects/ent-tiamat-dev/topics/ror.tiamat.changelog"
