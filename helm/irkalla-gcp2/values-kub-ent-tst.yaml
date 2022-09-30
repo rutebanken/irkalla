@@ -1,0 +1,21 @@
+common:
+  env: tst
+  replicas: 1
+
+configMap:
+  blobstoreProjectId: entur-ror-test
+  pubsubProjectId: entur-ror-test
+  chouetteUrl: http://chouette.tst.entur.internal
+  tiamatUrl: http://tiamat.tst.entur.internal
+
+  auth0:
+    ror:
+      url: https://ror-entur-staging.eu.auth0.com/
+      audience: https://ror.api.staging.entur.io
+  blobstoreName: irkalla-test
+  kafka:
+    brokers: bootstrap.test-ext.kafka.entur.io:9095
+    registry: http://schema-registry.test-ext.kafka.entur.io:8001
+    topicUpdatedStopPlaces: ror-stop-place-changelog-staging
+    secProtocol: SASL_SSL
+    saslMechanism: SCRAM-SHA-512
