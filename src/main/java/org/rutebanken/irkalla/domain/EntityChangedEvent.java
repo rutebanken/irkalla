@@ -15,6 +15,7 @@
 
 package org.rutebanken.irkalla.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -24,6 +25,7 @@ import java.io.StringWriter;
 import java.time.Instant;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class EntityChangedEvent {
 
     public enum EntityType {STOP_PLACE}
