@@ -15,14 +15,17 @@
 
 package org.rutebanken.irkalla.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.time.Instant;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class EntityChangedEvent {
 
     public enum EntityType {STOP_PLACE}
@@ -34,6 +37,8 @@ public class EntityChangedEvent {
     public String entityId;
 
     public Long entityVersion;
+
+    public String entityChanged;
 
     public CrudAction crudAction;
 
@@ -67,6 +72,14 @@ public class EntityChangedEvent {
 
     public void setEntityVersion(Long entityVersion) {
         this.entityVersion = entityVersion;
+    }
+
+    public String getEntityChanged() {
+        return entityChanged;
+    }
+
+    public void setEntityChanged(String entityChanged) {
+        this.entityChanged = entityChanged;
     }
 
     public CrudAction getCrudAction() {
