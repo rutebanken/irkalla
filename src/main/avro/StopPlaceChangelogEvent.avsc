@@ -17,6 +17,7 @@
        {
          "name": "stopPlaceChanged",
          "type": ["null", "string"],
+         "default": null,
          "doc": "Epoch timestamp when the change happened"
        },
        {
