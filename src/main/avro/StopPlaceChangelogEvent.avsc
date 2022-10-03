@@ -15,6 +15,12 @@
          "doc":"StopPlace version"
        },
        {
+         "name": "stopPlaceChanged",
+         "type": ["null", "string"],
+         "default": null,
+         "doc": "Epoch timestamp when the change happened"
+       },
+       {
          "name":"eventType",
          "doc":"Stop place change types,  REMOVE is used when stop places is deactivated and DELETED is used when stop place is terminated ",
          "type": {
