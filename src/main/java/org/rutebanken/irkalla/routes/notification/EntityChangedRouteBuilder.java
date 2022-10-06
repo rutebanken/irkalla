@@ -33,7 +33,6 @@ public class EntityChangedRouteBuilder extends BaseRouteBuilder {
                 .unmarshal().json(JsonLibrary.Jackson, EntityChangedEvent.class)
                 .setHeader(Constants.HEADER_ENTITY_ID,simple("${body.entityId}"))
                 .setHeader(Constants.HEADER_ENTITY_VERSION,simple("${body.entityVersion}"))
-                .setHeader(Constants.HEADER_ENTITY_CHANGED,simple("${body.entityChanged}"))
                 .setHeader(Constants.HEADER_CRUD_ACTION,simple("${body.crudAction}"))
 
                 .log(LoggingLevel.INFO,"Received changelog event: ${body.crudAction} ${body.entityType} ${body.entityId} v${body.entityVersion}")
