@@ -38,7 +38,7 @@ public class EntityChangedEvent {
 
     public Long entityVersion;
 
-    public String entityChanged;
+    public Instant entityChanged;
 
     public CrudAction crudAction;
 
@@ -74,11 +74,11 @@ public class EntityChangedEvent {
         this.entityVersion = entityVersion;
     }
 
-    public String getEntityChanged() {
+    public Instant getEntityChanged() {
         return entityChanged;
     }
 
-    public void setEntityChanged(String entityChanged) {
+    public void setEntityChanged(Instant entityChanged) {
         this.entityChanged = entityChanged;
     }
 
