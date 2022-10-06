@@ -22,7 +22,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.time.Instant;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -38,7 +37,7 @@ public class EntityChangedEvent {
 
     public Long entityVersion;
 
-    public Instant entityChanged;
+    public Long entityChanged;
 
     public CrudAction crudAction;
 
@@ -74,11 +73,11 @@ public class EntityChangedEvent {
         this.entityVersion = entityVersion;
     }
 
-    public Instant getEntityChanged() {
+    public Long getEntityChanged() {
         return entityChanged;
     }
 
-    public void setEntityChanged(Instant entityChanged) {
+    public void setEntityChanged(Long entityChanged) {
         this.entityChanged = entityChanged;
     }
 

@@ -65,7 +65,7 @@ public class EntityChangedRouteBuilderTest extends RouteBuilderIntegrationTestBa
         entityChangedEvent.setCrudAction(CrudAction.UPDATE);
         entityChangedEvent.setEntityId(stopPlaceId);
         entityChangedEvent.setEntityVersion(Instant.now().toEpochMilli());
-        entityChangedEvent.setEntityChanged(Instant.now());
+        entityChangedEvent.setEntityChanged(Instant.now().toEpochMilli());
         entityChangedEvent.setMsgId("dummy-id");
 
         return entityChangedEvent;
