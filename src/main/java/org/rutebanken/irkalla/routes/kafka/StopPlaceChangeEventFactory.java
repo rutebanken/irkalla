@@ -14,6 +14,7 @@ public class StopPlaceChangeEventFactory {
 
     public StopPlaceChangelogEvent createStopPlaceChangelogEvent(@Header(value = Constants.HEADER_ENTITY_ID) String stopPlaceId,
                                                                          @Header(value = Constants.HEADER_ENTITY_VERSION) long stopPlaceVersion,
+                                                                         @Header(value = Constants.HEADER_ENTITY_CHANGED) Instant stopPlaceChanged,
                                                                          @Header(value = Constants.HEADER_CRUD_ACTION) EnumType eventType
                                                                  ) {
         Assert.notNull(stopPlaceId,"stopPlaceId was null");
@@ -23,6 +24,7 @@ public class StopPlaceChangeEventFactory {
         return StopPlaceChangelogEvent.newBuilder()
                 .setStopPlaceId(stopPlaceId)
                 .setStopPlaceVersion(stopPlaceVersion)
+                .setStopPlaceChanged(stopPlaceChanged)
                 .setEventType(eventType)
                 .build();
     }

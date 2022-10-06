@@ -38,6 +38,8 @@ public class EntityChangedEvent {
 
     public Long entityVersion;
 
+    public Instant entityChanged;
+
     public CrudAction crudAction;
 
     public String getMsgId() {
@@ -70,6 +72,14 @@ public class EntityChangedEvent {
 
     public void setEntityVersion(Long entityVersion) {
         this.entityVersion = entityVersion;
+    }
+
+    public Instant getEntityChanged() {
+        return entityChanged;
+    }
+
+    public void setEntityChanged(Instant entityChanged) {
+        this.entityChanged = entityChanged;
     }
 
     public CrudAction getCrudAction() {
