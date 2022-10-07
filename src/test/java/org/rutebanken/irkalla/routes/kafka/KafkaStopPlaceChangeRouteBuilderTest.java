@@ -14,6 +14,8 @@ import org.rutebanken.irkalla.domain.EntityChangedEvent;
 import org.rutebanken.irkalla.routes.RouteBuilderIntegrationTestBase;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.Instant;
+
 @SpringBootTest
 @CamelSpringBootTest
 @Disabled
@@ -49,6 +51,7 @@ public class KafkaStopPlaceChangeRouteBuilderTest extends RouteBuilderIntegratio
         entityChangedEvent.setCrudAction(CrudAction.UPDATE);
         entityChangedEvent.setEntityId(stopPlaceId);
         entityChangedEvent.setEntityVersion(10L);
+        entityChangedEvent.setEntityChanged(Instant.now().toEpochMilli());
         entityChangedEvent.setMsgId("dummy-id");
 
         return entityChangedEvent;
