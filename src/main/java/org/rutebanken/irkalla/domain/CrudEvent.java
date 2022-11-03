@@ -30,7 +30,7 @@ import java.time.Instant;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CrudEvent {
 
-    public static final Logger logger= LoggerFactory.getLogger(CrudEvent.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CrudEvent.class);
     private static final int MAX_STRING_LENGTH = 255;
 
     public enum EntityType {StopPlace}
@@ -139,7 +139,7 @@ public class CrudEvent {
 
         public Builder newValue(String newValue) {
             if (newValue !=null && newValue.length() > MAX_STRING_LENGTH) {
-                logger.warn("Trimming newValue since its greater than max string length: " + newValue);
+                LOGGER.warn("Trimming newValue since its greater than max string length: {}, {}",MAX_STRING_LENGTH,  newValue);
             }
             event.newValue = StringUtils.substring(newValue,0, MAX_STRING_LENGTH);
             return this;
@@ -167,7 +167,7 @@ public class CrudEvent {
 
         public Builder comment(String comment) {
             if (comment !=null && comment.length() > MAX_STRING_LENGTH) {
-                logger.warn("Trimming comment since its greater than max string length: " + comment);
+                LOGGER.warn("Trimming comment since its greater than max string length:{}, {}",MAX_STRING_LENGTH, comment);
             }
             event.comment = StringUtils.substring(comment,0, MAX_STRING_LENGTH);
             return this;
