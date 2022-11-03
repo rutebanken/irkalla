@@ -18,6 +18,9 @@ package org.rutebanken.irkalla.domain;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wololo.geojson.Geometry;
 
 import java.io.IOException;
@@ -26,6 +29,9 @@ import java.time.Instant;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CrudEvent {
+
+    public static final Logger logger= LoggerFactory.getLogger(CrudEvent.class);
+    private static final int MAX_STRING_LENGTH = 255;
 
     public enum EntityType {StopPlace}
 
@@ -132,7 +138,10 @@ public class CrudEvent {
 
 
         public Builder newValue(String newValue) {
-            event.newValue = newValue;
+            if (newValue !=null && newValue.length() > MAX_STRING_LENGTH) {
+                logger.warn("Trimming newValue since its greater than max string length: " + newValue);
+            }
+            event.newValue = StringUtils.substring(newValue,0, MAX_STRING_LENGTH);
             return this;
         }
 
@@ -157,7 +166,10 @@ public class CrudEvent {
         }
 
         public Builder comment(String comment) {
-            event.comment = comment;
+            if (comment !=null && comment.length() > MAX_STRING_LENGTH) {
+                logger.warn("Trimming comment since its greater than max string length: " + comment);
+            }
+            event.comment = StringUtils.substring(comment,0, MAX_STRING_LENGTH);
             return this;
         }
 
