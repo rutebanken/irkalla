@@ -139,7 +139,7 @@ public class CrudEvent {
 
         public Builder newValue(String newValue) {
             if (newValue !=null && newValue.length() > MAX_STRING_LENGTH) {
-                LOGGER.warn("Trimming newValue since its greater than max string length: {}, {}",MAX_STRING_LENGTH,  newValue);
+                LOGGER.warn("Trimming newValue since it is greater than max string length: {}, {}",MAX_STRING_LENGTH,  newValue);
             }
             event.newValue = StringUtils.substring(newValue,0, MAX_STRING_LENGTH);
             return this;
@@ -167,7 +167,7 @@ public class CrudEvent {
 
         public Builder comment(String comment) {
             if (comment !=null && comment.length() > MAX_STRING_LENGTH) {
-                LOGGER.warn("Trimming comment since its greater than max string length:{}, {}",MAX_STRING_LENGTH, comment);
+                LOGGER.warn("Trimming comment since it is greater than max string length:{}, {}",MAX_STRING_LENGTH, comment);
             }
             event.comment = StringUtils.substring(comment,0, MAX_STRING_LENGTH);
             return this;
