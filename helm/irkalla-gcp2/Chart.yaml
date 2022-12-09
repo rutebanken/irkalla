@@ -13,5 +13,5 @@ maintainers:
 engine: gotpl
 dependencies:
   - name: common
-    version: 1.2.4
+    version: 1.4.0
     repository: "https://entur.github.io/helm-charts"
