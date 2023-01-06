@@ -208,12 +208,10 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
             <groupId>org.glassfish.jaxb</groupId>
             <artifactId>jaxb-runtime</artifactId>
         </dependency>
-
         <dependency>
             <groupId>net.logstash.logback</groupId>
             <artifactId>logstash-logback-encoder</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.apache.avro</groupId>
             <artifactId>avro</artifactId>
