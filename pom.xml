@@ -31,7 +31,7 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
     <version>0.0.1-SNAPSHOT</version>
 
     <name>irkalla</name>
-    <description>Config management</description>
+    <description>Irkalla monitors changes in Tiamat by querying its graphQL API and replicate the changes into Chouette through its Web service API.</description>
 
     <scm>
         <connection>scm:git:ssh://git@github.com/entur/irkalla.git</connection>
