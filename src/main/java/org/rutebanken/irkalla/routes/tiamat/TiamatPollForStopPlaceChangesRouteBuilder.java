@@ -21,6 +21,8 @@ import org.apache.camel.http.common.HttpMethods;
 import org.glassfish.jersey.uri.internal.JerseyUriBuilder;
 import org.rutebanken.irkalla.Constants;
 import org.rutebanken.irkalla.routes.BaseRouteBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -33,6 +35,8 @@ import static org.rutebanken.irkalla.Constants.HEADER_NEXT_BATCH_URL;
 
 @Component
 public class TiamatPollForStopPlaceChangesRouteBuilder extends BaseRouteBuilder {
+
+    public static final Logger LOGGER = LoggerFactory.getLogger(TiamatPollForStopPlaceChangesRouteBuilder.class);
 
     @Value("${HOSTNAME:irkalla}")
     private String clientId;
@@ -60,8 +64,9 @@ public class TiamatPollForStopPlaceChangesRouteBuilder extends BaseRouteBuilder 
         from("direct:processChangedStopPlacesAsNetex")
                 .choice()
                 .when(header(HEADER_NEXT_BATCH_URL).isNull())
-                .process(e -> setPollForChangesURL(e))
+                .process(this::setPollForChangesURL)
                 .end()
+                .log(LoggingLevel.INFO, "Next batch header is : ${header." + HEADER_NEXT_BATCH_URL + "}")
                 .to("direct:processBatchOfChangedStopPlacesAsNetex")
                 .routeId("tiamat-get-changed-stop-places-as-netex");
 
@@ -77,7 +82,7 @@ public class TiamatPollForStopPlaceChangesRouteBuilder extends BaseRouteBuilder 
                 .toD("${header." + Constants.HEADER_PROCESS_TARGET + "}")
                 .choice()
                 .when(simple("${header.Link}"))
-                .process(e -> setURLToNextBatch(e))
+                .process(this::setURLToNextBatch)
                 .end()
                 .routeId("tiamat-get-batch-of-changed-stop-places-as-netex");
 
@@ -104,7 +109,9 @@ public class TiamatPollForStopPlaceChangesRouteBuilder extends BaseRouteBuilder 
             uriBuilder.queryParam("per_page", batchSize);
         }
 
-        e.getIn().setHeader(HEADER_NEXT_BATCH_URL, uriBuilder.build().toString());
+        final String tiamatUrl = uriBuilder.build().toString();
+        LOGGER.info("HEADER_NEXT_BATCH_URL {}",tiamatUrl);
+        e.getIn().setHeader(HEADER_NEXT_BATCH_URL, tiamatUrl);
     }
 
 

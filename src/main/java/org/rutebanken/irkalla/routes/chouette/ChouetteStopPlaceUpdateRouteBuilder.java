@@ -31,6 +31,7 @@ import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 
+import static org.apache.camel.support.builder.PredicateBuilder.or;
 import static org.rutebanken.irkalla.Constants.HEADER_NEXT_BATCH_URL;
 import static org.rutebanken.irkalla.Constants.HEADER_SYNC_OPERATION;
 import static org.rutebanken.irkalla.Constants.HEADER_SYNC_STATUS_TO;
@@ -96,12 +97,12 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
         from("direct:synchronizeStopPlaces")
                 .setHeader(Constants.HEADER_PROCESS_TARGET, constant("direct:synchronizeStopPlaceBatch"))
                 .choice()
-                .when(header(HEADER_NEXT_BATCH_URL).isNull()) // New sync, init
+                .when(or(header(HEADER_NEXT_BATCH_URL).isNull(), header(HEADER_NEXT_BATCH_URL).isEqualTo(""))) // New sync, init
                 .to("direct:initNewSynchronization")
                 .otherwise()
+                .log(LoggingLevel.INFO, "Next batch header is : ${header." + HEADER_NEXT_BATCH_URL + "}")
                 .log(LoggingLevel.INFO, "${header." + HEADER_SYNC_OPERATION + "} synchronization of stop places in Chouette resumed.")
                 .end()
-
                 //.setBody(constant(""))
                 .to("direct:processChangedStopPlacesAsNetex")
                 .choice()
