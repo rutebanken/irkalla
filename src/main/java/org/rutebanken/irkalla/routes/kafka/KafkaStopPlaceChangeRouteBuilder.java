@@ -6,9 +6,11 @@ import org.apache.camel.http.common.HttpMethods;
 import org.rutebanken.irkalla.Constants;
 import org.rutebanken.irkalla.routes.BaseRouteBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
+@Profile("!no-kafka")
 public class KafkaStopPlaceChangeRouteBuilder extends BaseRouteBuilder {
 
     @Autowired
