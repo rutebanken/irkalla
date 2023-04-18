@@ -61,8 +61,7 @@ jobs:
       - save_cache:
           paths:
             - ~/.m2
-          keys:
-           - dep-cache-{{ checksum "pom.xml" }}
+          key: dep-cache-{{ checksum "pom.xml" }}
       # Cannot use -o because of snapshot dependencies.
       - run: mvn verify -s .circleci/settings.xml
       - run:
