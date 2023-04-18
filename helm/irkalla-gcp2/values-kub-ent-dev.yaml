@@ -3,8 +3,8 @@ common:
   replicas: 1
 
 configMap:
-  blobstoreProjectId: entur-ror-dev
-  pubsubProjectId: entur-ror-dev
+  blobstoreProjectId: ent-irkalla-dev
+  pubsubProjectId: ent-irkalla-dev
   chouetteUrl: http://chouette.dev.entur.internal
   tiamatUrl: http://tiamat.dev.entur.internal
 
@@ -12,7 +12,7 @@ configMap:
     ror:
       url: https://ror-entur-dev.eu.auth0.com/
       audience: https://ror.api.dev.entur.io
-  blobstoreName: irkalla-dev
+  blobstoreName: ror-irkalla-dev
   kafka:
     brokers: bootstrap.test-ext.kafka.entur.io:9095
     registry: http://schema-registry.test-ext.kafka.entur.io:8001

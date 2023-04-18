@@ -3,8 +3,8 @@ common:
   replicas: 1
 
 configMap:
-  blobstoreProjectId: entur-ror-test
-  pubsubProjectId: entur-ror-test
+  blobstoreProjectId: ent-irkalla-tst
+  pubsubProjectId: ent-irkalla-tst
   chouetteUrl: http://chouette.tst.entur.internal
   tiamatUrl: http://tiamat.tst.entur.internal
 
@@ -12,7 +12,7 @@ configMap:
     ror:
       url: https://ror-entur-staging.eu.auth0.com/
       audience: https://ror.api.staging.entur.io
-  blobstoreName: irkalla-test
+  blobstoreName: ror-irkalla-test
   kafka:
     brokers: bootstrap.test-ext.kafka.entur.io:9095
     registry: http://schema-registry.test-ext.kafka.entur.io:8001
