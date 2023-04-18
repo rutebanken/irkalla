@@ -5,7 +5,7 @@ common:
 configMap:
   blobstoreProjectId: ent-irkalla-dev
   pubsubProjectId: ent-irkalla-dev
-  nabuPubsubProjectId: entur-ror-dev
+  nabuPubsubProjectId: ent-nabu-dev
   chouetteUrl: http://chouette.dev.entur.internal
   tiamatUrl: http://tiamat.dev.entur.internal
 
