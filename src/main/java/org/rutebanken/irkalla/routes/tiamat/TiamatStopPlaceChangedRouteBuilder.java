@@ -54,7 +54,7 @@ public class TiamatStopPlaceChangedRouteBuilder extends BaseRouteBuilder {
                     .process(e -> e.getIn().setHeader("isEffective", isChangeEffective(e)))
                     .bean("stopPlaceChangedToEvent", "toEvent")
                     .convertBodyTo(String.class)
-                    .to("google-pubsub:{{irkalla.pubsub.project.id}}:CrudEventQueue")
+                    .to("google-pubsub:{{nabu.pubsub.project.id}}:CrudEventQueue")
                     .to("direct:triggerStopPlaceSyncIfChangeIsEffective")
                     .endChoice()
                 .end()

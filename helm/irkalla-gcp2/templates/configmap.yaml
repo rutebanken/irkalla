@@ -24,6 +24,7 @@ data:
 
     # PubSub
     irkalla.pubsub.project.id={{ .Values.configMap.pubsubProjectId }}
+    nabu.pubsub.project.id={{ .Values.configMap.nabuPubsubProjectId }}
     spring.cloud.gcp.pubsub.project-id=${irkalla.pubsub.project.id}
 
 
