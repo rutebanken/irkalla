@@ -13,7 +13,7 @@ configMap:
     ror:
       url: https://auth2.entur.org/
       audience: https://ror.api.entur.io
-  blobstoreName: ror-irkalla-production
+  blobstoreName: ror-irkalla-prd
   kafka:
     brokers: bootstrap.prod-ext.kafka.entur.io:9095
     registry: http://schema-registry.prod-ext.kafka.entur.io:8001

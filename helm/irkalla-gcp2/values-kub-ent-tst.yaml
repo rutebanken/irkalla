@@ -13,7 +13,7 @@ configMap:
     ror:
       url: https://ror-entur-staging.eu.auth0.com/
       audience: https://ror.api.staging.entur.io
-  blobstoreName: ror-irkalla-test
+  blobstoreName: ror-irkalla-tst
   kafka:
     brokers: bootstrap.test-ext.kafka.entur.io:9095
     registry: http://schema-registry.test-ext.kafka.entur.io:8001
