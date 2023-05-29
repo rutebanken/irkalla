@@ -43,7 +43,7 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
         <entur.helpers.version>1.0.76</entur.helpers.version>
         <entur-gcp-storage.version>1.83</entur-gcp-storage.version>
         <entur.common.logging.version>1.0.14</entur.common.logging.version>
-        <netex-java-model.version>1.0.13</netex-java-model.version>
+        <netex-java-model.version>1.0.14</netex-java-model.version>
         <netex-parser-java.version>1.0.4</netex-parser-java.version>
         <wololo.version>0.14.3</wololo.version>
         <entur.google.pubsub.emulator.download.skip>false</entur.google.pubsub.emulator.download.skip>
