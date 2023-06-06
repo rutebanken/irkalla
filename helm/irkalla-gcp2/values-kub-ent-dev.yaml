@@ -15,8 +15,8 @@ configMap:
       audience: https://ror.api.dev.entur.io
   blobstoreName: ror-irkalla-dev
   kafka:
-    brokers: entur-kafka-test-int-entur-test.aivencloud.com:11877
-    registry: https://entur-kafka-test-int-entur-test.aivencloud.com:11867
+    brokers: entur-kafka-test-ext-entur-test.aivencloud.com:11877
+    registry: https://entur-kafka-test-ext-entur-test.aivencloud.com:11867
     topicUpdatedStopPlaces: ror-stop-place-changelog-dev
     secProtocol: SASL_SSL
     saslMechanism: SCRAM-SHA-512

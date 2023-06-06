@@ -15,8 +15,8 @@ configMap:
       audience: https://ror.api.entur.io
   blobstoreName: ror-irkalla-prd
   kafka:
-    brokers: entur-kafka-prod-int-entur-prod.aivencloud.com:14019
-    registry: https://entur-kafka-prod-int-entur-prod.aivencloud.com:14009
+    brokers: entur-kafka-prod-ext-entur-prod.aivencloud.com:14019
+    registry: https://entur-kafka-prod-ext-entur-prod.aivencloud.com:14009
     topicUpdatedStopPlaces: ror-stop-place-changelog-production
     secProtocol: SASL_SSL
     saslMechanism: SCRAM-SHA-512
