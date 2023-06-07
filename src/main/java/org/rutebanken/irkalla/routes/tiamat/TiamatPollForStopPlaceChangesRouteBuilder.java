@@ -31,6 +31,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
+import static org.apache.camel.builder.PredicateBuilder.or;
 import static org.rutebanken.irkalla.Constants.HEADER_NEXT_BATCH_URL;
 
 @Component
@@ -63,7 +64,7 @@ public class TiamatPollForStopPlaceChangesRouteBuilder extends BaseRouteBuilder 
 
         from("direct:processChangedStopPlacesAsNetex")
                 .choice()
-                .when(header(HEADER_NEXT_BATCH_URL).isNull())
+                .when (or(header(HEADER_NEXT_BATCH_URL).isNull() , header(HEADER_NEXT_BATCH_URL).isEqualTo("")))
                 .process(this::setPollForChangesURL)
                 .end()
                 .log(LoggingLevel.INFO, "Next batch header is : ${header." + HEADER_NEXT_BATCH_URL + "}")
