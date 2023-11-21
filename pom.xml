@@ -21,7 +21,7 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
     <parent>
         <groupId>org.entur.ror</groupId>
         <artifactId>superpom</artifactId>
-        <version>1.0.41</version>
+        <version>1.65</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -39,9 +39,9 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
     </scm>
 
     <properties>
-        <camel.version>3.14.3</camel.version>
-        <entur.helpers.version>1.0.76</entur.helpers.version>
-        <entur-gcp-storage.version>1.83</entur-gcp-storage.version>
+        <java.version>17</java.version>
+        <camel.version>3.15.0</camel.version>
+        <entur.helpers.version>1.100</entur.helpers.version>
         <entur.common.logging.version>1.0.14</entur.common.logging.version>
         <netex-java-model.version>1.0.13</netex-java-model.version>
         <netex-parser-java.version>1.0.4</netex-parser-java.version>
@@ -67,27 +67,27 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
 
         <!-- Entur -->
         <dependency>
-            <groupId>org.entur.helpers</groupId>
+            <groupId>org.entur.ror.helpers</groupId>
             <artifactId>organisation</artifactId>
             <version>${entur.helpers.version}</version>
         </dependency>
         <dependency>
             <groupId>org.entur.ror.helpers</groupId>
             <artifactId>gcp-storage</artifactId>
-            <version>${entur-gcp-storage.version}</version>
+            <version>${entur.helpers.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.entur.helpers</groupId>
+            <groupId>org.entur.ror.helpers</groupId>
             <artifactId>entur-google-pubsub</artifactId>
             <version>${entur.helpers.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.entur.helpers</groupId>
+            <groupId>org.entur.ror.helpers</groupId>
             <artifactId>logging</artifactId>
             <version>${entur.helpers.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.entur.helpers</groupId>
+            <groupId>org.entur.ror.helpers</groupId>
             <artifactId>oauth2</artifactId>
             <version>${entur.helpers.version}</version>
         </dependency>
