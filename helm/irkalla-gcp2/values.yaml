@@ -36,8 +36,7 @@ common:
     enabled: false
   configmap:
     data:
-      JAVA_OPTIONS: -server -Xmx950m -Dspring.config.location=/etc/application-config/application.properties
-        -Dfile.encoding=UTF-8 -Drutebanken.kubernetes.enabled=true -Drutebanken.kubernetes.namespace=irkalla
+      JDK_JAVA_OPTIONS: -server -Xmx950m -Dspring.config.location=/etc/application-config/application.properties -Dfile.encoding=UTF-8
       TZ: Europe/Oslo
     enabled: true
     toEnv: true
