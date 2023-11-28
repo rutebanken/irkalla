@@ -20,7 +20,7 @@ import java.nio.file.Paths;
 @Profile("local-disk-blobstore")
 public class LocalDiskBlobStoreRepository implements BlobStoreRepository {
 
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Value("${blobstore.local.folder:files/blob}")
     private String baseFolder;

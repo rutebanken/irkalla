@@ -2,12 +2,11 @@ package org.rutebanken.irkalla.config;
 
 import org.entur.oauth2.RorAuthenticationConverter;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.stereotype.Component;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -22,9 +21,8 @@ import static org.springframework.security.config.Customizer.withDefaults;
  */
 @Profile("!test")
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
-@Component
-public class IrkallaSecurityConfiguration extends WebSecurityConfigurerAdapter {
+@Configuration
+public class IrkallaSecurityConfiguration{
 
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
@@ -37,8 +35,8 @@ public class IrkallaSecurityConfiguration extends WebSecurityConfigurerAdapter {
         return source;
     }
 
-    @Override
-    public void configure(HttpSecurity http) throws Exception {
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors(withDefaults())
                 .csrf().disable()
                 .authorizeRequests()
@@ -51,7 +49,6 @@ public class IrkallaSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and()
                 .oauth2ResourceServer().jwt().jwtAuthenticationConverter(new RorAuthenticationConverter());
-
+        return http.build();
     }
-
 }
