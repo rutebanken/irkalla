@@ -56,7 +56,7 @@ data:
     # Camel
     camel.springboot.name=Irkalla
     camel.springboot.message-history=true
-    camel.dataformat.json-jackson.module-refs=jacksonJavaTimeModule
+    camel.dataformat.jackson.module-refs=jacksonJavaTimeModule
     camel.servlet.mapping.context-path=/services/*
     camel.cluster.kubernetes.enabled=true
     camel.cluster.kubernetes.cluster-labels[app]=irkalla
