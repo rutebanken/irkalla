@@ -15,6 +15,7 @@
 
 package org.rutebanken.irkalla.routes.chouette;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
@@ -27,12 +28,11 @@ import org.rutebanken.irkalla.routes.RouteBuilderIntegrationTestBase;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.HashMap;
 import java.util.Map;
 
 
 @SpringBootTest
-public class ChouetteStopPlaceDeleteRouteBuilderTest extends RouteBuilderIntegrationTestBase {
+class ChouetteStopPlaceDeleteRouteBuilderTest extends RouteBuilderIntegrationTestBase {
 
     @Produce("google-pubsub:{{irkalla.pubsub.project.id}}:ChouetteStopPlaceDeleteQueue")
     protected ProducerTemplate deleteStopPlaces;
@@ -45,25 +45,20 @@ public class ChouetteStopPlaceDeleteRouteBuilderTest extends RouteBuilderIntegra
 
 
     @Test
-    public void testDeleteStopPlace() throws Exception {
+    void testDeleteStopPlace() throws Exception {
 
-        Map<String, String> headers = new HashMap<>();
-
-        String stopPlaceId = "NSR:StopPlace:33";
-
-        headers.put(Constants.HEADER_ENTITY_ID,stopPlaceId);
-
-        AdviceWith.adviceWith(context, "chouette-delete-stop-place",
-                a -> a.interceptSendToEndpoint(chouetteUrl + "/chouette_iev/stop_place/NSR:StopPlace:33")
-                        .skipSendToOriginalEndpoint().to("mock:chouetteDeleteStopPlace"));
-
-        context.start();
-
-        deleteStopPlaces.sendBodyAndHeader(null, GooglePubsubConstants.ATTRIBUTES, headers);
+        Map<String, String> headers = Map.of(Constants.HEADER_ENTITY_ID,"stopPlaceId");
+        AdviceWith.adviceWith(context, "chouette-delete-stop-place", a -> {
+            a.weaveByToUri(chouetteUrl + "/chouette_iev/stop_place/${header." + Constants.HEADER_ENTITY_ID + "}")
+                    .replace().to("mock:chouetteDeleteStopPlace");
+            a.interceptSendToEndpoint("direct:updateStatus").skipSendToOriginalEndpoint()
+                    .to("mock:updateStatus");
+        });
 
         chouetteDeleteStopPlace.expectedMessageCount(1);
 
-
+        context.start();
+        deleteStopPlaces.sendBodyAndHeader("", GooglePubsubConstants.ATTRIBUTES, headers);
         chouetteDeleteStopPlace.assertIsSatisfied();
     }
 }

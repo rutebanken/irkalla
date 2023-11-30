@@ -33,7 +33,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @CamelSpringBootTest
 @SpringBootTest(classes = IrkallaApplication.class, properties = "irkalla.camel.redelivery.max=0")
-public class ChouetteStopPlaceUpdateRouteBuilderTest extends RouteBuilderIntegrationTestBase {
+class ChouetteStopPlaceUpdateRouteBuilderTest extends RouteBuilderIntegrationTestBase {
 
 
     @Produce( "google-pubsub:{{irkalla.pubsub.project.id}}:ChouetteStopPlaceSyncQueue")
@@ -62,17 +62,15 @@ public class ChouetteStopPlaceUpdateRouteBuilderTest extends RouteBuilderIntegra
     protected MockEndpoint chouetteStopPlaceSyncQueueMock;
 
     @Test
-    public void testUpdateStopPlaces() throws Exception {
+    void testUpdateStopPlaces() throws Exception {
         String exportPath = tiamatUrl + publicationDeliveryPath + "*";
 
         AdviceWith.adviceWith(context, "tiamat-get-batch-of-changed-stop-places-as-netex",
                 a -> a.interceptSendToEndpoint(exportPath)
                         .skipSendToOriginalEndpoint().to("mock:tiamatExportChanges"));
 
-        AdviceWith.adviceWith(context,"chouette-synchronize-stop-place-batch",
-        a -> a.interceptSendToEndpoint(chouetteUrl + "/chouette_iev/stop_place/*")
-                        .skipSendToOriginalEndpoint().to("mock:chouetteUpdateStopPlaces"));
-
+        AdviceWith.adviceWith(context,"chouette-synchronize-stop-place-batch", a -> a.weaveByToUri(chouetteUrl + "/chouette_iev/stop_place")
+                .replace().to("mock:chouetteUpdateStopPlaces"));
 
         AdviceWith.adviceWith(context,"chouette-synchronize-stop-places-init",
                 a -> a.interceptSendToEndpoint("direct:getSyncStatusUntilTime")
@@ -105,7 +103,7 @@ public class ChouetteStopPlaceUpdateRouteBuilderTest extends RouteBuilderIntegra
 
 
     @Test
-    public void testUpdateStopPlacesNoChanges() throws Exception {
+    void testUpdateStopPlacesNoChanges() throws Exception {
         String exportPath = tiamatUrl + publicationDeliveryPath + "*";
 
         AdviceWith.adviceWith(context, "tiamat-get-batch-of-changed-stop-places-as-netex",
@@ -126,7 +124,7 @@ public class ChouetteStopPlaceUpdateRouteBuilderTest extends RouteBuilderIntegra
     }
 
     @Test
-    public void testUpdateStopPlacesRetryWhenChouetteIsBusy() throws Exception {
+    void testUpdateStopPlacesRetryWhenChouetteIsBusy() throws Exception {
         String exportPath = tiamatUrl + publicationDeliveryPath + "*";
 
         AdviceWith.adviceWith(context, "tiamat-get-batch-of-changed-stop-places-as-netex",
@@ -135,7 +133,9 @@ public class ChouetteStopPlaceUpdateRouteBuilderTest extends RouteBuilderIntegra
 
         AdviceWith.adviceWith(context, "chouette-synchronize-stop-place-batch",
                 a -> {
-                    a.interceptSendToEndpoint(chouetteUrl + "/chouette_iev/stop_place/*").skipSendToOriginalEndpoint().to("mock:chouetteUpdateStopPlaces");
+                    a.weaveByToUri(chouetteUrl + "/chouette_iev/stop_place")
+                            .replace().to("mock:chouetteUpdateStopPlaces");
+
                     a.weaveByToUri("google-pubsub:(.*):ChouetteStopPlaceSyncQueue").replace().to("mock:chouetteStopPlaceSyncQueue");
                 }
         );
