@@ -14,11 +14,12 @@
  *
  */
 
-package org.rutebanken.irkalla.pubsub;
+package org.rutebanken.irkalla.routes;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.google.pubsub.GooglePubsubEndpoint;
+import org.apache.camel.component.master.MasterEndpoint;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.DefaultInterceptSendToEndpoint;
 import org.apache.camel.support.EventNotifierSupport;
@@ -43,8 +44,8 @@ public class PubSubAutoCreateEventNotifier extends EventNotifierSupport {
     @Override
     public void notify(CamelEvent event) {
 
-        if (event instanceof CamelEvent.CamelContextStartingEvent) {
-            CamelContext context = ((CamelEvent.CamelContextStartingEvent) event).getContext();
+        if (event instanceof CamelEvent.CamelContextStartingEvent camelContextStartingEvent) {
+            CamelContext context = camelContextStartingEvent.getContext();
             context.getEndpoints().stream().filter(e -> e.getEndpointUri().startsWith("google-pubsub")).forEach(this::createSubscriptionIfMissing);
         }
 
@@ -52,10 +53,12 @@ public class PubSubAutoCreateEventNotifier extends EventNotifierSupport {
 
     private void createSubscriptionIfMissing(Endpoint e) {
         GooglePubsubEndpoint gep;
-        if (e instanceof GooglePubsubEndpoint) {
-            gep = (GooglePubsubEndpoint) e;
-        } else if (e instanceof DefaultInterceptSendToEndpoint) {
-            gep = (GooglePubsubEndpoint) ((DefaultInterceptSendToEndpoint) e).getOriginalEndpoint();
+        if (e instanceof GooglePubsubEndpoint googlePubsubEndpoint) {
+            gep = googlePubsubEndpoint;
+        } else if (e instanceof DefaultInterceptSendToEndpoint defaultInterceptSendToEndpoint && defaultInterceptSendToEndpoint.getOriginalEndpoint() instanceof GooglePubsubEndpoint googlePubsubEndpoint) {
+            gep = googlePubsubEndpoint;
+        }else if (e instanceof MasterEndpoint masterEndpoint && masterEndpoint.getEndpoint() instanceof DefaultInterceptSendToEndpoint defaultInterceptSendToEndpoint) {
+                gep = (GooglePubsubEndpoint) defaultInterceptSendToEndpoint.getOriginalEndpoint();
         } else {
             throw new IllegalStateException("Incompatible endpoint: " + e);
         }

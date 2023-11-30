@@ -15,7 +15,7 @@
 
 package org.rutebanken.irkalla.routes;
 
-import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.CamelContext;
 import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
 import org.apache.camel.test.spring.junit5.UseAdviceWith;
 import org.junit.jupiter.api.AfterEach;
@@ -30,7 +30,7 @@ import org.springframework.test.context.ActiveProfiles;
 public abstract class RouteBuilderIntegrationTestBase {
 
     @Autowired
-    protected ModelCamelContext context;
+    protected CamelContext context;
 
     @AfterEach
     void stopContext() {
