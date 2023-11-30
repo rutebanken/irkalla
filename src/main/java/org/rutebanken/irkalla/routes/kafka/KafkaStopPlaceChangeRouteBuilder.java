@@ -36,22 +36,6 @@ public class KafkaStopPlaceChangeRouteBuilder extends BaseRouteBuilder {
                 .log(LoggingLevel.INFO,   "Notified changelog: ${body}")
                 .routeId("notify-consumers");
 
-        /*
-         *This route is for local testing
-
-        /
-        from("kafka:{{irkalla.kafka.topic.event}}?clientId=irkalla-event-reader&valueDeserializer=io.confluent.kafka.serializers.KafkaAvroDeserializer&specificAvroReader=true&seekTo=beginning&autoOffsetReset=earliest&offsetRepository=#irkallaEventReaderOffsetRepo")
-                .log(LoggingLevel.INFO,  "Received notification event from ${properties:irkalla.kafka.topic.event}")
-                .to("direct:processStopPlaceChangelog")
-                .routeId("from-kafka-topic-event");
-
-        from("direct:processStopPlaceChangelog")
-                .process(exchange -> {
-                    log.info("Event from kafka: {} ",exchange.getIn().getBody());
-                })
-                .routeId("process-stop-place-changelog");
-        */
-
     }
 
 }
