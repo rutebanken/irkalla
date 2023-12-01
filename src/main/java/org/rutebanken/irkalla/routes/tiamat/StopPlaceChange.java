@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * Representation of a change for a stop place.
@@ -156,12 +155,12 @@ public class StopPlaceChange {
         // TODO do we need to verify magnitude of coord change? Seems to be small changes due to rounding.
         checkForChanges(current.geometry, previousVersion.geometry, StopPlaceUpdateType.COORDINATES);
 
-        List<String> currentQuayIds = current.safeGetQuays().stream().map(q -> q.id).collect(Collectors.toList());
-        List<String> previousVersionQuayIds = previousVersion.safeGetQuays().stream().map(q -> q.id).collect(Collectors.toList());
+        List<String> currentQuayIds = current.safeGetQuays().stream().map(q -> q.id).toList();
+        List<String> previousVersionQuayIds = previousVersion.safeGetQuays().stream().map(q -> q.id).toList();
 
 
-        List<String> newQuays = currentQuayIds.stream().filter(q -> !previousVersionQuayIds.contains(q)).collect(Collectors.toList());
-        List<String> removedQuays = previousVersionQuayIds.stream().filter(q -> !currentQuayIds.contains(q)).collect(Collectors.toList());
+        List<String> newQuays = currentQuayIds.stream().filter(q -> !previousVersionQuayIds.contains(q)).toList();
+        List<String> removedQuays = previousVersionQuayIds.stream().filter(q -> !currentQuayIds.contains(q)).toList();
 
         if (!newQuays.isEmpty()) {
             registerUpdate(StopPlaceUpdateType.NEW_QUAY);

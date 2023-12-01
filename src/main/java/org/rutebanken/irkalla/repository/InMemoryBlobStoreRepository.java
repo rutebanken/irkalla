@@ -20,7 +20,7 @@ import java.util.Map;
 @Profile("in-memory-blobstore")
 public class InMemoryBlobStoreRepository implements BlobStoreRepository {
 
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private Map<String, byte[]> blobs = new HashMap<>();
 

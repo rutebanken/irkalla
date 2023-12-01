@@ -26,6 +26,7 @@ import org.rutebanken.irkalla.routes.tiamat.graphql.model.TopographicPlace;
 
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.rutebanken.irkalla.routes.tiamat.StopPlaceChange.MULTI_MODAL_TYPE;
@@ -189,7 +190,7 @@ public class StopPlaceChangeTest {
     private StopPlace stopPlace(String name, double x, double y, String... quayIds) {
         StopPlace stopPlace = new StopPlace();
         stopPlace.name = new Name(name);
-        stopPlace.geometry = new GraphqlGeometry("Point", Arrays.asList(Arrays.asList(x, y)));
+        stopPlace.geometry = new GraphqlGeometry("Point", List.of(Arrays.asList(x, y)));
 
         if (quayIds != null) {
             stopPlace.quays = Arrays.stream(quayIds).map(id -> new Quay(id, new Name(id), stopPlace.geometry)).collect(Collectors.toList());

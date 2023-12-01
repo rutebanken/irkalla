@@ -120,7 +120,7 @@ public class AdminRestRouteBuilder extends BaseRouteBuilder {
                 .process(e -> authorize(AuthorizationConstants.ROLE_ROUTE_DATA_ADMIN))
                 .process(this::removeAllCamelHttpHeaders)
                 .setHeader(HEADER_SYNC_OPERATION, constant(SYNC_OPERATION_DELTA))
-                .setBody(constant(null))
+                .setBody(constant(""))
                 .to(ExchangePattern.InOnly,"google-pubsub:{{irkalla.pubsub.project.id}}:ChouetteStopPlaceSyncQueue")
                 .routeId("admin-chouette-synchronize-stop-places-delta");
 
@@ -133,7 +133,7 @@ public class AdminRestRouteBuilder extends BaseRouteBuilder {
                 .otherwise()
                 .setHeader(HEADER_SYNC_OPERATION, constant(SYNC_OPERATION_FULL))
                 .end()
-                .setBody(constant(null))
+                .setBody(constant(""))
                 .to(ExchangePattern.InOnly,"google-pubsub:{{irkalla.pubsub.project.id}}:ChouetteStopPlaceSyncQueue")
                 .routeId("admin-chouette-synchronize-stop-places-full");
 
