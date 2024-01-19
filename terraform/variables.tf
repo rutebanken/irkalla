@@ -45,13 +45,6 @@ variable "kube_namespace" {
   description = "The Kubernetes namespace"
   default = "irkalla"
 }
-variable  ror-irkalla-kafka-username {
-  description = "Irkalla kafka user name"
-}
-
-variable ror-irkalla-kafka-password {
-  description = "Irkalla kafka user password"
-}
 
 variable "tiamat-changelog-topic" {
   description = "Tiamat stop-place changelog"
