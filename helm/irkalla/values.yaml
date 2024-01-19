@@ -7,19 +7,15 @@ common:
   service:
     internalPort: 8080
   container:
-    image: ${artifact.metadata.image}
+    image: <+artifacts.primary.image>
     cpu: 0.1
     memory: 750
-    cpuLimit: 600m
     memoryLimit: 1100
     probes:
       liveness:
         path: /actuator/health/liveness
       readiness:
         path: /actuator/health/readiness
-    envFrom:
-      - secretRef:
-          name: ror-irkalla-secrets
     prometheus:
       enabled: true
       path: /actuator/prometheus
@@ -40,3 +36,5 @@ common:
       TZ: Europe/Oslo
     enabled: true
     toEnv: true
+  secrets:
+    kafka: [KAFKAPASSWORD, KAFKAUSERNAME]

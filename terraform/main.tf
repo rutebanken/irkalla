@@ -110,17 +110,3 @@ resource "google_pubsub_topic_iam_member" "nabu_topic_iam_member" {
   topic  = var.crud_event_pubsub_topic
 }
 
-# Add irkalla secrets
-
-resource "kubernetes_secret" "ror-irkalla-client-secrets" {
-  metadata {
-    name      = "${var.labels.team}-${var.labels.app}-secrets"
-    namespace = var.kube_namespace
-  }
-
-  data = {
-    "KAFKAUSERNAME"    = var.ror-irkalla-kafka-username
-    "KAFKAPASSWORD"    = var.ror-irkalla-kafka-password
-  }
-}
-
