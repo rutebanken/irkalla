@@ -37,4 +37,4 @@ common:
     enabled: true
     toEnv: true
   secrets:
-    ror-irkalla-secrets: [KAFKAPASSWORD, KAFKAUSERNAME]
+    kafka: [KAFKAPASSWORD, KAFKAUSERNAME]
