@@ -1,6 +1,8 @@
 common:
   env: dev
-  replicas: 1
+  deployment:
+    replicas: 2
+
 
 configMap:
   blobstoreProjectId: ent-irkalla-dev

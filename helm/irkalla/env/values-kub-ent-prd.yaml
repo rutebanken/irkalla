@@ -1,6 +1,7 @@
 common:
   env: prd
-  replicas: 1
+  deployment:
+    replicas: 2
 
 configMap:
   blobstoreProjectId: ent-irkalla-prd
