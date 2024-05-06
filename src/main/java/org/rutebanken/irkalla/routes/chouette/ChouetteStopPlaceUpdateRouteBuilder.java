@@ -98,10 +98,10 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
                 .setHeader(Constants.HEADER_PROCESS_TARGET, constant("direct:synchronizeStopPlaceBatch"))
                 .choice()
                 .when(or(header(HEADER_NEXT_BATCH_URL).isNull(), header(HEADER_NEXT_BATCH_URL).isEqualTo(""))) // New sync, init
-                .to("direct:initNewSynchronization")
+                 .to("direct:initNewSynchronization")
                 .otherwise()
-                .log(LoggingLevel.INFO, "Next batch header is : ${header." + HEADER_NEXT_BATCH_URL + "}")
-                .log(LoggingLevel.INFO, "${header." + HEADER_SYNC_OPERATION + "} synchronization of stop places in Chouette resumed.")
+                 .log(LoggingLevel.INFO, "Next batch header is : ${header." + HEADER_NEXT_BATCH_URL + "}")
+                 .log(LoggingLevel.INFO, "${header." + HEADER_SYNC_OPERATION + "} synchronization of stop places in Chouette resumed.")
                 .end()
                 //.setBody(constant(""))
                 .to("direct:processChangedStopPlacesAsNetex")

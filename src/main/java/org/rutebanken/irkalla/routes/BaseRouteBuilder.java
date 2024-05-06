@@ -17,7 +17,6 @@ package org.rutebanken.irkalla.routes;
 
 
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.pubsub.GooglePubsubConstants;
@@ -138,7 +137,7 @@ public abstract class BaseRouteBuilder extends RouteBuilder {
             if (temporaryExchange == null) {
                 throw new IllegalStateException("Synchronization holder not found");
             }
-            temporaryExchange.adapt(ExtendedExchange.class).handoverCompletions(aggregatedExchange);
+            temporaryExchange.getExchangeExtension().handoverCompletions(aggregatedExchange);
         }
     }
 

@@ -15,6 +15,7 @@
 
 package org.rutebanken.irkalla.routes;
 
+import jakarta.ws.rs.NotFoundException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.model.rest.RestBindingMode;
@@ -27,8 +28,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-
-import javax.ws.rs.NotFoundException;
 
 import static org.rutebanken.irkalla.Constants.HEADER_SYNC_OPERATION;
 import static org.rutebanken.irkalla.Constants.SYNC_OPERATION_DELTA;

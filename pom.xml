@@ -21,7 +21,7 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
     <parent>
         <groupId>org.entur.ror</groupId>
         <artifactId>superpom</artifactId>
-        <version>1.68</version>
+        <version>2.12</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -39,11 +39,11 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
     </scm>
 
     <properties>
-        <java.version>17</java.version>
-        <camel.version>3.21.2</camel.version>
-        <entur.helpers.version>1.100</entur.helpers.version>
-        <netex-java-model.version>1.0.14</netex-java-model.version>
-        <netex-parser-java.version>2.2.0</netex-parser-java.version>
+        <java.version>21</java.version>
+        <camel.version>4.3.0</camel.version>
+        <entur.helpers.version>2.18</entur.helpers.version>
+        <netex-java-model.version>2.0.15</netex-java-model.version>
+        <netex-parser-java.version>3.1.0</netex-parser-java.version>
         <wololo.version>0.18.1</wololo.version>
         <entur.google.pubsub.emulator.download.skip>false</entur.google.pubsub.emulator.download.skip>
         <avro.version>1.11.3</avro.version>
@@ -78,11 +78,6 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
         <dependency>
             <groupId>org.entur.ror.helpers</groupId>
             <artifactId>entur-google-pubsub</artifactId>
-            <version>${entur.helpers.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.entur.ror.helpers</groupId>
-            <artifactId>logging</artifactId>
             <version>${entur.helpers.version}</version>
         </dependency>
         <dependency>
@@ -151,7 +146,7 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
         </dependency>
         <dependency>
             <groupId>org.apache.camel.springboot</groupId>
-            <artifactId>camel-swagger-java-starter</artifactId>
+            <artifactId>camel-openapi-java-starter</artifactId>
             <exclusions>
                 <exclusion>
                     <artifactId>jsr311-api</artifactId>
@@ -200,8 +195,8 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
         <!-- Other -->
 
         <dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jaxb</groupId>
@@ -280,7 +275,6 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <mainClass>org.rutebanken.irkalla.IrkallaApplication</mainClass>
-                    <fork>false</fork>
                 </configuration>
                 <executions>
                     <execution>
