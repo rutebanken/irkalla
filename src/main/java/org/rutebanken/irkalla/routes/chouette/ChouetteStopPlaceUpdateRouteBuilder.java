@@ -196,7 +196,7 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
         List<Message> msgList = e.getIn().getBody(List.class);
         Collections.sort(msgList, new SyncMsgComparator());
 
-        Message topPriMsg = msgList.get(0);
+        Message topPriMsg = msgList.getFirst();
         Object syncOperation = topPriMsg.getHeader(HEADER_SYNC_OPERATION);
         if (syncOperation == null) {
             e.getIn().setHeader(HEADER_SYNC_OPERATION, SYNC_OPERATION_DELTA);
