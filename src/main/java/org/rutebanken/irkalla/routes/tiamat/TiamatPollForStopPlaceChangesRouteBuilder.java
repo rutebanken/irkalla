@@ -26,7 +26,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.ws.rs.core.UriBuilder;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -93,7 +92,9 @@ public class TiamatPollForStopPlaceChangesRouteBuilder extends BaseRouteBuilder 
         Long fromAsEpocMillis = e.getIn().getHeader(Constants.HEADER_SYNC_STATUS_FROM, Long.class);
         Long toAsEpocMillis = e.getIn().getHeader(Constants.HEADER_SYNC_STATUS_TO, Long.class);
 
-        UriBuilder uriBuilder = new JerseyUriBuilder().path(tiamatUrl + publicationDeliveryPath);
+        var uriBuilder = new JerseyUriBuilder().path(tiamatUrl + publicationDeliveryPath);
+
+
 
         uriBuilder.queryParam("topographicPlaceExportMode", "NONE");
         uriBuilder.queryParam("tariffZoneExportMode", "NONE");

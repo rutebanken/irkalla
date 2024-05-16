@@ -98,10 +98,10 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
                 .setHeader(Constants.HEADER_PROCESS_TARGET, constant("direct:synchronizeStopPlaceBatch"))
                 .choice()
                 .when(or(header(HEADER_NEXT_BATCH_URL).isNull(), header(HEADER_NEXT_BATCH_URL).isEqualTo(""))) // New sync, init
-                .to("direct:initNewSynchronization")
+                 .to("direct:initNewSynchronization")
                 .otherwise()
-                .log(LoggingLevel.INFO, "Next batch header is : ${header." + HEADER_NEXT_BATCH_URL + "}")
-                .log(LoggingLevel.INFO, "${header." + HEADER_SYNC_OPERATION + "} synchronization of stop places in Chouette resumed.")
+                 .log(LoggingLevel.INFO, "Next batch header is : ${header." + HEADER_NEXT_BATCH_URL + "}")
+                 .log(LoggingLevel.INFO, "${header." + HEADER_SYNC_OPERATION + "} synchronization of stop places in Chouette resumed.")
                 .end()
                 //.setBody(constant(""))
                 .to("direct:processChangedStopPlacesAsNetex")
@@ -196,7 +196,7 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
         List<Message> msgList = e.getIn().getBody(List.class);
         Collections.sort(msgList, new SyncMsgComparator());
 
-        Message topPriMsg = msgList.get(0);
+        Message topPriMsg = msgList.getFirst();
         Object syncOperation = topPriMsg.getHeader(HEADER_SYNC_OPERATION);
         if (syncOperation == null) {
             e.getIn().setHeader(HEADER_SYNC_OPERATION, SYNC_OPERATION_DELTA);

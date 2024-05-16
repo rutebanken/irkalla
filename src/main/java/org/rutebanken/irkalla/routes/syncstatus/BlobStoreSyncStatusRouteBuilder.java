@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -54,14 +53,14 @@ public class BlobStoreSyncStatusRouteBuilder extends BaseRouteBuilder {
         try {
             InputStream inputStream = blobStoreRepository.getBlob(blobName);
             if (inputStream != null) {
-                String stringVal = StringUtils.trimTrailingWhitespace(IOUtils.toString(inputStream, StandardCharsets.UTF_8));
+                String stringVal = IOUtils.toString(inputStream, StandardCharsets.UTF_8).stripTrailing();
                 log.debug("Read Sync status from GCS: {} ", stringVal);
                 syncStatusUntilTime = Instant.from(FORMATTER.parse(stringVal)).toEpochMilli();
             } else {
                 log.info("Got empty inputstream for syncedUntilTime, assuming this is initial sync.");
             }
         } catch (Exception ex) {
-            log.warn("Failed to parse sync status timestamp from gcs, using null. Msg: " + ex.getMessage(), ex);
+            log.warn("Failed to parse sync status timestamp from gcs, using null. Msg: {}", ex.getMessage(), ex);
 
         }
         exchange.getIn().setBody(syncStatusUntilTime);

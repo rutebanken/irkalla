@@ -1,7 +1,7 @@
 package org.rutebanken.irkalla.config;
 
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.apache.camel.impl.engine.MemoryStateRepository;
+import org.apache.camel.support.processor.state.MemoryStateRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

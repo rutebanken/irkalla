@@ -1,12 +1,14 @@
 package org.rutebanken.irkalla.config;
 
-import org.entur.oauth2.RorAuthenticationConverter;
+import org.entur.oauth2.multiissuer.MultiIssuerAuthenticationManagerResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -36,19 +38,19 @@ public class IrkallaSecurityConfiguration{
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, MultiIssuerAuthenticationManagerResolver multiIssuerAuthenticationManagerResolver) throws Exception {
         http.cors(withDefaults())
-                .csrf().disable()
-                .authorizeRequests()
-                .antMatchers("/services/stop_place_synchronization_timetable/swagger.json").permitAll()
-                // exposed internally only, on a different port (pod-level)
-                .antMatchers("/actuator/prometheus").permitAll()
-                .antMatchers("/actuator/health").permitAll()
-                .antMatchers("/actuator/health/liveness").permitAll()
-                .antMatchers("/actuator/health/readiness").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .oauth2ResourceServer().jwt().jwtAuthenticationConverter(new RorAuthenticationConverter());
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeRequests(auths -> auths
+                        .requestMatchers(AntPathRequestMatcher.antMatcher("/services/openapi.json")).permitAll()
+                        // exposed internally only, on a different port (pod-level)
+                        .requestMatchers(AntPathRequestMatcher.antMatcher("/actuator/prometheus")).permitAll()
+                        .requestMatchers(AntPathRequestMatcher.antMatcher("/actuator/health")).permitAll()
+                        .requestMatchers(AntPathRequestMatcher.antMatcher("/actuator/health/liveness")).permitAll()
+                        .requestMatchers(AntPathRequestMatcher.antMatcher("/actuator/health/readiness")).permitAll()
+                .anyRequest().authenticated())
+                .oauth2ResourceServer(configurer -> configurer.authenticationManagerResolver(multiIssuerAuthenticationManagerResolver));
+
         return http.build();
     }
 }

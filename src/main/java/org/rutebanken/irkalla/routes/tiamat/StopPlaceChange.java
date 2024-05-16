@@ -144,7 +144,7 @@ public class StopPlaceChange {
         updateType = StopPlaceUpdateType.MINOR;
 
         if (current == null || previousVersion == null) {
-            logger.warn("Unable to detect update type for unknown current and/or previous version of stops. Current: " + current + ", previous: " + previousVersion);
+            logger.warn("Unable to detect update type for unknown current and/or previous version of stops. Current: {}, previous: {}", current, previousVersion);
             return;
         }
 
@@ -192,10 +192,10 @@ public class StopPlaceChange {
     private String formatGeometry(GraphqlGeometry geometry) {
         if ("Point".equals(geometry.type)) {
             if (!CollectionUtils.isEmpty(geometry.coordinates)) {
-                List<Double> coordinates = geometry.coordinates.get(0);
+                List<Double> coordinates = geometry.coordinates.getFirst();
                 if (coordinates != null && coordinates.size() > 1) {
-                    Double x = coordinates.get(0);
-                    Double y = coordinates.get(1);
+                    Double x = coordinates.getFirst();
+                    Double y = coordinates.getLast();
                     return "(" + x + "," + y + ")";
                 }
             }

@@ -46,7 +46,7 @@ public class StopPlaceResponse {
         if (data == null || CollectionUtils.isEmpty(data.current)) {
             return null;
         }
-        return data.current.get(0);
+        return data.current.getFirst();
     }
 
     @JsonIgnore
@@ -54,7 +54,7 @@ public class StopPlaceResponse {
         if (data == null || CollectionUtils.isEmpty(data.previous)) {
             return null;
         }
-        return data.previous.get(0);
+        return data.previous.getFirst();
     }
 }
 
