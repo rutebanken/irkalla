@@ -23,11 +23,11 @@ import java.util.List;
 public class GraphqlGeometry {
     public String type;
 
-    public List<List<Double>> coordinates;
+    public List<List<Double>> legacyCoordinates;
 
-    public GraphqlGeometry(String type, List<List<Double>> coordinates) {
+    public GraphqlGeometry(String type, List<List<Double>> legacyCoordinates) {
         this.type = type;
-        this.coordinates = coordinates;
+        this.legacyCoordinates = legacyCoordinates;
     }
 
     public GraphqlGeometry() {
@@ -41,21 +41,21 @@ public class GraphqlGeometry {
         GraphqlGeometry that = (GraphqlGeometry) o;
 
         if (type != null ? !type.equals(that.type) : that.type != null) return false;
-        return coordinates != null ? coordinates.equals(that.coordinates) : that.coordinates == null;
+        return legacyCoordinates != null ? legacyCoordinates.equals(that.legacyCoordinates) : that.legacyCoordinates == null;
     }
 
     @Override
     public int hashCode() {
         int result = type != null ? type.hashCode() : 0;
-        result = 31 * result + (coordinates != null ? coordinates.hashCode() : 0);
+        result = 31 * result + (legacyCoordinates != null ? legacyCoordinates.hashCode() : 0);
         return result;
     }
 
     @Override
     public String toString() {
         return "Geometry{" +
-                       "type='" + type + '\'' +
-                       ", coordinates=" + coordinates +
-                       '}';
+               "type='" + type + '\'' +
+               ", legacyCoordinates=" + legacyCoordinates +
+               '}';
     }
 }

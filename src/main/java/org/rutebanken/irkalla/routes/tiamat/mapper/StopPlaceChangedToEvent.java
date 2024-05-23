@@ -56,7 +56,7 @@ public class StopPlaceChangedToEvent {
 
         if (graphqlGeometry != null && "Point".equals(graphqlGeometry.type)) {
             List<Double> coordinates = new ArrayList<>();
-            graphqlGeometry.coordinates.forEach(coordList -> coordinates.addAll(coordList));
+            graphqlGeometry.legacyCoordinates.forEach(coordList -> coordinates.addAll(coordList));
 
             return new Point(coordinates.stream().mapToDouble(c -> c).toArray());
         }

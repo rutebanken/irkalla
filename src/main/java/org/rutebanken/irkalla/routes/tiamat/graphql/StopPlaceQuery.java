@@ -71,7 +71,7 @@ public class StopPlaceQuery {
                                                             "    }" +
                                                             "    geometry {" +
                                                             "      type" +
-                                                            "      coordinates" +
+                                                            "      legacyCoordinates" +
                                                             "    }" +
                                                             "    __typename" +
                                                             "       topographicPlace {" +
@@ -97,7 +97,7 @@ public class StopPlaceQuery {
                                                             "        }" +
                                                             "      geometry {" +
                                                             "        type" +
-                                                            "        coordinates" +
+                                                            "        legacyCoordinates" +
                                                             "      }" +
                                                             "    }" +
                                                             "    }" +

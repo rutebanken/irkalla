@@ -45,8 +45,6 @@ public class GraphQLStopPlaceDao implements StopPlaceDao {
     @Value("${tiamat.graphql.path:/services/stop_places/graphql}")
     private String tiamatGraphQLPath;
 
-    @Value("${tiamat.graphql.legacyCoordinates:false}")
-    private boolean legacyCoordinates;
 
     @Override
     public StopPlaceChange getStopPlaceChange(CrudAction crudAction, String id, Long version) {
@@ -78,7 +76,7 @@ public class GraphQLStopPlaceDao implements StopPlaceDao {
         headers.set(HttpHeaders.CONTENT_TYPE, "application/json");
         headers.set(ET_CLIENT_NAME_HEADER, clientName);
         headers.set(ET_CLIENT_ID_HEADER, clientId);
-        final String query = legacyCoordinates?new StopPlaceQueryLegacyCoordinates(id,version).toString():new StopPlaceQuery(id, version).toString();
+        final String query = new StopPlaceQuery(id, version).toString();
         return new HttpEntity<>(query, headers);
     }
 
