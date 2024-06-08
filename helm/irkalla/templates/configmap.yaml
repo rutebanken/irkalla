@@ -21,6 +21,10 @@ data:
     irkalla.oauth2.resourceserver.auth0.entur.partner.jwt.issuer-uri={{ .Values.configMap.auth0.partner.url }}
     irkalla.oauth2.resourceserver.auth0.entur.partner.jwt.audience={{ .Values.configMap.auth0.ror.audience }}
 
+    # Authorization
+    irkalla.security.authorization-service=token-based
+
+
     # Blobstore
     blobstore.gcs.project.id={{ .Values.configMap.blobstoreProjectId }}
     blobstore.gcs.container.name={{ .Values.configMap.blobstoreName }}
