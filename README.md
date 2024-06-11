@@ -19,6 +19,9 @@ server.admin.port=11501
 
 server.context-path=/irkalla/
 
+irkalla.security.user-context-service=full-access
+
+
 tiamat.url=http://tiamat:2888
 chouette.url=http://localhost:8080
 etcd.url=http://etcd-client:2379/v2/keys/prod/irkalla
@@ -27,3 +30,18 @@ rutebanken.kubernetes.enabled=false
 chouette.sync.stop.place.autoStartup=true
 
 spring.jackson.serialization.write-dates-as-timestamps=false
+
+```
+
+## Security
+An authorization service implementation must be selected.
+The following implementation gives full access to all authenticated users:
+
+```properties
+irkalla.security.user-context-service=full-access
+```
+
+The following implementation enables OAuth2 token-based authorization:
+```properties
+irkalla.security.user-context-service=token-based
+```

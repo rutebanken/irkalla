@@ -20,14 +20,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.apache.camel.model.rest.RestParamType;
-import org.rutebanken.helper.organisation.AuthorizationConstants;
 import org.rutebanken.helper.organisation.NotAuthenticatedException;
-import org.springframework.beans.factory.annotation.Value;
+import org.rutebanken.irkalla.security.IrkallaAuthorizationService;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
 import static org.rutebanken.irkalla.Constants.HEADER_SYNC_OPERATION;
 import static org.rutebanken.irkalla.Constants.SYNC_OPERATION_DELTA;
@@ -37,10 +33,11 @@ import static org.rutebanken.irkalla.Constants.SYNC_OPERATION_FULL_WITH_DELETE_U
 @Component
 public class AdminRestRouteBuilder extends BaseRouteBuilder {
 
-    @Value("${authorization.enabled:true}")
-    protected boolean authorizationEnabled;
+    private final IrkallaAuthorizationService irkallaAuthorizationService;
 
-    private static final String DEFAULT_ROLE_PREFIX = "ROLE_";
+    public AdminRestRouteBuilder(IrkallaAuthorizationService irkallaAuthorizationService) {
+        this.irkallaAuthorizationService = irkallaAuthorizationService;
+    }
 
 
     @Override
@@ -116,7 +113,7 @@ public class AdminRestRouteBuilder extends BaseRouteBuilder {
                 .routeId("admin-chouette-synchronize-stop-places-status");
 
         from("direct:adminChouetteSynchronizeStopPlacesDelta")
-                .process(e -> authorize(AuthorizationConstants.ROLE_ROUTE_DATA_ADMIN))
+                .process(e -> irkallaAuthorizationService.verifyAdministratorPrivileges())
                 .process(this::removeAllCamelHttpHeaders)
                 .setHeader(HEADER_SYNC_OPERATION, constant(SYNC_OPERATION_DELTA))
                 .setBody(constant(""))
@@ -124,7 +121,7 @@ public class AdminRestRouteBuilder extends BaseRouteBuilder {
                 .routeId("admin-chouette-synchronize-stop-places-delta");
 
         from("direct:adminChouetteSynchronizeStopPlacesFull")
-                .process(e -> authorize(AuthorizationConstants.ROLE_ROUTE_DATA_ADMIN))
+                .process(e -> irkallaAuthorizationService.verifyAdministratorPrivileges())
                 .removeHeaders("CamelHttp*")
                 .choice()
                 .when(simple("${header.cleanFirst}"))
@@ -155,25 +152,5 @@ public class AdminRestRouteBuilder extends BaseRouteBuilder {
                 .routeId("admin-route-authorize-delete");
 
 
-    }
-
-    private void authorize(String requiredRole) {
-        if (!authorizationEnabled) {
-            return;
-        }
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null) {
-            throw new NotAuthenticatedException();
-        }
-
-        boolean authorized = false;
-        final String requiredRoleWithDefaultPrefix= DEFAULT_ROLE_PREFIX + requiredRole;
-        if (!CollectionUtils.isEmpty(authentication.getAuthorities())) {
-            authorized = authentication.getAuthorities().stream().anyMatch(authority -> requiredRoleWithDefaultPrefix.equals(authority.getAuthority()));
-        }
-
-        if (!authorized) {
-            throw new AccessDeniedException("Insufficient privileges for operation");
-        }
     }
 }
