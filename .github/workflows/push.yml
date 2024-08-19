@@ -23,9 +23,9 @@ jobs:
         env:
           GITHUB_ACTOR: ${{ secrets.ARTIFACTORY_USER }}
           GITHUB_TOKEN: ${{ secrets.ARTIFACTORY_APIKEY }}
+          JFROG_USER: ${{ secrets.ARTIFACTORY_USER }}
+          JFROG_PASS: ${{ secrets.ARTIFACTORY_APIKEY }}
       - run: |
-          echo "export JFROG_USER=$ARTIFACTORY_USER"  >> $BASH_ENV
-          echo "export JFROG_PASS=$ARTIFACTORY_PASSWORD"  >> $BASH_ENV
           echo "$ARTIFACTORY_SETTINGS" | base64 --decode > .github/settings.xml
           mvn verify -s .github/settings.xml
       - uses: actions/upload-artifact@v4.3.3
