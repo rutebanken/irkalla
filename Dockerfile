@@ -1,5 +1,4 @@
 FROM bellsoft/liberica-openjdk-alpine:21.0.2-14 AS builder
-WORKDIR /deployments
 COPY target/irkalla-*-SNAPSHOT.jar application.jar
 RUN java -Djarmode=layertools -jar application.jar extract
 
@@ -14,5 +13,5 @@ RUN mkdir -p /home/appuser/.ssh \
 COPY --from=builder dependencies/ ./
 COPY --from=builder snapshot-dependencies/ ./
 COPY --from=builder spring-boot-loader/ ./
-COPY --from=builder deployments/application/ ./
+COPY --from=builder application/ ./
 ENTRYPOINT [ "/sbin/tini", "--", "java", "org.springframework.boot.loader.launch.JarLauncher" ]
