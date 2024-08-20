@@ -21,13 +21,9 @@ jobs:
           distribution: liberica
           cache: 'maven'
         env:
-          GITHUB_ACTOR: ${{ secrets.ARTIFACTORY_USER }}
-          GITHUB_TOKEN: ${{ secrets.ARTIFACTORY_APIKEY }}
           JFROG_USER: ${{ secrets.ARTIFACTORY_USER }}
           JFROG_PASS: ${{ secrets.ARTIFACTORY_APIKEY }}
-      - run: |
-          echo "$ARTIFACTORY_SETTINGS" | base64 --decode > .github/settings.xml
-          mvn verify -s .github/settings.xml
+      - run: mvn verify -s ./settings.xml
       - uses: actions/upload-artifact@v4.3.3
         with:
           path: target/*.jar
