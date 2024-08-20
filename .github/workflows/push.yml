@@ -23,7 +23,8 @@ jobs:
         env:
           JFROG_USER: ${{ secrets.ARTIFACTORY_USER }}
           JFROG_PASS: ${{ secrets.ARTIFACTORY_APIKEY }}
-      - run: mvn verify -s settings.xml
+      - run: wget https://raw.githubusercontent.com/entur/circleci-toolbox-image-java11/master/tools/m2/settings.xml -O .github/settings.xml
+      - run: mvn verify -s .github/settings.xml
       - uses: actions/upload-artifact@v4.3.3
         with:
           path: target/*.jar
