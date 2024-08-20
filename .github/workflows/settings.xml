@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<settings xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.1.0 http://maven.apache.org/xsd/settings-1.1.0.xsd" xmlns="http://maven.apache.org/SETTINGS/1.1.0"
+<settings xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.2.0 http://maven.apache.org/xsd/settings-1.2.0.xsd" xmlns="http://maven.apache.org/SETTINGS/1.2.0"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <servers>
         <server>
@@ -12,49 +12,39 @@
             <password>${env.JFROG_PASS}</password>
             <id>snapshots</id>
         </server>
-        <server>
-            <username>${env.JFROG_USER}</username>
-            <password>${env.JFROG_PASS}</password>
-            <id>entur-mirror</id>
-        </server>
-        <server>
-            <username>${env.SONATYPE_USERNAME}</username>
-            <password>${env.SONATYPE_PASSWORD}</password>
-            <id>ossrh</id>
-        </server>
     </servers>
     <profiles>
         <profile>
             <repositories>
                 <repository>
                     <snapshots>
-                        <enabled>true</enabled>
+                        <enabled>false</enabled>
                     </snapshots>
                     <id>central</id>
                     <name>libs-release</name>
-                    <url>https://entur2.jfrog.io/entur2/libs-release</url>
+                    <url>https://entur2.jfrog.io/artifactory/libs-release</url>
                 </repository>
                 <repository>
                     <snapshots />
                     <id>snapshots</id>
                     <name>libs-snapshot</name>
-                    <url>https://entur2.jfrog.io/entur2/libs-snapshot</url>
+                    <url>https://entur2.jfrog.io/artifactory/libs-snapshot</url>
                 </repository>
             </repositories>
             <pluginRepositories>
                 <pluginRepository>
                     <snapshots>
-                        <enabled>true</enabled>
+                        <enabled>false</enabled>
                     </snapshots>
                     <id>central</id>
                     <name>libs-release</name>
-                    <url>https://entur2.jfrog.io/entur2/libs-release</url>
+                    <url>https://entur2.jfrog.io/artifactory/libs-release</url>
                 </pluginRepository>
                 <pluginRepository>
                     <snapshots />
                     <id>snapshots</id>
                     <name>libs-snapshot</name>
-                    <url>https://entur2.jfrog.io/entur2/libs-snapshot</url>
+                    <url>https://entur2.jfrog.io/artifactory/libs-snapshot</url>
                 </pluginRepository>
             </pluginRepositories>
             <id>artifactory</id>
@@ -63,12 +53,4 @@
     <activeProfiles>
         <activeProfile>artifactory</activeProfile>
     </activeProfiles>
-    <mirrors>
-        <mirror>
-            <id>entur-mirror</id>
-            <name>Entur Mirror</name>
-            <url>https://entur2.jfrog.io/entur2/libs-release</url>
-            <mirrorOf>!central,!snapshots,*</mirrorOf>
-        </mirror>
-    </mirrors>
 </settings>
