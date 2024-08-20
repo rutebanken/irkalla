@@ -10,6 +10,9 @@ jobs:
   docker-lint:
     uses: entur/gha-docker/.github/workflows/lint.yml@v1
   maven-verify:
+    env:
+      JFROG_USER: ${{ secrets.ARTIFACTORY_USER }}
+      JFROG_PASS: ${{ secrets.ARTIFACTORY_APIKEY }}
     runs-on: ubuntu-24.04
     permissions:
       contents: read
@@ -20,9 +23,6 @@ jobs:
           java-version: 21.0.1+12
           distribution: liberica
           cache: 'maven'
-        env:
-          JFROG_USER: ${{ secrets.ARTIFACTORY_USER }}
-          JFROG_PASS: ${{ secrets.ARTIFACTORY_APIKEY }}
       - run: mvn verify -s .github/workflows/settings.xml
       - uses: actions/upload-artifact@v4.3.3
         with:
