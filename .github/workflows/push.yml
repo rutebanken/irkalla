@@ -20,6 +20,9 @@ jobs:
         with:
           repository: 'entur/ror-maven-settings'
           path: maven-settings
+      - run: |
+          pwd
+          ls -al .
       - uses: actions/checkout@v4
       - name: Copy maven settings
         run: |
