@@ -21,7 +21,8 @@ jobs:
           repository: 'entur/ror-maven-settings'
           path: maven-settings
       - uses: actions/checkout@v4
-        run: cp -r maven-settings/.github/workflows/* .github/workflows/
+      - name: Copy maven settings
+        run: cp maven-settings/.m2/settings.xml .github/workflows/settings.xml
       - uses: actions/setup-java@v4
         with:
           java-version: 21.0.1+12
