@@ -22,7 +22,9 @@ jobs:
           path: maven-settings
       - uses: actions/checkout@v4
       - name: Copy maven settings
-        run: cp maven-settings/.m2/settings.xml .github/workflows/settings.xml
+        run: |
+          ls -al .
+          cp maven-settings/.m2/settings.xml .github/workflows/settings.xml
       - uses: actions/setup-java@v4
         with:
           java-version: 21.0.1+12
