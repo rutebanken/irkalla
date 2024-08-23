@@ -15,12 +15,13 @@ jobs:
     permissions:
       contents: read
     steps:
-      - name: Set up Maven Settings
+      - name: Checkout common maven settings
         uses: actions/checkout@v4
         with:
           repository: 'entur/ror-maven-settings'
-          path: .github/workflows
+          path: maven-settings
       - uses: actions/checkout@v4
+        run: cp -r maven-settings/.github/workflows/* .github/workflows/
       - uses: actions/setup-java@v4
         with:
           java-version: 21.0.1+12
