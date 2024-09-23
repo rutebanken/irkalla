@@ -307,4 +307,14 @@ Inspired by: https://github.com/fabric8io/ipaas-quickstarts/
         </plugins>
     </build>
 
+    <repositories>
+        <repository>
+            <id>confluent</id>
+            <name>Confluent</name>
+            <url>https://packages.confluent.io/maven/</url>
+        </repository>
+    </repositories>
+
+
+
 </project>
