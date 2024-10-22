@@ -171,9 +171,9 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
                 .removeHeaders("CamelHttp*")
                 .setHeader(Exchange.HTTP_METHOD, constant(HttpMethods.POST))
                 .doTry()
-                .toD(chouetteUrl + "/chouette_iev/stop_place")
-                .log(LoggingLevel.DEBUG, "Response from Chouette: ${body}")
-                .log(LoggingLevel.DEBUG, "Response Headers from Chouette: ${headers}")
+                .toD(chouetteUrl + "/chouette_iev/stop_place?httpClient.soTimeout=300000&httpClient.connectTimeout=300000")
+                .log(LoggingLevel.INFO, "Response from Chouette: ${body}")
+                .log(LoggingLevel.INFO, "Response Headers from Chouette: ${headers}")
                 .doCatch(HttpOperationFailedException.class).onWhen(exchange -> {
                             HttpOperationFailedException ex = exchange.getException(HttpOperationFailedException.class);
                             return (ex.getStatusCode() == 423);})
