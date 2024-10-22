@@ -69,7 +69,7 @@ class ChouetteStopPlaceUpdateRouteBuilderTest extends RouteBuilderIntegrationTes
                 a -> a.interceptSendToEndpoint(exportPath)
                         .skipSendToOriginalEndpoint().to("mock:tiamatExportChanges"));
 
-        AdviceWith.adviceWith(context,"chouette-synchronize-stop-place-batch", a -> a.weaveByToUri(chouetteUrl + "/chouette_iev/stop_place")
+        AdviceWith.adviceWith(context,"chouette-synchronize-stop-place-batch", a -> a.weaveByToUri(chouetteUrl + "/chouette_iev/stop_place*")
                 .replace().to("mock:chouetteUpdateStopPlaces"));
 
         AdviceWith.adviceWith(context,"chouette-synchronize-stop-places-init",
@@ -133,7 +133,7 @@ class ChouetteStopPlaceUpdateRouteBuilderTest extends RouteBuilderIntegrationTes
 
         AdviceWith.adviceWith(context, "chouette-synchronize-stop-place-batch",
                 a -> {
-                    a.weaveByToUri(chouetteUrl + "/chouette_iev/stop_place")
+                    a.weaveByToUri(chouetteUrl + "/chouette_iev/stop_place*")
                             .replace().to("mock:chouetteUpdateStopPlaces");
 
                     a.weaveByToUri("google-pubsub:(.*):ChouetteStopPlaceSyncQueue").replace().to("mock:chouetteStopPlaceSyncQueue");
