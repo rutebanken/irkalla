@@ -99,7 +99,6 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
 
 
         from("direct:synchronizeStopPlaces")
-                .setHeader(Constants.HEADER_PROCESS_TARGET, constant("direct:synchronizeStopPlaceBatch"))
                 .choice()
                 .when(or(header(HEADER_NEXT_BATCH_URL).isNull(), header(HEADER_NEXT_BATCH_URL).isEqualTo(""))) // New sync, init
                  .to("direct:initNewSynchronization")
