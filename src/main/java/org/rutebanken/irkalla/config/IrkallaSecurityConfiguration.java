@@ -41,7 +41,7 @@ public class IrkallaSecurityConfiguration{
     public SecurityFilterChain filterChain(HttpSecurity http, MultiIssuerAuthenticationManagerResolver multiIssuerAuthenticationManagerResolver) throws Exception {
         http.cors(withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeRequests(auths -> auths
+                .authorizeHttpRequests(auths -> auths
                         .requestMatchers(AntPathRequestMatcher.antMatcher("/services/openapi.json")).permitAll()
                         // exposed internally only, on a different port (pod-level)
                         .requestMatchers(AntPathRequestMatcher.antMatcher("/actuator/prometheus")).permitAll()
