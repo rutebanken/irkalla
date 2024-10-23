@@ -76,6 +76,7 @@ public class TiamatPollForStopPlaceChangesRouteBuilder extends BaseRouteBuilder 
                 .setHeader(Exchange.HTTP_METHOD, constant(HttpMethods.GET))
                 .setBody(constant(""))
                 .toD("${header." + HEADER_NEXT_BATCH_URL + "}")
+                .log(LoggingLevel.INFO, "Fetched batch of changed stop places: ${header." + HEADER_NEXT_BATCH_URL + "}")
                 .removeHeader(HEADER_NEXT_BATCH_URL)
                 .choice()
                 .when(simple("${header." + Exchange.HTTP_RESPONSE_CODE + "} == 200"))

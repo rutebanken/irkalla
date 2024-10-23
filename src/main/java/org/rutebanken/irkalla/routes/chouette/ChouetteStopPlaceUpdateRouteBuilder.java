@@ -42,6 +42,10 @@ import static org.rutebanken.irkalla.Constants.SYNC_OPERATION_FULL_WITH_DELETE_U
 
 @Component
 public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
+
+    // setting socket read timeout to 5 minutes
+    private static final String HTTP_TIMEOUT_CONFIG = "?httpConnection.soTimeout=300000";
+
     @Value("${chouette.url}")
     private String chouetteUrl;
 
@@ -84,7 +88,7 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
                 .process(this::removeSynchronizationForAggregatedExchange)
                 .aggregate(constant(true)).aggregationStrategy(new GroupedMessageAggregationStrategy()).completionSize(100).completionTimeout(1000)
                 .process(this::addSynchronizationForAggregatedExchange)
-                .process(e -> mergePubSubMessages(e))
+                .process(this::mergePubSubMessages)
                 .choice()
                 .when(simple("${header." + HEADER_SYNC_OPERATION + "} == '" + SYNC_OPERATION_FULL_WITH_DELETE_UNUSED_FIRST + "'"))
                 .to("direct:deleteUnusedStopPlaces")
@@ -149,7 +153,9 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
                 .setBody(constant(""))
                 .setHeader(Exchange.HTTP_METHOD, constant(HttpMethods.DELETE))
                 .doTry()
-                .toD(chouetteUrl + "/chouette_iev/stop_place/unused")
+                .log(LoggingLevel.INFO, "Sending unused stop places deletion request to Chouette")
+                .toD(chouetteUrl + "/chouette_iev/stop_place/unused" + HTTP_TIMEOUT_CONFIG)
+                .log(LoggingLevel.INFO, "Sent unused stop places deletion request to Chouette")
                 .setHeader(HEADER_SYNC_OPERATION, constant(SYNC_OPERATION_FULL))
                 .log(LoggingLevel.INFO, "Deleting unused stop places in Chouette completed.")
                 .setBody(constant(""))
@@ -171,7 +177,9 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
                 .removeHeaders("CamelHttp*")
                 .setHeader(Exchange.HTTP_METHOD, constant(HttpMethods.POST))
                 .doTry()
-                .toD(chouetteUrl + "/chouette_iev/stop_place")
+                .log(LoggingLevel.INFO, "Sending stop places update request to Chouette")
+                .toD(chouetteUrl + "/chouette_iev/stop_place" + HTTP_TIMEOUT_CONFIG)
+                .log(LoggingLevel.INFO, "Sent stop places update request to Chouette")
                 .log(LoggingLevel.DEBUG, "Response from Chouette: ${body}")
                 .log(LoggingLevel.DEBUG, "Response Headers from Chouette: ${headers}")
                 .doCatch(HttpOperationFailedException.class).onWhen(exchange -> {
@@ -196,7 +204,7 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
      */
     private void mergePubSubMessages(Exchange e) {
         List<Message> msgList = e.getIn().getBody(List.class);
-        Collections.sort(msgList, new SyncMsgComparator());
+        msgList.sort(new SyncMsgComparator());
 
         Message topPriMsg = msgList.getFirst();
         Object syncOperation = topPriMsg.getHeader(HEADER_SYNC_OPERATION);
