@@ -34,4 +34,6 @@ public class Constants {
     public static final String CAMEL_ALL_HEADERS = "Camel*";
     public static final String CAMEL_ALL_HTTP_HEADERS = "CamelHttp*";
 
+    public static final String BATCH_NUMBER = "batchNumber";
+    public static final String CAMEL_BREADCRUMB_ID = "camel.breadcrumbId";
 }

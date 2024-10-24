@@ -24,14 +24,17 @@ import org.apache.camel.http.common.HttpMethods;
 import org.apache.camel.processor.aggregate.GroupedMessageAggregationStrategy;
 import org.rutebanken.irkalla.Constants;
 import org.rutebanken.irkalla.routes.BaseRouteBuilder;
+import org.rutebanken.irkalla.util.BatchNumber;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
-import java.util.Collections;
 import java.util.List;
 
 import static org.apache.camel.support.builder.PredicateBuilder.or;
+import static org.rutebanken.irkalla.Constants.BATCH_NUMBER;
+import static org.rutebanken.irkalla.Constants.CAMEL_BREADCRUMB_ID;
 import static org.rutebanken.irkalla.Constants.HEADER_NEXT_BATCH_URL;
 import static org.rutebanken.irkalla.Constants.HEADER_SYNC_OPERATION;
 import static org.rutebanken.irkalla.Constants.HEADER_SYNC_STATUS_TO;
@@ -99,10 +102,15 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
 
 
         from("direct:synchronizeStopPlaces")
+                .process( e -> {
+                    MDC.put(CAMEL_BREADCRUMB_ID, e.getIn().getHeader(Exchange.BREADCRUMB_ID, String.class));
+                    MDC.put(HEADER_SYNC_OPERATION, e.getIn().getHeader(HEADER_SYNC_OPERATION, String.class));
+                })
                 .choice()
                 .when(or(header(HEADER_NEXT_BATCH_URL).isNull(), header(HEADER_NEXT_BATCH_URL).isEqualTo(""))) // New sync, init
                  .to("direct:initNewSynchronization")
                 .otherwise()
+                 .process(e -> MDC.put(BATCH_NUMBER, BatchNumber.getTiamatUrlPageNumber(e.getIn().getHeader(HEADER_NEXT_BATCH_URL, String.class))))
                  .log(LoggingLevel.INFO, "Next batch header is : ${header." + HEADER_NEXT_BATCH_URL + "}")
                  .log(LoggingLevel.INFO, "${header." + HEADER_SYNC_OPERATION + "} synchronization of stop places in Chouette resumed.")
                 .end()
@@ -121,6 +129,7 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
 
 
         from("direct:initNewSynchronization")
+                .process(e -> MDC.put(HEADER_SYNC_OPERATION, e.getIn().getHeader(HEADER_SYNC_OPERATION, String.class)))
                 .log(LoggingLevel.INFO, "${header." + HEADER_SYNC_OPERATION + "} synchronization of stop places in Chouette started.")
                 .choice()
                 .when(simple("${header." + HEADER_SYNC_OPERATION + "} == '" + SYNC_OPERATION_DELTA + "'"))
@@ -147,6 +156,7 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
 
 
         from("direct:deleteUnusedStopPlaces")
+                .process(e -> MDC.put(HEADER_SYNC_OPERATION, e.getIn().getHeader(HEADER_SYNC_OPERATION, String.class)))
                 .log(LoggingLevel.INFO, "Full synchronization of stop places in Chouette, deleting unused stops first")
                 .removeHeaders("CamelHttp*")
                 .setBody(constant(""))
@@ -176,11 +186,10 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
                 .removeHeaders("CamelHttp*")
                 .setHeader(Exchange.HTTP_METHOD, constant(HttpMethods.POST))
                 .doTry()
-                .log(LoggingLevel.INFO, "Sending stop places update request to Chouette")
                 .toD(chouetteUrl + "/chouette_iev/stop_place" + HTTP_TIMEOUT_CONFIG)
                 .log(LoggingLevel.INFO, "Sent stop places update request to Chouette")
-                .log(LoggingLevel.DEBUG, "Response from Chouette: ${body}")
-                .log(LoggingLevel.DEBUG, "Response Headers from Chouette: ${headers}")
+                .log(LoggingLevel.INFO, "Response from Chouette: ${body}")
+                .log(LoggingLevel.INFO, "Response Headers from Chouette: ${headers}")
                 .doCatch(HttpOperationFailedException.class).onWhen(exchange -> {
                             HttpOperationFailedException ex = exchange.getException(HttpOperationFailedException.class);
                             return (ex.getStatusCode() == 423);})
