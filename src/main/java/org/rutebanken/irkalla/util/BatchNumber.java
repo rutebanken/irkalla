@@ -14,12 +14,15 @@ public class BatchNumber {
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
+        if(uri.getQuery() == null) {
+            return "";
+        }
         final String queryPrams = URLDecoder.decode(uri.getQuery(), StandardCharsets.UTF_8);
 
         return Arrays.stream(queryPrams.split("&"))
                 .filter(param -> param.startsWith("page"))
                 .map(pram -> pram.split("=")[1])
-                .findFirst().orElse("0");
+                .findFirst().orElse("");
     }
 
 }
