@@ -30,6 +30,9 @@
                             "serviceContext": {
                                 "service": "irkalla"
                             },
+                            "breadcrumb": "%X{camel.breadcrumbId}",
+                            "syncOperation": "%X{RutebankenSyncOperation}",
+                            "fullSyncBatchNumber": "%X{batchNumber}",
                             "message": "%message\n%ex{full}",
                             "severity": "%level",
                             "reportLocation": {
