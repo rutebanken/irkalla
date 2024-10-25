@@ -70,6 +70,8 @@ data:
     camel.cluster.kubernetes.cluster-labels[app]=irkalla
     camel.cluster.kubernetes.config-map-name=irkalla-leaders
     camel.springboot.use-breadcrumb=true
+    # the Camel shutdown timeout must be shorter than the Kubernetes terminationGracePeriod
+    irkalla.shutdown.timeout=25
 
 
 
