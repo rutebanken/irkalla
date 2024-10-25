@@ -188,8 +188,8 @@ public class ChouetteStopPlaceUpdateRouteBuilder extends BaseRouteBuilder {
                 .doTry()
                 .toD(chouetteUrl + "/chouette_iev/stop_place" + HTTP_TIMEOUT_CONFIG)
                 .log(LoggingLevel.INFO, "Sent stop places update request to Chouette")
-                .log(LoggingLevel.INFO, "Response from Chouette: ${body}")
-                .log(LoggingLevel.INFO, "Response Headers from Chouette: ${headers}")
+                .log(LoggingLevel.DEBUG, "Response from Chouette: ${body}")
+                .log(LoggingLevel.DEBUG, "Response Headers from Chouette: ${headers}")
                 .doCatch(HttpOperationFailedException.class).onWhen(exchange -> {
                             HttpOperationFailedException ex = exchange.getException(HttpOperationFailedException.class);
                             return (ex.getStatusCode() == 423);})
