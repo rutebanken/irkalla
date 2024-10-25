@@ -15,19 +15,39 @@
 
 package org.rutebanken.irkalla;
 
+import org.apache.camel.builder.RouteBuilder;
 import org.entur.pubsub.base.config.GooglePubSubConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-@SpringBootApplication(exclude={UserDetailsServiceAutoConfiguration.class})
+/**
+ * A spring-boot application that includes a Camel route builder to set up the Camel context.
+ */
+@SpringBootApplication(exclude = {UserDetailsServiceAutoConfiguration.class})
 @EnableScheduling
 @Import({GooglePubSubConfig.class})
-public class IrkallaApplication {
+public class IrkallaApplication extends RouteBuilder {
 
-	public static void main(String[] args) {
-		SpringApplication.run(IrkallaApplication.class, args);
-	}
+    private static final Logger LOGGER = LoggerFactory.getLogger(IrkallaApplication.class);
+
+    @Value("${irkalla.shutdown.timeout:45}")
+    private Long shutdownTimeout;
+
+    // must have a main method spring-boot can run
+    public static void main(String[] args) {
+        LOGGER.info("Starting Irkalla...");
+        SpringApplication.run(IrkallaApplication.class, args);
+    }
+
+    @Override
+    public void configure() {
+        getContext().getShutdownStrategy().setTimeout(shutdownTimeout);
+        getContext().setUseMDCLogging(true);
+    }
 }
